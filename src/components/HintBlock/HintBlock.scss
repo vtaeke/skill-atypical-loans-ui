@@ -1,0 +1,41 @@
+@font-face {
+  font-family: 'SB Sans Text';
+  src: url('../../resources/sbsanstext-medium.woff2') format('woff2'),
+  url('../../resources/sbsanstext-medium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.hints-block {
+  color: white;
+  font-family: 'SB Sans Text', sans-serif;
+  border-radius: 10px;
+  padding: 20px;
+  height: calc(100% - 40px);
+
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  .thumbnails {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .thumbnail-container {
+    position: relative;
+  }
+
+  .thumbnail {
+    width: 150px;
+    height: 150px;
+    border-radius: 5px;
+  }
+
+  .placeholder {
+    margin-top: 221px;
+    margin-right: 22px;
+  }
+}
