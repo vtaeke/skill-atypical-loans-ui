@@ -61,7 +61,7 @@ const FormPage: React.FC<Props> = ({  }) => {
                 <FormBlock title="Форма запроса" setFileList={setFileList} />
             </div>
             <div className="right-block">
-                <HintsBlock fileList={fileList}  onFileRemove={handleFileRemove}/>
+                <HintsBlock fileList={fileList}  onFileRemove={handleFileRemove} setFileList={setFileList}/>
             </div>
         </div>
     );
