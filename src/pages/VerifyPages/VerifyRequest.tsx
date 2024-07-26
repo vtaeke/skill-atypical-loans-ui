@@ -15,6 +15,7 @@ import circleSalut from "../../resources/circleSalut.svg";
 import closeImg from "../../resources/closeImg.svg";
 import mapIcon from "../../resources/mapIcon.svg";
 import {AppDispatch} from "../../redux/store";
+import Notification from "../Notification/Notification";
 
 const VerifyRequest: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -34,6 +35,10 @@ const VerifyRequest: React.FC = () => {
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
+    const [showNotification, setShowNotification] = useState(false)
+    const [notificationMsg, setNotificationMsg] = useState('')
+
+
     const navigate = useNavigate();
 
     // const assistantStateRef = useRef<AssistantAppState>();
@@ -79,6 +84,13 @@ const VerifyRequest: React.FC = () => {
         Object.entries(formState).forEach(([field, value]) => {
             dispatch(updateFormField(field, value))
         })
+        setNotificationMsg('Заявка успешно создана!')
+        setShowNotification(true)
+
+        // setTimeout(() => {
+        //     setShowNotification(false)
+        // }, 4000)
+
         console.log('Данные формы отправлены в Redux:', formState);
     };
 
@@ -88,6 +100,10 @@ const VerifyRequest: React.FC = () => {
             [field]: value
         }));
     };
+
+    const closeNotification = () => {
+        setShowNotification(false)
+    }
 
     const handleCardClick = (path: string) => {
         navigate(path);
@@ -278,6 +294,11 @@ const VerifyRequest: React.FC = () => {
                         <HintsBlock fileList={fileList} onFileRemove={handleFileRemove} setFileList={setFileList} />
                     </div>
                 </div>
+
+                {showNotification && (
+                    <Notification message={notificationMsg} onClose={closeNotification} />
+                )}
+
                 <div className='footer-verify'>
                     <div className="circle" style={{ paddingRight: '14px', cursor: 'pointer' }} onClick={() => handleCardClick('/requests')}>
                         <img width={61} height={61} src={circleSalut} alt="Clip Board" />
