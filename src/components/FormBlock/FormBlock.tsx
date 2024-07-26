@@ -81,7 +81,7 @@ const FormBlock: React.FC<FormBlockProps> = ({ title, setFileList }) => {
                     <input type="text" placeholder="Признак VIP" value={formState.isVip} onChange={(e) => setFormState({ ...formState, isVip: e.target.value })} />
                 </div>
                 <div className="form-group">
-                    <textarea placeholder="Комментарий"></textarea>
+                    {/*<textarea placeholder="Комментарий"></textarea>*/}
                     <input type="file" onChange={handleFileChange} multiple />
                 </div>
                 <div className="form-buttons">
