@@ -63,7 +63,7 @@ const HintsBlock: React.FC<HintsBlockProps> = ({ fileList, onFileRemove, setFile
                     </svg>
                 </div>
             </div>
-            </div>
+        </div>
     );
 };
 

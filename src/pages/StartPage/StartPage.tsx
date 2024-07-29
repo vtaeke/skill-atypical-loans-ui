@@ -103,7 +103,7 @@ const StartPage: React.FC = () => {
                     <img width={35} height={38} src={clipboardVerifyVip} alt="Create Request" />
                     <p>VIP.Верификация</p>
                 </div>
-                <div className="card" onClick={() => handleCardClick('/form')}>
+                <div className="card" onClick={() => handleCardClick('/foreigners')}>
                     <img width={35} height={38} src={clipboardProfile} alt="Create Request" />
                     <p>Иностранцы</p>
                 </div>
@@ -115,7 +115,7 @@ const StartPage: React.FC = () => {
                     <img width={35} height={38} src={clipBoardNotTypical} alt="Create Request" />
                     <p>Нетиповая и сверхлемитная</p>
                 </div>
-                <div className="card" onClick={() => handleCardClick('/form')}>
+                <div className="card" onClick={() => handleCardClick('/settlement-problem-debt')}>
                     <img width={35} height={38} src={clipBoardRegularFile} alt="Create Request" />
                     <p>Урегулирование задолженности</p>
                 </div>

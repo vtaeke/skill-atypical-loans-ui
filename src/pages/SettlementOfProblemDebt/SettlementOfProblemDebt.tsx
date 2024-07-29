@@ -16,27 +16,25 @@ import closeImg from "../../resources/closeImg.svg";
 import mapIcon from "../../resources/mapIcon.svg";
 import {AppDispatch} from "../../redux/store";
 import Notification from "../Notification/Notification";
+import './SettlementOfProblemDebt.scss'
 
-const NonTransactionalRequest: React.FC = () => {
+const SettlementOfProblemDebt: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const [formState, setFormState] = useState({
-        requestType: '',
+        restructuring: '',
         contractNumber: '',
-        propertyList: '',
-        propertyCost: '',
-        bank: 'Item 1',
-        region: '',
         clientFamily: '',
         clientName: '',
         clientSurname: '',
+        bank: '',
         email: '',
-        isVip: '',
-        comment: ''
+        comment: '',
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
     const [showNotification, setShowNotification] = useState(false)
     const [notificationMsg, setNotificationMsg] = useState('')
+
 
     const navigate = useNavigate();
 
@@ -83,9 +81,12 @@ const NonTransactionalRequest: React.FC = () => {
         Object.entries(formState).forEach(([field, value]) => {
             dispatch(updateFormField(field, value))
         })
-
         setNotificationMsg('Заявка успешно создана!')
         setShowNotification(true)
+
+        // setTimeout(() => {
+        //     setShowNotification(false)
+        // }, 4000)
 
         console.log('Данные формы отправлены в Redux:', formState);
     };
@@ -122,8 +123,8 @@ const NonTransactionalRequest: React.FC = () => {
 
                 <div className="main">
                     <div className="form">
-                        <div className="form-block">
-                            <h2 style={{ fontSize: 20 }}>Заключение сделки по не транзакционным продуктам</h2>
+                        <div className="form-block" style={{ height: '580px'}}>
+                            <h2 style={{ fontSize: 20 }}>Урегулирование проблемной задолженности</h2>
                             <form onSubmit={handleSubmit}>
                                 <div className="form-content-request">
                                     <span className="icon" style={{ marginRight: '10px' }}>
@@ -132,9 +133,9 @@ const NonTransactionalRequest: React.FC = () => {
                                     <div className="input-block-category">
                                         <input
                                             type="text"
-                                            placeholder="Категория запроса"
-                                            value={formState.requestType}
-                                            onChange={(e) => handleInputChange('requestType', e.target.value)}
+                                            placeholder="Реструктуризация"
+                                            value={formState.restructuring}
+                                            onChange={(e) => handleInputChange('restructuring', e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -150,78 +151,6 @@ const NonTransactionalRequest: React.FC = () => {
                                             value={formState.contractNumber}
                                             onChange={(e) => handleInputChange('contractNumber', e.target.value)}
                                         />
-                                    </div>
-                                </div>
-
-                                <div className="form-content-body">
-                                    <div className="form-content-realty">
-                                        <span className="icon" style={{ marginRight: '10px' }}>
-                                            <img width={30} height={30} src={houseIcon} alt="icon" />
-                                        </span>
-                                        <div className="form-content-real-property">
-                                            <select
-                                                className='select-realty'
-                                                value={formState.propertyList}
-                                                onChange={(e) => handleInputChange('propertyList', e.target.value)}
-                                            >
-                                                <option value="" disabled hidden>Тип запроса</option>
-                                                <option value="Объект недвижимости">Объект недвижимости</option>
-                                                <option value="ИЖС">ИЖС</option>
-                                            </select>
-                                        </div>
-                                        <div className="form-content-real-property">
-                                            <input
-                                                style={{ width: "395px", height: '25px' }}
-                                                type="text"
-                                                placeholder="Стоимость"
-                                                value={formState.propertyCost}
-                                                onChange={(e) => handleInputChange('propertyCost', e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <button className='button-realty-add'>Добавить</button>
-                                </div>
-
-                                <div className="form-content-body">
-                                    <div className="form-content-bank">
-                                        <span className="icon" style={{ marginRight: '10px' }}>
-                                            <img width={30} height={30} src={homeLine} alt="icon" />
-                                        </span>
-                                        <div className="form-content-form-bank">
-                                            <select
-                                                className='select-bank'
-                                                value={formState.bank}
-                                                onChange={(e) => handleInputChange('bank', e.target.value)}
-                                            >
-                                                <option value="" disabled hidden>Территориальный блок</option>
-                                                <option value="Территориальный банк расположения объекта недвижимости">Территориальный банк расположения объекта недвижимости</option>
-                                                <option value="Сбер">Сбер</option>
-                                                <option value="Сбербанк">Сбербанк</option>
-                                                <option value="СБЕР2">СБЕР</option>
-                                                <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="form-content-body">
-                                    <div className="form-region-object">
-                                        <span className="icon" style={{ marginRight: '10px' }}>
-                                            <img width={30} height={30} src={mapIcon} alt="icon" />
-                                        </span>
-                                        <div className="form-content-region-object">
-                                            <select
-                                                className='select-region'
-                                                value={formState.region}
-                                                onChange={(e) => handleInputChange('region', e.target.value)}
-                                            >
-                                                <option value="" disabled hidden>Территориальный блок</option>
-                                                <option value="Регион расположения объекта недвижимости">Регион расположения объекта недвижимости</option>
-                                                <option value="регион1">регион1</option>
-                                                <option value="регион2">регион2</option>
-                                                <option value="регион3">регион3</option>
-                                            </select>
-                                        </div>
                                     </div>
                                 </div>
 
@@ -256,6 +185,79 @@ const NonTransactionalRequest: React.FC = () => {
                                     </div>
                                 </div>
 
+                                {/*<div className="form-content-body">*/}
+                                {/*    <div className="form-content-realty">*/}
+                                {/*        <span className="icon" style={{ marginRight: '10px' }}>*/}
+                                {/*            <img width={30} height={30} src={houseIcon} alt="icon" />*/}
+                                {/*        </span>*/}
+                                {/*        <div className="form-content-real-property">*/}
+                                {/*            <select*/}
+                                {/*                className='select-realty'*/}
+                                {/*                value={formState.propertyList}*/}
+                                {/*                onChange={(e) => handleInputChange('propertyList', e.target.value)}*/}
+                                {/*            >*/}
+                                {/*                <option value="" disabled hidden>Тип запроса</option>*/}
+                                {/*                <option value="Объект недвижимости">Объект недвижимости</option>*/}
+                                {/*                <option value="ИЖС">ИЖС</option>*/}
+                                {/*            </select>*/}
+                                {/*        </div>*/}
+                                {/*        <div className="form-content-real-property">*/}
+                                {/*            <input*/}
+                                {/*                style={{ width: "395px", height: '25px' }}*/}
+                                {/*                type="text"*/}
+                                {/*                placeholder="Стоимость"*/}
+                                {/*                value={formState.propertyCost}*/}
+                                {/*                onChange={(e) => handleInputChange('propertyCost', e.target.value)}*/}
+                                {/*            />*/}
+                                {/*        </div>*/}
+                                {/*    </div>*/}
+                                {/*    <button className='button-realty-add'>Добавить</button>*/}
+                                {/*</div>*/}
+
+                                <div className="form-content-body">
+                                    <div className="form-content-bank">
+                                        <span className="icon" style={{ marginRight: '10px' }}>
+                                            <img width={30} height={30} src={homeLine} alt="icon" />
+                                        </span>
+                                        <div className="form-content-form-bank">
+                                            <select
+                                                className='select-bank'
+                                                value={formState.bank}
+                                                onChange={(e) => handleInputChange('bank', e.target.value)}
+                                            >
+                                                <option value="Центральный аппарат">Центральный аппарат</option>
+                                                <option value="Сбер">Сбер</option>
+                                                <option value="Сбербанк">Сбербанк</option>
+                                                <option value="СБЕР2">СБЕР</option>
+                                                <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/*<div className="form-content-body">*/}
+                                {/*    <div className="form-region-object">*/}
+                                {/*        <span className="icon" style={{ marginRight: '10px' }}>*/}
+                                {/*            <img width={30} height={30} src={mapIcon} alt="icon" />*/}
+                                {/*        </span>*/}
+                                {/*        <div className="form-content-region-object">*/}
+                                {/*            <select*/}
+                                {/*                className='select-region'*/}
+                                {/*                value={formState.region}*/}
+                                {/*                onChange={(e) => handleInputChange('region', e.target.value)}*/}
+                                {/*            >*/}
+                                {/*                <option value="" disabled hidden>Территориальный блок</option>*/}
+                                {/*                <option value="Регион расположения объекта недвижимости">Регион расположения объекта недвижимости</option>*/}
+                                {/*                <option value="регион1">регион1</option>*/}
+                                {/*                <option value="регион2">регион2</option>*/}
+                                {/*                <option value="регион3">регион3</option>*/}
+                                {/*            </select>*/}
+                                {/*        </div>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
+
+
+
                                 <div className="form-content-email">
                                     <span className="icon" style={{ marginRight: '10px' }}>
                                         <img width={30} height={30} src={emailIcon} alt="icon" />
@@ -279,14 +281,14 @@ const NonTransactionalRequest: React.FC = () => {
                                     ></textarea>
                                 </div>
 
-                                <div className="form-button">
+                                <div className="form-button" style={{ marginTop: '20px'}}>
                                     <button type="submit" className="create-request-btn">Создать заявку</button>
                                 </div>
 
                             </form>
                         </div>
                     </div>
-                    <div className="right-block-request">
+                    <div className="right-block-request" style={{ height: '620px'}}>
                         <HintsBlock fileList={fileList} onFileRemove={handleFileRemove} setFileList={setFileList} />
                     </div>
                 </div>
@@ -308,4 +310,4 @@ const NonTransactionalRequest: React.FC = () => {
     );
 };
 
-export default NonTransactionalRequest;
+export default SettlementOfProblemDebt;

@@ -8,6 +8,8 @@ import RequestsList from "./pages/RequestsList/RequestsList";
 import VerifyRequest from "./pages/VerifyPages/VerifyRequest";
 import VipVerifyRequest from "./pages/VerifyPages/VipVerifyRequest";
 import NonTransactionalRequest from "./pages/NonTransactionalPage/NonTransactionalRequest";
+import SettlementOfProblemDebt from "./pages/SettlementOfProblemDebt/SettlementOfProblemDebt";
+import Foreigners from "./pages/Foreigners/Foreigners";
 
 const router = createBrowserRouter([
     {
@@ -33,6 +35,14 @@ const router = createBrowserRouter([
     {
         path: "/non-transactional",
         element: <NonTransactionalRequest />,
+    },
+    {
+        path: "/settlement-problem-debt",
+        element: <SettlementOfProblemDebt />,
+    },
+    {
+        path: "/foreigners",
+        element: <Foreigners />,
     },
 ]);
 

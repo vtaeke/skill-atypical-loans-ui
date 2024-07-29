@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFormField, resetForm } from '../../redux/formActions';
+import { updateFormField, resetForm } from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import './VerifyRequest.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
