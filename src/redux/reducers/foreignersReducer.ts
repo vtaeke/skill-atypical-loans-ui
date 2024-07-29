@@ -1,36 +1,28 @@
-import { UPDATE_FORM_FIELD, RESET_FORM, FormActionTypes } from './formActions';
+import { UPDATE_FORM_FIELD, RESET_FORM, FormActionTypes } from '../action/formActions';
 
-interface FormState {
-    requestType: string;
+interface FormSettlement {
+    product: string;
     contractNumber: string;
-    propertyList: string;
-    propertyCost: string;
-    bank: string;
-    region: string;
     clientFamily: string;
     clientName: string;
     clientSurname: string;
+    bank: string;
     email: string;
-    isVip: string;
     comment: string;
 }
 
-const initialState: FormState = {
-    requestType: '',
+const initialState: FormSettlement = {
+    product: '',
     contractNumber: '',
-    propertyList: '',
-    propertyCost: '',
-    bank: '',
-    region: '',
     clientFamily: '',
     clientName: '',
     clientSurname: '',
+    bank: '',
     email: '',
-    isVip: '',
-    comment: ''
+    comment: '',
 };
 
-const formReducer = (state = initialState, action: FormActionTypes): FormState => {
+const formSettlement = (state = initialState, action: FormActionTypes): FormSettlement => {
     switch (action.type) {
         case UPDATE_FORM_FIELD:
             return {
@@ -44,4 +36,4 @@ const formReducer = (state = initialState, action: FormActionTypes): FormState =
     }
 };
 
-export default formReducer;
+export default formSettlement;
