@@ -24,24 +24,40 @@
   .thumbnails {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
+    //gap: 5px;
+    width: 100px;
     flex-grow: 1;
   }
 
   .thumbnail-container {
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
   .thumbnail {
-    width: 150px;
-    height: 150px;
+    //width: 150px;
+    //height: 150px;
     border-radius: 5px;
+  }
+
+  .thumbnail-icon {
+    width: 45px;
+    height: 40px;
+    padding-top: 10px;
   }
 
   .placeholder {
     margin-top: 100px;
     margin-right: 22px;
   }
+}
+
+.remove-file {
+  position: absolute;
+  top: 0;
+  left: 50px;
+  cursor: pointer;
 }
 
 .form-container {
@@ -78,6 +94,9 @@
   justify-content: space-around;
 }
 
+.file-name {
+  font-size: 12px;
+}
 
 .form-container {
   display: flex;

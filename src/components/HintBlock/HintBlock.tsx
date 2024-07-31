@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import './HintBlock.scss';
 import somePic from '../../resources/somePic.svg';
 import loadFile from '../../resources/loadFile.svg';
+import folderIcon from '../../resources/folderIcon.svg';
+import trashIcon from '../../resources/trashIcon.svg';
 
 interface HintsBlockProps {
     fileList: File[];
@@ -32,16 +34,25 @@ const HintsBlock: React.FC<HintsBlockProps> = ({ fileList, onFileRemove, setFile
             {fileList.length === 0 && <img src={somePic} alt="icon" className="placeholder" />}
             <div className="thumbnails">
                 {fileList.map((file, index) => (
-                    <div key={index} className="thumbnail-container" >
+                    // <div key={index} className="thumbnail-container" >
+                    //     <img
+                    //         src={URL.createObjectURL(file)}
+                    //         alt={file.name}
+                    //         className="thumbnail"
+                    //         onContextMenu={(event) => {
+                    //             event.preventDefault();
+                    //             onFileRemove(index);
+                    //         }}
+                    //     />
+                    // </div>
+                    <div key={index} className="thumbnail-container">
                         <img
-                            src={URL.createObjectURL(file)}
-                            alt={file.name}
-                            className="thumbnail"
-                            onContextMenu={(event) => {
-                                event.preventDefault();
-                                onFileRemove(index);
-                            }}
+                            src={folderIcon}
+                            alt="file icon"
+                            className="thumbnail-icon"
                         />
+                        <span className="file-name">{file.name}</span>
+                        <span className="remove-file" onClick={() => onFileRemove(index)}><img src={trashIcon} /></span>
                     </div>
                 ))}
             </div>
