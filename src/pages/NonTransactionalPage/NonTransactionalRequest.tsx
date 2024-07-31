@@ -16,6 +16,7 @@ import closeImg from "../../resources/closeImg.svg";
 import mapIcon from "../../resources/mapIcon.svg";
 import {AppDispatch} from "../../redux/store";
 import Notification from "../Notification/Notification";
+import NorificationAlert from "../Notification/NorificationAlert";
 
 const NonTransactionalRequest: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -24,7 +25,7 @@ const NonTransactionalRequest: React.FC = () => {
         contractNumber: '',
         propertyList: '',
         propertyCost: '',
-        bank: 'Item 1',
+        bank: '',
         clientFamily: '',
         clientName: '',
         clientSurname: '',
@@ -37,6 +38,8 @@ const NonTransactionalRequest: React.FC = () => {
     const [notificationMsg, setNotificationMsg] = useState('')
     const [emailError, setEmailError] = useState<React.ReactNode>(null)
     const [successSubmit, setSuccessSubmit] = useState(false)
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
 
     const navigate = useNavigate();
 
@@ -64,10 +67,11 @@ const NonTransactionalRequest: React.FC = () => {
     }, [formState.email])
 
     useEffect(() => {
-        const validValue = Object.values(formState).every(val => val !== '')
+        const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
+        console.log('filelength', fileList.length)
         console.log('validValue', validValue)
         setSuccessSubmit(validValue)
-    }, [formState])
+    }, [formState, fileList])
 
     // const assistantStateRef = useRef<AssistantAppState>();
     // const assistantRef = useRef<ReturnType<typeof createAssistant>>();
@@ -101,23 +105,45 @@ const NonTransactionalRequest: React.FC = () => {
         }
     };
 
+    //v3 вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        // for (const field in formState) {
-        //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-        // }
-        // Object.keys(formState).forEach((field) => {
-        //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-        // })
         Object.entries(formState).forEach(([field, value]) => {
             dispatch(updateFormField(field, value))
         })
+
+        const formData = new FormData()
+        Object.entries(formState).forEach(([field, value]) => {
+            formData.append(field, value)
+        });
+        fileList.forEach(file => {
+            formData.append('files', file)
+        });
 
         setNotificationMsg('Заявка успешно создана!')
         setShowNotification(true)
 
         console.log('Данные формы отправлены в Redux:', formState);
+        console.log('Прикрепленные файлы:', fileList);
     };
+
+    // const handleSubmit = (event: React.FormEvent) => {
+    //     event.preventDefault();
+    //     // for (const field in formState) {
+    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
+    //     // }
+    //     // Object.keys(formState).forEach((field) => {
+    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
+    //     // })
+    //     Object.entries(formState).forEach(([field, value]) => {
+    //         dispatch(updateFormField(field, value))
+    //     })
+    //
+    //     setNotificationMsg('Заявка успешно создана!')
+    //     setShowNotification(true)
+    //
+    //     console.log('Данные формы отправлены в Redux:', formState);
+    // };
 
     const handleInputChange = (field: string, value: string) => {
         setFormState(prevState => ({
@@ -131,7 +157,16 @@ const NonTransactionalRequest: React.FC = () => {
     }
 
     const handleCardClick = (path: string) => {
-        navigate(path);
+        if (Object.values(formState).some(val => val !== '') || fileList.length > 0) {
+            setAlertMessage('');
+            setShowAlert(true);
+        } else {
+            navigate(path);
+        }
+    };
+
+    const closeAlert = () => {
+        setShowAlert(false);
     };
 
     return (
@@ -311,6 +346,9 @@ const NonTransactionalRequest: React.FC = () => {
                                     {emailError && (
                                         <div style={{fontSize: '14px'}}>{emailError}</div>
                                     )}
+                                    {fileList.length === 0 && (
+                                        <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>
+                                    )}
                                 </div>
 
                                 <div className="form-button">
@@ -334,6 +372,9 @@ const NonTransactionalRequest: React.FC = () => {
 
                 {showNotification && (
                     <Notification message={notificationMsg} onClose={closeNotification} />
+                )}
+                {showAlert && (
+                    <NorificationAlert message={alertMessage} onClose={closeAlert} />
                 )}
 
                 <div className='footer-verify'>

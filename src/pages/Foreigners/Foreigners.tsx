@@ -18,6 +18,7 @@ import {AppDispatch} from "../../redux/store";
 import Notification from "../Notification/Notification";
 import '../SettlementOfProblemDebt/SettlementOfProblemDebt.scss'
 import {log} from "util";
+import NorificationAlert from "../Notification/NorificationAlert";
 
 const Foreigners: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -37,6 +38,8 @@ const Foreigners: React.FC = () => {
     const [notificationMsg, setNotificationMsg] = useState('')
     const [emailError, setEmailError] = useState<React.ReactNode>(null)
     const [successSubmit, setSuccessSubmit] = useState(false)
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
 
     const navigate = useNavigate();
 
@@ -65,10 +68,11 @@ const Foreigners: React.FC = () => {
 
 
     useEffect(() => {
-        const validValue = Object.values(formState).every(val => val !== '')
+        const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
+        console.log('filelength', fileList.length)
         console.log('validValue', validValue)
         setSuccessSubmit(validValue)
-    }, [formState])
+    }, [formState, fileList])
 
 
     // const assistantStateRef = useRef<AssistantAppState>();
@@ -103,26 +107,48 @@ const Foreigners: React.FC = () => {
         }
     };
 
+    //v3 вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        // for (const field in formState) {
-        //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-        // }
-        // Object.keys(formState).forEach((field) => {
-        //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-        // })
         Object.entries(formState).forEach(([field, value]) => {
             dispatch(updateFormField(field, value))
         })
+
+        const formData = new FormData()
+        Object.entries(formState).forEach(([field, value]) => {
+            formData.append(field, value)
+        });
+        fileList.forEach(file => {
+            formData.append('files', file)
+        });
+
         setNotificationMsg('Заявка успешно создана!')
         setShowNotification(true)
 
-        // setTimeout(() => {
-        //     setShowNotification(false)
-        // }, 4000)
-
         console.log('Данные формы отправлены в Redux:', formState);
+        console.log('Прикрепленные файлы:', fileList);
     };
+
+    // const handleSubmit = (event: React.FormEvent) => {
+    //     event.preventDefault();
+    //     // for (const field in formState) {
+    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
+    //     // }
+    //     // Object.keys(formState).forEach((field) => {
+    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
+    //     // })
+    //     Object.entries(formState).forEach(([field, value]) => {
+    //         dispatch(updateFormField(field, value))
+    //     })
+    //     setNotificationMsg('Заявка успешно создана!')
+    //     setShowNotification(true)
+    //
+    //     // setTimeout(() => {
+    //     //     setShowNotification(false)
+    //     // }, 4000)
+    //
+    //     console.log('Данные формы отправлены в Redux:', formState);
+    // };
 
     const handleInputChange = (field: string, value: string) => {
         setFormState(prevState => ({
@@ -135,8 +161,21 @@ const Foreigners: React.FC = () => {
         setShowNotification(false)
     }
 
+    // const handleCardClick = (path: string) => {
+    //     navigate(path);
+    // };
+
     const handleCardClick = (path: string) => {
-        navigate(path);
+        if (Object.values(formState).some(val => val !== '') || fileList.length > 0) {
+            setAlertMessage('');
+            setShowAlert(true);
+        } else {
+            navigate(path);
+        }
+    };
+
+    const closeAlert = () => {
+        setShowAlert(false);
     };
 
     return (
@@ -158,7 +197,7 @@ const Foreigners: React.FC = () => {
                     <div className="form">
                         <div className="form-block" style={{ height: '600px'}}>
                             <h2 style={{ fontSize: 20 }}>Иностранные граждане. Проверка благонадежности</h2>
-                            <form onSubmit={handleSubmit}>
+                            <form >
                                 <div className="form-content-request">
                                     <span className="icon" style={{ marginRight: '10px' }}>
                                         <img width={30} height={30} src={categoryChoice} alt="icon" />
@@ -266,6 +305,9 @@ const Foreigners: React.FC = () => {
                                 {emailError && (
                                     <div style={{fontSize: '14px'}}>{emailError}</div>
                                 )}
+                                {fileList.length === 0 && (
+                                    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>
+                                )}
                                 <div className="form-button" style={{ marginTop: '20px'}}>
                                     <button
                                         style={successSubmit ? {} : {
@@ -274,6 +316,7 @@ const Foreigners: React.FC = () => {
                                             cursor: 'not-allowed',
                                             opacity: 0.5,
                                         }}
+                                        onClick={handleSubmit}
                                         disabled={!successSubmit} type="submit" className="create-request-btn">Создать заявку</button>
                                 </div>
 
@@ -287,6 +330,9 @@ const Foreigners: React.FC = () => {
 
                 {showNotification && (
                     <Notification message={notificationMsg} onClose={closeNotification} />
+                )}
+                {showAlert && (
+                    <NorificationAlert message={alertMessage} onClose={closeAlert} />
                 )}
 
                 <div className='footer-verify'>

@@ -1,4 +1,4 @@
-import { UPDATE_FORM_FIELD, RESET_FORM, FormActionTypes } from '../action/formActions';
+import {UPDATE_FORM_FIELD, RESET_FORM, FormActionTypes, ADD_FILES} from '../action/formActions';
 
 interface FormSettlement {
     product: string;
@@ -9,6 +9,7 @@ interface FormSettlement {
     bank: string;
     email: string;
     comment: string;
+    files: File[];
 }
 
 const initialState: FormSettlement = {
@@ -20,6 +21,7 @@ const initialState: FormSettlement = {
     bank: '',
     email: '',
     comment: '',
+    files: []
 };
 
 const formForeigners = (state = initialState, action: FormActionTypes): FormSettlement => {
@@ -31,6 +33,11 @@ const formForeigners = (state = initialState, action: FormActionTypes): FormSett
             };
         case RESET_FORM:
             return initialState;
+        case ADD_FILES:
+            return {
+                ...state,
+                files: [...state.files, ...action.payload]
+            }
         default:
             return state;
     }
