@@ -22,7 +22,7 @@ const initialState: FormSettlement = {
     comment: '',
 };
 
-const formSettlement = (state = initialState, action: FormActionTypes): FormSettlement => {
+const formForeigners = (state = initialState, action: FormActionTypes): FormSettlement => {
     switch (action.type) {
         case UPDATE_FORM_FIELD:
             return {
@@ -36,4 +36,4 @@ const formSettlement = (state = initialState, action: FormActionTypes): FormSett
     }
 };
 
-export default formSettlement;
+export default formForeigners;

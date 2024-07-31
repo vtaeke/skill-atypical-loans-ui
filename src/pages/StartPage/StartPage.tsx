@@ -111,7 +111,7 @@ const StartPage: React.FC = () => {
                     <img width={35} height={38} src={clipBoardNotTr} alt="Create Request" />
                     <p>Не транзикционные</p>
                 </div>
-                <div className="card" onClick={() => handleCardClick('/form')}>
+                <div className="card" onClick={() => handleCardClick('/conclusion-transactions')}>
                     <img width={35} height={38} src={clipBoardNotTypical} alt="Create Request" />
                     <p>Нетиповая и сверхлемитная</p>
                 </div>

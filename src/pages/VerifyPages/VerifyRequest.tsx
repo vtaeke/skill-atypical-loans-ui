@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFormField, resetForm } from '../../redux/action/formActions';
+import {updateFormField, resetForm, addFiles} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import './VerifyRequest.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
@@ -30,16 +30,45 @@ const VerifyRequest: React.FC = () => {
         clientName: '',
         clientSurname: '',
         email: '',
-        isVip: '',
         comment: ''
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
     const [showNotification, setShowNotification] = useState(false)
     const [notificationMsg, setNotificationMsg] = useState('')
-
+    const [emailError, setEmailError] = useState<React.ReactNode>(null)
+    const [successSubmit, setSuccessSubmit] = useState(false)
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const validateEmail = () => {
+            if (formState.email === '') {
+                setEmailError(null)
+                return;
+            }
+
+            const emailReg = /^[a-zA-Z0-9._%+-]+@(sberbank.ru|sber.ru|omega.sbrf.ru)$/;
+            if (!emailReg.test(formState.email)) {
+                setEmailError(
+                    <>
+                        <span style={{color: 'rgb(239, 107, 37)'}}>
+                            Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
+                        </span>
+                        <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
+                    </>)
+            } else {
+                setEmailError(null)
+            }
+        }
+        validateEmail()
+    }, [formState.email])
+
+    useEffect(() => {
+        const validValue = Object.values(formState).every(val => val !== '')
+        console.log('validValue', validValue)
+        setSuccessSubmit(validValue)
+    }, [formState])
 
     // const assistantStateRef = useRef<AssistantAppState>();
     // const assistantRef = useRef<ReturnType<typeof createAssistant>>();
@@ -66,12 +95,21 @@ const VerifyRequest: React.FC = () => {
         setFileList(newFileList);
     };
 
+    // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (event.target.files) {
+    //         const filesArray = Array.from(event.target.files);
+    //         setFileList([...fileList, ...filesArray]);
+    //     }
+    // };
+
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const filesArray = Array.from(event.target.files);
             setFileList([...fileList, ...filesArray]);
+            dispatch(addFiles(filesArray));  // Dispatch files to Redux
         }
     };
+
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -94,6 +132,40 @@ const VerifyRequest: React.FC = () => {
         console.log('Данные формы отправлены в Redux:', formState);
     };
 
+    //v2 handleSubmit send to back-end
+    // const handleSubmit = async(event: React.FormEvent) => {
+    //     event.preventDefault();
+    //     Object.entries(formState).forEach(([field, value]) => {
+    //         dispatch(updateFormField(field, value))
+    //     })
+    //
+    //     // send to back-end
+    //     const formData = new FormData()
+    //     Object.entries(formState).forEach(([field, value]) => {
+    //         formData.append(field, value)
+    //     });
+    //     fileList.forEach(file => {
+    //         formData.append('files', file)
+    //     });
+    //
+    //     try {
+    //         const response = await fetch('/backend', {
+    //             method: 'POST',
+    //             body: formData
+    //         });
+    //         if (response.ok) {
+    //             setNotificationMsg('Заявка успешно создана!');
+    //             setShowNotification(true);
+    //         } else {
+    //             setNotificationMsg('Ошибка при создании заявки!');
+    //             setShowNotification(true);
+    //         }
+    //     } catch (error) {
+    //         setNotificationMsg('Ошибка при создании заявки!')
+    //         setShowNotification(true);
+    //     }
+    // }
+    //
     const handleInputChange = (field: string, value: string) => {
         setFormState(prevState => ({
             ...prevState,
@@ -126,7 +198,7 @@ const VerifyRequest: React.FC = () => {
 
                 <div className="main">
                     <div className="form">
-                        <div className="form-block">
+                        <div className="form-block" style={{height: '635px'}}>
                             <h2 style={{ fontSize: 20 }}>Запрос на верификацию отчетов</h2>
                             <form onSubmit={handleSubmit}>
                                 <div className="form-content-request">
@@ -271,7 +343,9 @@ const VerifyRequest: React.FC = () => {
                                             value={formState.email}
                                             onChange={(e) => handleInputChange('email', e.target.value)}
                                         />
-                                        <img className='errorImg' src={errorIcon} alt="" />
+                                        {emailError && (
+                                            <img className='errorImg' src={errorIcon} alt=""/>
+                                        )}
                                     </div>
                                 </div>
 
@@ -282,15 +356,24 @@ const VerifyRequest: React.FC = () => {
                                         onChange={(e) => handleInputChange('comment', e.target.value)}
                                     ></textarea>
                                 </div>
-
+                                {emailError && (
+                                    <div style={{fontSize: '12px'}}>{emailError}</div>
+                                )}
                                 <div className="form-button">
-                                    <button type="submit" className="create-request-btn">Создать заявку</button>
+                                    <button
+                                        style={successSubmit ? {} : {
+                                            backgroundColor: '#ccc',
+                                            color: '#fff',
+                                            cursor: 'not-allowed',
+                                            opacity: 0.5,
+                                        }}
+                                        disabled={!successSubmit} type="submit" className="create-request-btn">Создать заявку</button>
                                 </div>
 
                             </form>
                         </div>
                     </div>
-                    <div className="right-block-request">
+                    <div className="right-block-request" style={{height: '635px'}}>
                         <HintsBlock fileList={fileList} onFileRemove={handleFileRemove} setFileList={setFileList} />
                     </div>
                 </div>

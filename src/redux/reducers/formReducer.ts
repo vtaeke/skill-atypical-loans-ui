@@ -1,4 +1,4 @@
-import { UPDATE_FORM_FIELD, RESET_FORM, FormActionTypes } from '../action/formActions';
+import {ADD_FILES, FormActionTypes, RESET_FORM, UPDATE_FORM_FIELD} from '../action/formActions';
 
 interface FormState {
     requestType: string;
@@ -13,6 +13,7 @@ interface FormState {
     email: string;
     isVip: string;
     comment: string;
+    files: File[];
 }
 
 const initialState: FormState = {
@@ -27,7 +28,8 @@ const initialState: FormState = {
     clientSurname: '',
     email: '',
     isVip: '',
-    comment: ''
+    comment: '',
+    files: []
 };
 
 const formReducer = (state = initialState, action: FormActionTypes): FormState => {
@@ -39,6 +41,11 @@ const formReducer = (state = initialState, action: FormActionTypes): FormState =
             };
         case RESET_FORM:
             return initialState;
+        case ADD_FILES:
+            return {
+                ...state,
+                files: [...state.files, ...action.payload]
+            }
         default:
             return state;
     }

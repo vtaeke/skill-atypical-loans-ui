@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
 import { updateFormField, resetForm } from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
@@ -17,6 +17,7 @@ import mapIcon from "../../resources/mapIcon.svg";
 import {AppDispatch} from "../../redux/store";
 import Notification from "../Notification/Notification";
 import '../SettlementOfProblemDebt/SettlementOfProblemDebt.scss'
+import {log} from "util";
 
 const Foreigners: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -34,9 +35,41 @@ const Foreigners: React.FC = () => {
     const [fileList, setFileList] = useState<File[]>([]);
     const [showNotification, setShowNotification] = useState(false)
     const [notificationMsg, setNotificationMsg] = useState('')
-
+    const [emailError, setEmailError] = useState<React.ReactNode>(null)
+    const [successSubmit, setSuccessSubmit] = useState(false)
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const validateEmail = () => {
+            if (formState.email === '') {
+                setEmailError(null)
+                return;
+            }
+
+            const emailReg = /^[a-zA-Z0-9._%+-]+@(sberbank.ru|sber.ru|omega.sbrf.ru)$/;
+            if (!emailReg.test(formState.email)) {
+                setEmailError(
+                    <>
+                        <span style={{color: 'rgb(239, 107, 37)'}}>
+                            Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
+                        </span>
+                        <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
+                    </>)
+            } else {
+                setEmailError(null)
+            }
+        }
+        validateEmail()
+    }, [formState.email])
+
+
+    useEffect(() => {
+        const validValue = Object.values(formState).every(val => val !== '')
+        console.log('validValue', validValue)
+        setSuccessSubmit(validValue)
+    }, [formState])
+
 
     // const assistantStateRef = useRef<AssistantAppState>();
     // const assistantRef = useRef<ReturnType<typeof createAssistant>>();
@@ -107,7 +140,7 @@ const Foreigners: React.FC = () => {
     };
 
     return (
-        <div className="app">
+        <div className="app" style={{ height: '100vh'}}>
             <div className="container">
                 <div className="up-header">
                     <button className='btn-close' onClick={() => handleCardClick('/')}><img src={closeImg} alt=""/></button>
@@ -123,8 +156,8 @@ const Foreigners: React.FC = () => {
 
                 <div className="main">
                     <div className="form">
-                        <div className="form-block" style={{ height: '580px'}}>
-                            <h2 style={{ fontSize: 20 }}>Урегулирование проблемной задолженности</h2>
+                        <div className="form-block" style={{ height: '600px'}}>
+                            <h2 style={{ fontSize: 20 }}>Иностранные граждане. Проверка благонадежности</h2>
                             <form onSubmit={handleSubmit}>
                                 <div className="form-content-request">
                                     <span className="icon" style={{ marginRight: '10px' }}>
@@ -185,35 +218,6 @@ const Foreigners: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {/*<div className="form-content-body">*/}
-                                {/*    <div className="form-content-realty">*/}
-                                {/*        <span className="icon" style={{ marginRight: '10px' }}>*/}
-                                {/*            <img width={30} height={30} src={houseIcon} alt="icon" />*/}
-                                {/*        </span>*/}
-                                {/*        <div className="form-content-real-property">*/}
-                                {/*            <select*/}
-                                {/*                className='select-realty'*/}
-                                {/*                value={formState.propertyList}*/}
-                                {/*                onChange={(e) => handleInputChange('propertyList', e.target.value)}*/}
-                                {/*            >*/}
-                                {/*                <option value="" disabled hidden>Тип запроса</option>*/}
-                                {/*                <option value="Объект недвижимости">Объект недвижимости</option>*/}
-                                {/*                <option value="ИЖС">ИЖС</option>*/}
-                                {/*            </select>*/}
-                                {/*        </div>*/}
-                                {/*        <div className="form-content-real-property">*/}
-                                {/*            <input*/}
-                                {/*                style={{ width: "395px", height: '25px' }}*/}
-                                {/*                type="text"*/}
-                                {/*                placeholder="Стоимость"*/}
-                                {/*                value={formState.propertyCost}*/}
-                                {/*                onChange={(e) => handleInputChange('propertyCost', e.target.value)}*/}
-                                {/*            />*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-                                {/*    <button className='button-realty-add'>Добавить</button>*/}
-                                {/*</div>*/}
-
                                 <div className="form-content-body">
                                     <div className="form-content-bank">
                                         <span className="icon" style={{ marginRight: '10px' }}>
@@ -235,29 +239,6 @@ const Foreigners: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {/*<div className="form-content-body">*/}
-                                {/*    <div className="form-region-object">*/}
-                                {/*        <span className="icon" style={{ marginRight: '10px' }}>*/}
-                                {/*            <img width={30} height={30} src={mapIcon} alt="icon" />*/}
-                                {/*        </span>*/}
-                                {/*        <div className="form-content-region-object">*/}
-                                {/*            <select*/}
-                                {/*                className='select-region'*/}
-                                {/*                value={formState.region}*/}
-                                {/*                onChange={(e) => handleInputChange('region', e.target.value)}*/}
-                                {/*            >*/}
-                                {/*                <option value="" disabled hidden>Территориальный блок</option>*/}
-                                {/*                <option value="Регион расположения объекта недвижимости">Регион расположения объекта недвижимости</option>*/}
-                                {/*                <option value="регион1">регион1</option>*/}
-                                {/*                <option value="регион2">регион2</option>*/}
-                                {/*                <option value="регион3">регион3</option>*/}
-                                {/*            </select>*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
-
-
-
                                 <div className="form-content-email">
                                     <span className="icon" style={{ marginRight: '10px' }}>
                                         <img width={30} height={30} src={emailIcon} alt="icon" />
@@ -269,7 +250,9 @@ const Foreigners: React.FC = () => {
                                             value={formState.email}
                                             onChange={(e) => handleInputChange('email', e.target.value)}
                                         />
-                                        <img className='errorImg' src={errorIcon} alt="" />
+                                        {emailError && (
+                                            <img className='errorImg' src={errorIcon} alt=""/>
+                                        )}
                                     </div>
                                 </div>
 
@@ -280,15 +263,24 @@ const Foreigners: React.FC = () => {
                                         onChange={(e) => handleInputChange('comment', e.target.value)}
                                     ></textarea>
                                 </div>
-
+                                {emailError && (
+                                    <div style={{fontSize: '14px'}}>{emailError}</div>
+                                )}
                                 <div className="form-button" style={{ marginTop: '20px'}}>
-                                    <button type="submit" className="create-request-btn">Создать заявку</button>
+                                    <button
+                                        style={successSubmit ? {} : {
+                                            backgroundColor: '#ccc',
+                                            color: '#fff',
+                                            cursor: 'not-allowed',
+                                            opacity: 0.5,
+                                        }}
+                                        disabled={!successSubmit} type="submit" className="create-request-btn">Создать заявку</button>
                                 </div>
 
                             </form>
                         </div>
                     </div>
-                    <div className="right-block-request" style={{ height: '620px'}}>
+                    <div className="right-block-request" style={{ height: '600px'}}>
                         <HintsBlock fileList={fileList} onFileRemove={handleFileRemove} setFileList={setFileList} />
                     </div>
                 </div>
