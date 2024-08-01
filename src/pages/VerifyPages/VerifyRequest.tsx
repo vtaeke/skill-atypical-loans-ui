@@ -21,17 +21,17 @@ import NorificationAlert from "../Notification/NorificationAlert";
 const VerifyRequest: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const [formState, setFormState] = useState({
-        requestType: '',
-        contractNumber: '',
-        propertyList: '',
-        propertyCost: '',
-        bank: '',
-        region: '',
-        clientFamily: '',
-        clientName: '',
-        clientSurname: '',
-        email: '',
-        comment: ''
+        businessProcess: '',
+        externalId: '',
+        objectType: '',
+        objectCost: '',
+        tbObjectName: '',
+        objectRegionCode: '',
+        lastName: '',
+        firstName: '',
+        middleName: '',
+        initiatorEmail: '',
+        comment: '',
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
@@ -46,13 +46,13 @@ const VerifyRequest: React.FC = () => {
 
     useEffect(() => {
         const validateEmail = () => {
-            if (formState.email === '') {
+            if (formState.initiatorEmail === '') {
                 setEmailError(null)
                 return;
             }
 
             const emailReg = /^[a-zA-Z0-9._%+-]+@(sberbank.ru|sber.ru|omega.sbrf.ru)$/;
-            if (!emailReg.test(formState.email)) {
+            if (!emailReg.test(formState.initiatorEmail)) {
                 setEmailError(
                     <>
                         <span style={{color: 'rgb(239, 107, 37)'}}>
@@ -65,12 +65,10 @@ const VerifyRequest: React.FC = () => {
             }
         }
         validateEmail()
-    }, [formState.email])
+    }, [formState.initiatorEmail])
 
     useEffect(() => {
         const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
-        console.log('filelength', fileList.length)
-        console.log('validValue', validValue)
         setSuccessSubmit(validValue)
     }, [formState, fileList])
 
@@ -247,8 +245,8 @@ const VerifyRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Категория запроса"
-                                            value={formState.requestType}
-                                            onChange={(e) => handleInputChange('requestType', e.target.value)}
+                                            value={formState.businessProcess}
+                                            onChange={(e) => handleInputChange('businessProcess', e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -261,8 +259,8 @@ const VerifyRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Номер кредитного договора"
-                                            value={formState.contractNumber}
-                                            onChange={(e) => handleInputChange('contractNumber', e.target.value)}
+                                            value={formState.externalId}
+                                            onChange={(e) => handleInputChange('externalId', e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -275,8 +273,8 @@ const VerifyRequest: React.FC = () => {
                                         <div className="form-content-real-property">
                                             <select
                                                 className='select-realty'
-                                                value={formState.propertyList}
-                                                onChange={(e) => handleInputChange('propertyList', e.target.value)}
+                                                value={formState.objectType}
+                                                onChange={(e) => handleInputChange('objectType', e.target.value)}
                                             >
                                                 <option value="" disabled hidden>Объект недвижимости</option>
                                                 <option value="Объект недвижимости">Объект недвижимости</option>
@@ -288,8 +286,8 @@ const VerifyRequest: React.FC = () => {
                                                 style={{ width: "395px", height: '16px' }}
                                                 type="text"
                                                 placeholder="Стоимость"
-                                                value={formState.propertyCost}
-                                                onChange={(e) => handleInputChange('propertyCost', e.target.value)}
+                                                value={formState.objectCost}
+                                                onChange={(e) => handleInputChange('objectCost', e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -304,11 +302,10 @@ const VerifyRequest: React.FC = () => {
                                         <div className="form-content-form-bank">
                                             <select
                                                 className='select-bank'
-                                                value={formState.bank}
-                                                onChange={(e) => handleInputChange('bank', e.target.value)}
+                                                value={formState.tbObjectName}
+                                                onChange={(e) => handleInputChange('tbObjectName', e.target.value)}
                                             >
-                                                <option value="" disabled hidden>Территориальный блок</option>
-                                                <option value="Территориальный банк расположения объекта недвижимости">Территориальный банк расположения объекта недвижимости</option>
+                                                <option value="" disabled hidden>Территориальный банк расположения объекта недвижимости</option>
                                                 <option value="Сбер">Сбер</option>
                                                 <option value="Сбербанк">Сбербанк</option>
                                                 <option value="СБЕР2">СБЕР</option>
@@ -326,11 +323,10 @@ const VerifyRequest: React.FC = () => {
                                         <div className="form-content-region-object">
                                             <select
                                                 className='select-region'
-                                                value={formState.region}
-                                                onChange={(e) => handleInputChange('region', e.target.value)}
+                                                value={formState.objectRegionCode}
+                                                onChange={(e) => handleInputChange('objectRegionCode', e.target.value)}
                                             >
-                                                <option value="" disabled hidden>Территориальный блок</option>
-                                                <option value="Регион расположения объекта недвижимости">Регион расположения объекта недвижимости</option>
+                                                <option value="" disabled hidden>Регион расположения объекта недвижимости</option>
                                                 <option value="регион1">регион1</option>
                                                 <option value="регион2">регион2</option>
                                                 <option value="регион3">регион3</option>
@@ -349,23 +345,23 @@ const VerifyRequest: React.FC = () => {
                                             className='fio'
                                             type="text"
                                             placeholder="Фамилия"
-                                            value={formState.clientFamily}
-                                            onChange={(e) => handleInputChange('clientFamily', e.target.value)}
+                                            value={formState.lastName}
+                                            onChange={(e) => handleInputChange('lastName', e.target.value)}
                                         />
                                         <input
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
                                             placeholder="Имя"
-                                            value={formState.clientName}
-                                            onChange={(e) => handleInputChange('clientName', e.target.value)}
+                                            value={formState.firstName}
+                                            onChange={(e) => handleInputChange('firstName', e.target.value)}
                                         />
                                         <input
                                             className='fio'
                                             type="text"
                                             placeholder="Отчество"
-                                            value={formState.clientSurname}
-                                            onChange={(e) => handleInputChange('clientSurname', e.target.value)}
+                                            value={formState.middleName}
+                                            onChange={(e) => handleInputChange('middleName', e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -378,8 +374,8 @@ const VerifyRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Email"
-                                            value={formState.email}
-                                            onChange={(e) => handleInputChange('email', e.target.value)}
+                                            value={formState.initiatorEmail}
+                                            onChange={(e) => handleInputChange('initiatorEmail', e.target.value)}
                                         />
                                         {emailError && (
                                             <img className='errorImg' src={errorIcon} alt=""/>

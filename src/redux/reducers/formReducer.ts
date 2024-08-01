@@ -1,33 +1,33 @@
 import {ADD_FILES, FormActionTypes, RESET_FORM, UPDATE_FORM_FIELD} from '../action/formActions';
 
 interface FormState {
-    requestType: string;
-    contractNumber: string;
-    propertyList: string;
-    propertyCost: string;
-    bank: string;
-    region: string;
-    clientFamily: string;
-    clientName: string;
-    clientSurname: string;
-    email: string;
-    isVip: string;
-    comment: string;
-    files: File[];
+    businessProcess: string,
+    externalId: string,
+    objectType: string,
+    objectCost: string,
+    tbObjectName: string,
+    objectRegionCode: string,
+    lastName: string,
+    firstName: string,
+    middleName: string,
+    initiatorEmail: string,
+    vip: string,
+    comment: string,
+    files: File[]
 }
 
 const initialState: FormState = {
-    requestType: '',
-    contractNumber: '',
-    propertyList: '',
-    propertyCost: '',
-    bank: '',
-    region: '',
-    clientFamily: '',
-    clientName: '',
-    clientSurname: '',
-    email: '',
-    isVip: '',
+    businessProcess: '',
+    externalId: '',
+    objectType: '',
+    objectCost: '',
+    tbObjectName: '',
+    objectRegionCode: '',
+    lastName: '',
+    firstName: '',
+    middleName: '',
+    initiatorEmail: '',
+    vip: '',
     comment: '',
     files: []
 };

@@ -21,16 +21,15 @@ import NorificationAlert from "../Notification/NorificationAlert";
 const NonTransactionalRequest: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const [formState, setFormState] = useState({
-        requestType: '',
-        contractNumber: '',
-        propertyList: '',
-        propertyCost: '',
-        bank: '',
-        clientFamily: '',
-        clientName: '',
-        clientSurname: '',
-        email: '',
-        comment: ''
+        businessProcess: '',
+        externalId: '',
+        lastName: '',
+        firstName: '',
+        middleName: '',
+        objectType: '',
+        objectCost: '',
+        initiatorEmail: '',
+        comment: '',
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
@@ -45,13 +44,13 @@ const NonTransactionalRequest: React.FC = () => {
 
     useEffect(() => {
         const validateEmail = () => {
-            if (formState.email === '') {
+            if (formState.initiatorEmail === '') {
                 setEmailError(null)
                 return;
             }
 
             const emailReg = /^[a-zA-Z0-9._%+-]+@(sberbank.ru|sber.ru|omega.sbrf.ru)$/;
-            if (!emailReg.test(formState.email)) {
+            if (!emailReg.test(formState.initiatorEmail)) {
                 setEmailError(
                     <>
                         <span style={{color: 'rgb(239, 107, 37)'}}>
@@ -64,12 +63,10 @@ const NonTransactionalRequest: React.FC = () => {
             }
         }
         validateEmail()
-    }, [formState.email])
+    }, [formState.initiatorEmail])
 
     useEffect(() => {
         const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
-        console.log('filelength', fileList.length)
-        console.log('validValue', validValue)
         setSuccessSubmit(validValue)
     }, [formState, fileList])
 
@@ -197,8 +194,8 @@ const NonTransactionalRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Категория запроса"
-                                            value={formState.requestType}
-                                            onChange={(e) => handleInputChange('requestType', e.target.value)}
+                                            value={formState.businessProcess}
+                                            onChange={(e) => handleInputChange('businessProcess', e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -211,8 +208,8 @@ const NonTransactionalRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Номер кредитного договора"
-                                            value={formState.contractNumber}
-                                            onChange={(e) => handleInputChange('contractNumber', e.target.value)}
+                                            value={formState.externalId}
+                                            onChange={(e) => handleInputChange('externalId', e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -227,23 +224,23 @@ const NonTransactionalRequest: React.FC = () => {
                                             className='fio'
                                             type="text"
                                             placeholder="Фамилия"
-                                            value={formState.clientFamily}
-                                            onChange={(e) => handleInputChange('clientFamily', e.target.value)}
+                                            value={formState.lastName}
+                                            onChange={(e) => handleInputChange('lastName', e.target.value)}
                                         />
                                         <input
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
                                             placeholder="Имя"
-                                            value={formState.clientName}
-                                            onChange={(e) => handleInputChange('clientName', e.target.value)}
+                                            value={formState.firstName}
+                                            onChange={(e) => handleInputChange('firstName', e.target.value)}
                                         />
                                         <input
                                             className='fio'
                                             type="text"
                                             placeholder="Отчество"
-                                            value={formState.clientSurname}
-                                            onChange={(e) => handleInputChange('clientSurname', e.target.value)}
+                                            value={formState.middleName}
+                                            onChange={(e) => handleInputChange('middleName', e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -256,8 +253,8 @@ const NonTransactionalRequest: React.FC = () => {
                                         <div className="form-content-real-property">
                                             <select
                                                 className='select-realty'
-                                                value={formState.propertyList}
-                                                onChange={(e) => handleInputChange('propertyList', e.target.value)}
+                                                value={formState.objectType}
+                                                onChange={(e) => handleInputChange('objectType', e.target.value)}
                                             >
                                                 <option value="" disabled hidden>Объект недвижимости</option>
                                                 <option value="Объект недвижимости">Объект недвижимости</option>
@@ -269,8 +266,8 @@ const NonTransactionalRequest: React.FC = () => {
                                                 style={{ width: "395px", height: '16px' }}
                                                 type="text"
                                                 placeholder="Стоимость"
-                                                value={formState.propertyCost}
-                                                onChange={(e) => handleInputChange('propertyCost', e.target.value)}
+                                                value={formState.objectCost}
+                                                onChange={(e) => handleInputChange('objectCost', e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -328,8 +325,8 @@ const NonTransactionalRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Email"
-                                            value={formState.email}
-                                            onChange={(e) => handleInputChange('email', e.target.value)}
+                                            value={formState.initiatorEmail}
+                                            onChange={(e) => handleInputChange('initiatorEmail', e.target.value)}
                                         />
                                         {emailError && (
                                             <img className='errorImg' src={errorIcon} alt=""/>
