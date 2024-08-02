@@ -56,7 +56,7 @@
 
 .form-block {
   width: 900px;
-  height: 680px;
+  height: 600px;
 }
 
 //.right-block {
@@ -64,7 +64,7 @@
 //}
 
 .right-block-request {
-  height: 720px;
+  height: 600px;
   width: calc((100% - 50px) / 4);
   margin-right: 20px;
   margin-left: 20px;
@@ -85,7 +85,7 @@
 .form-content-request input{
   //width: calc(100% - 56px);
   width: 100%;
-  height: 25px;
+  //height: 25px;
 
   padding: 10px;
   background-color: rgb(48, 48, 48);
@@ -106,7 +106,7 @@
 .input-block-contract input {
   //width: calc(100% - 56px);
   width: 100%;
-  height: 25px;
+  //height: 25px;
 
   padding: 10px;
   background-color: rgb(48, 48, 48);
@@ -128,11 +128,12 @@
 
 .create-request-btn {
   width: 300px;
-  height: 40px;
+  height: 35px;
   border: none;
   border-radius: 10px;
   display: inline-block;
-  margin: 0 auto;
+  //margin: 0 auto;
+  margin: 0 0 -10px 0;
   background-image: linear-gradient(45deg, rgb(47, 214, 92) 0%, rgb(32, 193, 199) 100%);
   color: white;
   cursor: pointer;
@@ -169,39 +170,42 @@
 
 .select-realty {
   width: 395px;
-  height: 45px;
+  height: 35px;
   //width: calc(100% - 56px);
   //padding: 10px;
   padding-left: 10px;
   background-color: rgb(48, 48, 48);
   border: none;
-  color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+  //color: rgba(255, 255, 255, 0.28);
   border-radius: 5px;
   margin-bottom: 10px;
 }
 
 .select-bank {
   width: 835px;
-  height: 45px;
+  height: 35px;
   //width: calc(100% - 56px);
   //padding: 10px;
   padding-left: 10px;
   background-color: rgb(48, 48, 48);
   border: none;
-  color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+  //color: rgba(255, 255, 255, 0.28);
   border-radius: 5px;
   margin-bottom: 10px;
 }
 
 .select-region {
   width: 835px;
-  height: 45px;
+  height: 35px;
   //width: calc(100% - 56px);
   //padding: 10px;
   padding-left: 10px;
   background-color: rgb(48, 48, 48);
   border: none;
-  color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+  //color: rgba(255, 255, 255, 0.28);
   border-radius: 5px;
   margin-bottom: 10px;
 }
@@ -220,13 +224,13 @@
 
 .button-realty-add {
   width: 100px;
-  height: 40px;
+  height: 30px;
   background-image: linear-gradient(45deg, rgb(47, 214, 92) 0%, rgb(32, 193, 199) 100%);
   color: white;
   border-radius: 10px;
   border: none;
   cursor: pointer;
-  margin: 7px 0px 10px 47px;
+  margin: 0px 0px 10px 47px;
 }
 
 .form-content-body-bank {
@@ -241,16 +245,17 @@
 }
 
 .fio {
-    width: 260px;
-    height: 45px;
-    //width: calc(100% - 56px);
-    //padding: 10px;
-    padding-left: 10px;
-    background-color: rgb(48, 48, 48);
-    border: none;
-    color: rgba(255, 255, 255, 0.28);
-    border-radius: 5px;
-    margin-bottom: 10px;
+  width: 260px;
+  height: 35px;
+  //width: calc(100% - 56px);
+  //padding: 10px;
+  padding-left: 10px;
+  background-color: rgb(48, 48, 48);
+  border: none;
+  color: #fff;
+  //color: rgba(255, 255, 255, 0.28);
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 
 .form-content-fio {
@@ -268,7 +273,7 @@
 }
 .errorImg {
   position: absolute;
-  top: 10px;
+  top: 7px;
   right: 0;
   width: 20px; /* adjust the width to your liking */
   height: 20px; /* adjust the height to your liking */
@@ -277,7 +282,7 @@
 .input-block-email input{
   //width: calc(100% - 56px);
   width: 100%;
-  height: 25px;
+  //height: 25px;
 
   padding: 10px;
   background-color: rgb(48, 48, 48);
@@ -306,7 +311,7 @@
 }
 
 .footer-verify {
-  margin-top: 20px;
+  margin-top: 7px;
   display: flex;
   //margin: 0 auto;
   align-items: center;

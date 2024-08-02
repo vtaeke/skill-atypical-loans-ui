@@ -10,6 +10,7 @@ import VipVerifyRequest from "./pages/VerifyPages/VipVerifyRequest";
 import NonTransactionalRequest from "./pages/NonTransactionalPage/NonTransactionalRequest";
 import SettlementOfProblemDebt from "./pages/SettlementOfProblemDebt/SettlementOfProblemDebt";
 import Foreigners from "./pages/Foreigners/Foreigners";
+import ConclusionTransactions from "./pages/ConclusionTransactions/ConclusionTransactions";
 
 const router = createBrowserRouter([
     {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
     {
         path: "/foreigners",
         element: <Foreigners />,
+    },
+    {
+        path: "/conclusion-transactions",
+        element: <ConclusionTransactions />,
     },
 ]);
 
