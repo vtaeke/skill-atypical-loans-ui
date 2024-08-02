@@ -73,11 +73,11 @@ const VipVerifyRequest: React.FC = () => {
     //     setSuccessSubmit(validValue)
     // }, [formState, fileList])
 
-    // условие - Отчество не обязательное
+    // условие - Отчество, комментарий - не обязательное
     useEffect(() => {
         const requiredFields: (keyof typeof formState)[] = [
             'businessProcess', 'externalId', 'objectType', 'objectCost', 'tbObjectName', 'objectRegionCode', 'lastName',
-            'firstName', 'initiatorEmail', 'comment'
+            'firstName', 'initiatorEmail'
         ];
         const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
         setSuccessSubmit(validValue);

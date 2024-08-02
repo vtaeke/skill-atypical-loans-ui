@@ -73,10 +73,10 @@ const Foreigners: React.FC = () => {
     //     setSuccessSubmit(validValue)
     // }, [formState, fileList])
 
-    // условие - Отчество не обязательное
+    // условие - Отчество, комментарий - не обязательное
     useEffect(() => {
         const requiredFields: (keyof typeof formState)[] = [
-            'businessProcess', 'externalId', 'tbObjectName', 'lastName', 'firstName', 'initiatorEmail', 'comment'
+            'businessProcess', 'externalId', 'tbObjectName', 'lastName', 'firstName', 'initiatorEmail'
         ];
         const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
         setSuccessSubmit(validValue);

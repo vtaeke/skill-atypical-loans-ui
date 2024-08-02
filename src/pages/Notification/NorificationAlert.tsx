@@ -28,8 +28,8 @@ const NorificationAlert: React.FC<NotificationProps> = ({message, onClose}) => {
                 <span className='message-style' style={{ textAlign: 'center', fontSize: '16px'}}>У вас есть не созданная заявка. Данные по ней не будут сохранены.
                     <br/>Вы уверены, что хотите покинуть страницу? </span>
                 <div className="button-container">
-                    <button className='btn-yes' onClick={() => handleCardClick('/')}>Да"</button>
-                    <button className='btn-no' onClick={() => onClose()}>Нет"</button>
+                    <button className='btn-yes' onClick={() => handleCardClick('/')}>Да</button>
+                    <button className='btn-no' onClick={() => onClose()}>Нет</button>
                 </div>
             </div>
             <div className="notification-header">
