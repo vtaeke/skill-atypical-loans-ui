@@ -67,10 +67,21 @@ const VipVerifyRequest: React.FC = () => {
         validateEmail()
     }, [formState.initiatorEmail])
 
+    // условие - проверка на все поля
+    // useEffect(() => {
+    //     const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
+    //     setSuccessSubmit(validValue)
+    // }, [formState, fileList])
+
+    // условие - Отчество не обязательное
     useEffect(() => {
-        const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
-        setSuccessSubmit(validValue)
-    }, [formState, fileList])
+        const requiredFields: (keyof typeof formState)[] = [
+            'businessProcess', 'externalId', 'objectType', 'objectCost', 'tbObjectName', 'objectRegionCode', 'lastName',
+            'firstName', 'initiatorEmail', 'comment'
+        ];
+        const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
+        setSuccessSubmit(validValue);
+    }, [formState, fileList]);
 
     // const assistantStateRef = useRef<AssistantAppState>();
     // const assistantRef = useRef<ReturnType<typeof createAssistant>>();
