@@ -354,6 +354,7 @@ const VipVerifyRequest: React.FC = () => {
 
                                 <div className="form-comment">
                                     <textarea
+                                        maxLength={1000}
                                         placeholder="Комментарий"
                                         value={formState.comment}
                                         onChange={(e) => handleInputChange('comment', e.target.value)}

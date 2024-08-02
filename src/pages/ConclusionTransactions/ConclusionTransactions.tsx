@@ -297,6 +297,7 @@ const ConclusionTransactions: React.FC = () => {
                                                 </div>
                                                 <div className="form-comment">
                                                     <textarea
+                                                        maxLength={1000}
                                                         placeholder="Комментарий"
                                                         value={formState.comment}
                                                         onChange={(e) => handleInputChange('comment', e.target.value)}
@@ -392,6 +393,7 @@ const ConclusionTransactions: React.FC = () => {
                                                 </div>
                                                 <div className="form-comment">
                                                 <textarea
+                                                    maxLength={1000}
                                                     placeholder="Комментарий"
                                                     value={formState.comment}
                                                     onChange={(e) => handleInputChange('comment', e.target.value)}
