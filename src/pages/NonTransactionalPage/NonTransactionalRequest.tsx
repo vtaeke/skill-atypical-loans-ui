@@ -201,12 +201,15 @@ const NonTransactionalRequest: React.FC = () => {
                                         <img width={30} height={30} src={categoryChoice} alt="icon" />
                                     </span>
                                     <div className="input-block-category">
-                                        <input
-                                            type="text"
-                                            placeholder="Категория запроса"
+                                        <select
+                                            className='select-realty'
                                             value={formState.businessProcess}
                                             onChange={(e) => handleInputChange('businessProcess', e.target.value)}
-                                        />
+                                        >
+                                            <option value="" disabled hidden>Категория запроса</option>
+                                            <option value="Реструктуризация">Реструктуризация</option>
+                                            <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
+                                        </select>
                                     </div>
                                 </div>
 
