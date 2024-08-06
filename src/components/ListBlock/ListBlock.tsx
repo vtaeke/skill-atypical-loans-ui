@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import RequestsCard from '../RequestsCard/RequestsCard';
-import './ListBlock.scss';
 
 interface ListBlockProps {
-    requests: { title: string; status: 'Выполнена' | 'Отказано' | 'На согласовании'; }[];
+    requests: {
+        title: string;
+        type: 'Верификация отчетов' | 'VIP. Верификация отчетов' | 'Нетиповая и сверхлимитная сделки' |
+            'Сделка по не транзакционным продуктам' | 'Иностранцы';
+        status: 'Выполнена' | 'Отказано' | 'На согласовании' | 'Ошибка' | 'Создана' | 'В Работе'; }[];
 }
 
 const ListBlock: React.FC<ListBlockProps> = ({ requests }) => {
@@ -15,30 +18,17 @@ const ListBlock: React.FC<ListBlockProps> = ({ requests }) => {
 
     return (
         <div className="list-block">
-            <div className="requests-list">
+            <div className="requests-list-card">
                 {requests.map((request, index) => (
                     <RequestsCard
                         key={index}
                         title={request.title}
+                        type={request.type}
                         status={request.status}
                         isSelected={selectedIndex === index}
                         onSelect={() => handleSelect(index)}
                     />
                 ))}
-            </div>
-            <div className="buttons">
-                <button
-                    className="save-btn"
-                    disabled={selectedIndex === null}
-                >
-                    Сохранить
-                </button>
-                <button
-                    className="update-btn"
-                    disabled={selectedIndex === null}
-                >
-                    Отправить обновление
-                </button>
             </div>
         </div>
     );

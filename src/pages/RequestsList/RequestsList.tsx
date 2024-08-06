@@ -3,13 +3,14 @@ import { AssistantAppState, createAssistant, createSmartappDebugger } from "@sbe
 import SearchBlock from "../../components/SearchBlock/SearchBlock";
 import ListBlock from "../../components/ListBlock/ListBlock";
 import HintsBlock from "../../components/HintBlock/HintBlock";
-import "./RequestsList.scss";
 
 interface Props {}
 
 interface Request {
     title: string;
-    status: 'Выполнена' | 'Отказано' | 'На согласовании';
+    type: 'Верификация отчетов' | 'VIP. Верификация отчетов' | 'Нетиповая и сверхлимитная сделки' |
+        'Сделка по не транзакционным продуктам' | 'Иностранцы';
+    status: 'Выполнена' | 'Отказано' | 'На согласовании' | 'Ошибка' | 'Создана' | 'В Работе';
 }
 
 // const initialize = (getState: () => any) => {
@@ -31,9 +32,13 @@ interface Request {
 const RequestsList: React.FC<Props> = ({}) => {
     const [fileList, setFileList] = useState<File[]>([]);
     const [requests, setRequests] = useState<Request[]>([
-        { title: 'Запрос 1', status: 'Выполнена' },
-        { title: 'Запрос 2', status: 'Отказано' },
-        { title: 'Запрос 3', status: 'На согласовании' }
+        { title: '135-000-001-002', type: 'Верификация отчетов', status: 'Выполнена' },
+        { title: '135-000-001-002', type: 'VIP. Верификация отчетов', status: 'Отказано' },
+        { title: '135-000-001-003', type: 'Нетиповая и сверхлимитная сделки', status: 'На согласовании' },
+        { title: '135-000-001-005', type: 'Сделка по не транзакционным продуктам', status: 'Выполнена' },
+        { title: '135-000-001-007', type: 'Иностранцы', status: 'Отказано' },
+        { title: '135-000-001-012', type: 'Сделка по не транзакционным продуктам', status: 'На согласовании' },
+        { title: '135-000-001-0015', type: 'Верификация отчетов', status: 'Ошибка' },
     ]);
 
     // const assistantStateRef = useRef<AssistantAppState>();
@@ -62,15 +67,9 @@ const RequestsList: React.FC<Props> = ({}) => {
     };
     
     return (
-        <div className="app">
-            <div className="left-block">
-                <SearchBlock items={[]} />
-            </div>
-            <div className="center-block">
+        <div className="request-list-main">
+            <div className="request-list-body">
                 <ListBlock requests={requests} />
-            </div>
-            <div className="right-block">
-                <HintsBlock fileList={fileList}  onFileRemove={handleFileRemove} setFileList={setFileList}/>
             </div>
         </div>
     );
