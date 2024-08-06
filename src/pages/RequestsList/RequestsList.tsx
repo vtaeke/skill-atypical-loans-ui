@@ -70,7 +70,7 @@ const RequestsList: React.FC<Props> = ({}) => {
                 <ListBlock requests={requests} />
             </div>
             <div className="right-block">
-                <HintsBlock fileList={fileList}  onFileRemove={handleFileRemove}/>
+                <HintsBlock fileList={fileList}  onFileRemove={handleFileRemove} setFileList={setFileList}/>
             </div>
         </div>
     );

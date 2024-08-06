@@ -9,7 +9,7 @@
   color: white;
   font-family: "SB Sans Text", sans-serif;
   border-radius: 10px;
-  padding: 20px;
+  padding: 10px;
   height: calc(100% - 40px);
 }
 .hints-block h2 {
