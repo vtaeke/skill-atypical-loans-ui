@@ -1,15 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import { AssistantAppState, createAssistant, createSmartappDebugger } from "@sberdevices/assistant-client";
 import SearchBlock from "../../components/SearchBlock/SearchBlock";
 import ListBlock from "../../components/ListBlock/ListBlock";
 import HintsBlock from "../../components/HintBlock/HintBlock";
+import noResultsIcon from '../../resources/noResultsIcon.svg'
+import {useNavigate} from "react-router-dom";
+import './RequestsList.scss'
 
 interface Props {}
 
 interface Request {
     title: string;
     type: 'Верификация отчетов' | 'VIP. Верификация отчетов' | 'Нетиповая и сверхлимитная сделки' |
-        'Сделка по не транзакционным продуктам' | 'Иностранцы';
+        'Сделка по не транзакционным продуктам' | 'Иностранные граждане';
     status: 'Выполнена' | 'Отказано' | 'На согласовании' | 'Ошибка' | 'Создана' | 'В Работе';
 }
 
@@ -29,17 +32,28 @@ interface Request {
 //     return createAssistant({ getState });
 // }
 
-const RequestsList: React.FC<Props> = ({}) => {
+interface Props {
+    selectedStatusFilters: string[];
+    selectedTypeFilters: string[];
+}
+
+const RequestsList: React.FC<Props> = ({selectedStatusFilters, selectedTypeFilters}) => {
     const [fileList, setFileList] = useState<File[]>([]);
     const [requests, setRequests] = useState<Request[]>([
         { title: '135-000-001-002', type: 'Верификация отчетов', status: 'Выполнена' },
         { title: '135-000-001-002', type: 'VIP. Верификация отчетов', status: 'Отказано' },
         { title: '135-000-001-003', type: 'Нетиповая и сверхлимитная сделки', status: 'На согласовании' },
         { title: '135-000-001-005', type: 'Сделка по не транзакционным продуктам', status: 'Выполнена' },
-        { title: '135-000-001-007', type: 'Иностранцы', status: 'Отказано' },
+        { title: '135-000-001-007', type: 'Иностранные граждане', status: 'Отказано' },
         { title: '135-000-001-012', type: 'Сделка по не транзакционным продуктам', status: 'На согласовании' },
         { title: '135-000-001-0015', type: 'Верификация отчетов', status: 'Ошибка' },
     ]);
+
+    const navigate = useNavigate();
+
+    const handleCardClick = (path: string) => {
+        navigate(path);
+    };
 
     // const assistantStateRef = useRef<AssistantAppState>();
     // const assistantRef = useRef<ReturnType<typeof createAssistant>>();
@@ -60,16 +74,27 @@ const RequestsList: React.FC<Props> = ({}) => {
     //     });
     // }, []);
 
-    const handleFileRemove = (index: number) => {
-        const newFileList = [...fileList];
-        newFileList.splice(index, 1);
-        setFileList(newFileList);
-    };
-    
+    console.log('selectedStatusFilters', selectedStatusFilters)
+    console.log('selectedTypeFilters', selectedTypeFilters)
+    const filteredRequests = useMemo(() => {
+        return requests.filter((request) => {
+            const statusMatch = selectedStatusFilters.length === 0 || selectedStatusFilters.includes(request.status);
+            const typeMatch = selectedTypeFilters.length === 0 || selectedTypeFilters.includes(request.type);
+            return statusMatch && typeMatch;
+        });
+    }, [requests, selectedStatusFilters, selectedTypeFilters]);
+
+    if (filteredRequests.length === 0) {
+        return <div className="no-results">
+            <img width={490} height={320} src={noResultsIcon} alt=""/>
+            <h4 style={{ margin: '15px 0 8px 0'}}>Заявки не найдены</h4>
+            <h4 style={{color: 'rgba(255, 255, 255, 0.56)'}}>Попробуйте поискать что-нибудь еще</h4>
+        </div>;
+    }
     return (
         <div className="request-list-main">
             <div className="request-list-body">
-                <ListBlock requests={requests} />
+                <ListBlock requests={filteredRequests} />
             </div>
         </div>
     );

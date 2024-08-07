@@ -7,6 +7,12 @@
   font-display: swap;
 }
 
+h4 {
+  font-weight: 500;
+  margin: 0;
+  padding: 0
+}
+
 .request-card {
   width: 1180px;
   height: 45px;
@@ -55,7 +61,7 @@
     margin-bottom: 20px;
     position: absolute;
     bottom: 0;
-    right: calc(100% - 60%);
+    right: calc(100% - 63%);
 }
 
 .request-card-table-body {
