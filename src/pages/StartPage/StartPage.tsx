@@ -105,7 +105,7 @@ const StartPage: React.FC = () => {
                 </div>
                 <div className="card" onClick={() => handleCardClick('/foreigners')}>
                     <img width={35} height={38} src={clipboardProfile} alt="Create Request" />
-                    <p>Иностранцы</p>
+                    <p>Иностранные граждане</p>
                 </div>
                 <div className="card" onClick={() => handleCardClick('/non-transactional')}>
                     <img width={35} height={38} src={clipBoardNotTr} alt="Create Request" />

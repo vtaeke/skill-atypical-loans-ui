@@ -7,7 +7,16 @@
   font-display: swap;
 }
 
+.filter-window p {
+  margin: 0;
+  padding: 0;
+}
 
+.gradient-text {
+  background: linear-gradient(45deg, rgb(47, 214, 92) 0%, rgb(32, 193, 199) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 .app {
   width: 100%;
@@ -78,7 +87,7 @@
 
 .form-block-description {
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   padding-top: 7px;
 }
 
@@ -90,12 +99,46 @@
   display: flex;
 }
 
+.selected-status-filters {
+  margin-left: 25px;
+}
+
+.selected-filter {
+  width: 135px;
+  height: 30px;
+  background-color: rgb(8, 8, 8);
+  border-radius: 12px;
+  font-size: 14px;
+  padding: 8px 8px 8px 8px;
+  margin-right: 8px;
+}
+
+.selected-filter button {
+  color: #fff;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.selected-type {
+  width: 135px;
+  height: 30px;
+  background-color: rgb(8, 8, 8);
+  border-radius: 12px;
+  font-size: 14px;
+  padding: 8px 8px 8px 8px;
+  margin-right: 8px;
+}
+
+.selected-type button {
+  color: #fff;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
 
 .input-block-search  {
-    //width: calc(100% - 56px);
     width: 464px;
-    //height: 25px;
-
     padding: 10px;
     background-color: rgb(48, 48, 48);
     border: none;
@@ -189,6 +232,15 @@
 .filter-btn {
   display: flex;
   justify-content: space-evenly;
+}
+
+.search-button-active {
+  background: linear-gradient(45deg, rgb(47, 214, 92) 0%, rgb(32, 193, 199) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  border: none;
+  margin: 0 37px 0 0;
+  padding: 0;
 }
 
 .fb-btn {
