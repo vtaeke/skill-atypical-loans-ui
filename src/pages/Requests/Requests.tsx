@@ -21,22 +21,21 @@ import RequestsList from "../RequestsList/RequestsList";
 const Requests: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
 
-    const [fileList, setFileList] = useState<File[]>([]);
     const [showNotification, setShowNotification] = useState(false)
     const [notificationMsg, setNotificationMsg] = useState('')
-    const [emailError, setEmailError] = useState<React.ReactNode>(null)
-    const [successSubmit, setSuccessSubmit] = useState(false)
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [showFilterWindow, setShowFilterWindow] = useState(false);
     const [selectedStatusFilters, setSelectedStatusFilters] = useState<string[]>([]);
     const [selectedTypeFilters, setSelectedTypeFilters] = useState<string[]>([]);
+    const [selectedButtonType, setSelectedButtonType] = useState<string[]>([]);
+    const [selectedButtonStatus, setSelectedButtonStatus] = useState<string[]>([]);
+
+    const navigate = useNavigate();
 
     const handleFilterClick = () => {
         setShowFilterWindow(!showFilterWindow);
     };
-
-    const navigate = useNavigate();
 
     const handleStatusFilterClick = (status: string) => {
         setSelectedStatusFilters((prevFilters) =>
@@ -44,6 +43,10 @@ const Requests: React.FC = () => {
                 ? prevFilters.filter((filter) => filter !== status)
                 : [...prevFilters, status]
         );
+        setSelectedButtonStatus(prevSelected => prevSelected.includes(status)
+            ? prevSelected.filter(item => item !== status)
+            : [...prevSelected, status]
+        )
     };
 
     const handleApplyFilters = () => {
@@ -56,11 +59,18 @@ const Requests: React.FC = () => {
                 ? prevFilters.filter((filter) => filter !== type)
                 : [...prevFilters, type]
         );
+        // setSelectedButton(prevType => (prevType === type ? null : type));
+        setSelectedButtonType(prevSelected => prevSelected.includes(type)
+                ? prevSelected.filter(item => item !== type)
+                : [...prevSelected, type]
+        )
     };
 
     const handleResetFilters = () => {
         setSelectedStatusFilters([])
         setSelectedTypeFilters([])
+        setSelectedButtonType([])
+        setSelectedButtonStatus([])
     }
 
     const handleResetFilter = (status:string) => {
@@ -77,9 +87,11 @@ const Requests: React.FC = () => {
                 ? prevFilters.filter((filter) => filter !== type)
                 : [...prevFilters, type]
         );
+        setSelectedButtonType(prevSelected => prevSelected.includes(type)
+            ? prevSelected.filter(item => item !== type)
+            : [...prevSelected, type]
+        )
     }
-
-
 
     // const assistantStateRef = useRef<AssistantAppState>();
     // const assistantRef = useRef<ReturnType<typeof createAssistant>>();
@@ -124,9 +136,7 @@ const Requests: React.FC = () => {
                         <span style={{ color: 'rgb(165, 165, 165)' }}>Заявки / </span>
                         <span style={{ color: '#fff' }}>Мои заявки</span>
                     </div>
-                    {/*<button className='my-order' style={{ color: '#fff' }} onClick={() => handleCardClick('/requests')}>Мои заявки</button>*/}
                 </div>
-
 
                 <div className="main">
                     <div className="form">
@@ -159,35 +169,40 @@ const Requests: React.FC = () => {
                                         <div className="filter-header">
                                             <p>Статус</p>
                                             <div className="filter-buttons">
-                                                <button className="fb-style"
+                                                <button
+                                                    className={`fb-style ${selectedButtonStatus.includes('Выполнена') ? 'gradient-text' : ''}`}
                                                     onClick={()=> handleStatusFilterClick('Выполнена')}
                                                 >Выполнена
                                                     <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#2AC673" fill-opacity="1.000000"/>
                                                     </svg>
                                                 </button>
-                                                <button className="fb-style"
+                                                <button
+                                                    className={`fb-style ${selectedButtonStatus.includes('Отказано') ? 'gradient-text' : ''}`}
                                                     onClick={()=> handleStatusFilterClick('Отказано')}
                                                 >Отказано
                                                     <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#EF6B25" fill-opacity="1.000000"/>
                                                     </svg>
                                                 </button>
-                                                <button className="fb-style"
+                                                <button
+                                                    className={`fb-style ${selectedButtonStatus.includes('В работе') ? 'gradient-text' : ''}`}
                                                     onClick={()=> handleStatusFilterClick('В работе')}
                                                 >В работе
                                                     <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#FFFFFF" fill-opacity="0.960000"/>
                                                     </svg>
                                                 </button>
-                                                <button className="fb-style"
+                                                <button
+                                                    className={`fb-style ${selectedButtonStatus.includes('Создана') ? 'gradient-text' : ''}`}
                                                     onClick={()=> handleStatusFilterClick('Создана')}
                                                 >Создана
                                                     <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#FFFFFF" fill-opacity="0.550000"/>
                                                     </svg>
                                                 </button>
-                                                <button className="fb-style"
+                                                <button
+                                                    className={`fb-style ${selectedButtonStatus.includes('Ошибка') ? 'gradient-text' : ''}`}
                                                     onClick={()=> handleStatusFilterClick('Ошибка')}
                                                 >Ошибка
                                                     <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -201,33 +216,39 @@ const Requests: React.FC = () => {
                                             <div className="filter-type">
                                                 <div className="filter-type-category">
                                                     <p>1.</p>
-                                                    <button className="ft-style"
+                                                    <button
+                                                        className={`ft-style ${selectedButtonType.includes('Урегулирование проблемной задолженности') ? 'gradient-text' : ''}`}
                                                     onClick={() => handleTypeFilterClick('Урегулирование проблемной задолженности')}>Урегулирование проблемной задолженности</button>
                                                 </div>
                                                 <div className="filter-type-category">
                                                     <p>2.</p>
-                                                    <button className="ft-style"
+                                                    <button
+                                                        className={`ft-style ${selectedButtonType.includes('Верификация отчетов') ? 'gradient-text' : ''}`}
                                                     onClick={() => handleTypeFilterClick('Верификация отчетов')}>Верификация отчетов</button>
                                                 </div>
                                                 <div className="filter-type-category">
                                                     <p>3.</p>
-                                                    <button className="ft-style"
+                                                    <button
+                                                        className={`ft-style ${selectedButtonType.includes('Иностранные граждане') ? 'gradient-text' : ''}`}
                                                     onClick={() => handleTypeFilterClick('Иностранные граждане')}>Иностранные граждане</button>
                                                 </div>
                                                 <div className="filter-type-category">
                                                     <p>4.</p>
-                                                    <button className="ft-style"
-                                                    onClick={() => handleTypeFilterClick('VIP. Верификация отчетов')}>VIP. Верификация отчетов</button>
+                                                    <button
+                                                        className={`ft-style ${selectedButtonType.includes('VIP. Верификация отчетов') ? 'gradient-text' : ''}`}
+                                                        onClick={() => handleTypeFilterClick('VIP. Верификация отчетов')}>VIP. Верификация отчетов</button>
                                                 </div>
                                                 <div className="filter-type-category">
                                                     <p>5.</p>
-                                                    <button className="ft-style"
-                                                    onClick={() => handleTypeFilterClick('Нетиповая и сверхлимитная сделки')}>Нетиповая и сверхлимитная сделки</button>
+                                                    <button
+                                                        className={`ft-style ${selectedButtonType.includes('Нетиповая и сверхлимитная сделки') ? 'gradient-text' : ''}`}
+                                                        onClick={() => handleTypeFilterClick('Нетиповая и сверхлимитная сделки')}>Нетиповая и сверхлимитная сделки</button>
                                                 </div>
                                                 <div className="filter-type-category">
                                                     <p>6.</p>
-                                                    <button className="ft-style"
-                                                    onClick={() => handleTypeFilterClick('Сделка по не транзакционным продуктам')}>Сделка по не транзакционным продуктам</button>
+                                                    <button
+                                                        className={`ft-style ${selectedButtonType.includes('Сделка по не транзакционным продуктам') ? 'gradient-text' : ''}`}
+                                                        onClick={() => handleTypeFilterClick('Сделка по не транзакционным продуктам')}>Сделка по не транзакционным продуктам</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -248,13 +269,13 @@ const Requests: React.FC = () => {
                                 )}
                             </div>
                             <div className="hide-filter-block" style={{ marginTop: '5px'}}>
-                            {selectedTypeFilters.map((filter) => (
-                                <span key={filter} className="selected-type">{filter}
-                                    <button onClick={() => handleResetType(filter)}>
-                                        <img width={12} height={12} src={closeImg}/>
-                                    </button>
-                                </span>
-                            ))}
+                                {selectedTypeFilters.map((filter) => (
+                                    <span key={filter} className="selected-type">{filter}
+                                        <button onClick={() => handleResetType(filter)}>
+                                            <img width={12} height={12} src={closeImg}/>
+                                        </button>
+                                    </span>
+                                ))}
                             </div>
 
                             <form >
@@ -279,7 +300,6 @@ const Requests: React.FC = () => {
                             </form>
                         </div>
                     </div>
-
                 </div>
 
                 {showNotification && (
