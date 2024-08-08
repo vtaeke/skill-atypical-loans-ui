@@ -7,13 +7,12 @@ import categoryChoice from "../../resources/categoryChoice.svg";
 import numberIcon from "../../resources/numberIcon.svg";
 import peopleIcon from "../../resources/peopleIcon.svg";
 import houseIcon from "../../resources/houseIcon.svg";
-import homeLine from "../../resources/home-line.svg";
 import errorIcon from "../../resources/errorIcon.svg";
 import emailIcon from "../../resources/emailIcon.svg";
 import { useNavigate } from "react-router-dom";
 import circleSalut from "../../resources/circleSalut.svg";
 import closeImg from "../../resources/closeImg.svg";
-import mapIcon from "../../resources/mapIcon.svg";
+import amountPeople from "../../resources/amountPeople.svg";
 import {AppDispatch} from "../../redux/store";
 import Notification from "../Notification/Notification";
 import NorificationAlert from "../Notification/NorificationAlert";
@@ -26,6 +25,7 @@ const NonTransactionalRequest: React.FC = () => {
         lastName: '',
         firstName: '',
         middleName: '',
+        dealMembersNumber: '',
         objectType: '',
         objectCost: '',
         initiatorEmail: '',
@@ -194,7 +194,7 @@ const NonTransactionalRequest: React.FC = () => {
                 <div className="main">
                     <div className="form">
                         <div className="form-block">
-                            <h2 style={{ fontSize: 20 }}>Заключение сделки по не транзакционным продуктам</h2>
+                            <h2 style={{ fontSize: 20 }}>Заключение сделки по нетранзакционным продуктам</h2>
                             <form onSubmit={handleSubmit}>
                                 <div className="form-content-request">
                                     <span className="icon" style={{ marginRight: '10px' }}>
@@ -258,6 +258,20 @@ const NonTransactionalRequest: React.FC = () => {
                                     </div>
                                 </div>
 
+                                <div className="form-content-credit-amount" style={{display: 'flex'}}>
+                                    <span className="icon" style={{ marginRight: '10px' }}>
+                                        <img width={30} height={30} src={amountPeople} alt="icon" />
+                                    </span>
+                                    <div className="input-block-contract">
+                                        <input
+                                            type="text"
+                                            placeholder="Количество участников сделки"
+                                            value={formState.dealMembersNumber}
+                                            onChange={(e) => handleInputChange('dealMembersNumber', e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className="form-content-body">
                                     <div className="form-content-realty">
                                         <span className="icon" style={{ marginRight: '10px' }}>
@@ -286,49 +300,6 @@ const NonTransactionalRequest: React.FC = () => {
                                     </div>
                                     <button className='button-realty-add'>Добавить</button>
                                 </div>
-
-                                {/*<div className="form-content-body">*/}
-                                {/*    <div className="form-content-bank">*/}
-                                {/*        <span className="icon" style={{ marginRight: '10px' }}>*/}
-                                {/*            <img width={30} height={30} src={homeLine} alt="icon" />*/}
-                                {/*        </span>*/}
-                                {/*        <div className="form-content-form-bank">*/}
-                                {/*            <select*/}
-                                {/*                className='select-bank'*/}
-                                {/*                value={formState.bank}*/}
-                                {/*                onChange={(e) => handleInputChange('bank', e.target.value)}*/}
-                                {/*            >*/}
-                                {/*                <option value="" disabled hidden>Территориальный блок</option>*/}
-                                {/*                <option value="Территориальный банк расположения объекта недвижимости">Территориальный банк расположения объекта недвижимости</option>*/}
-                                {/*                <option value="Сбер">Сбер</option>*/}
-                                {/*                <option value="Сбербанк">Сбербанк</option>*/}
-                                {/*                <option value="СБЕР2">СБЕР</option>*/}
-                                {/*                <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>*/}
-                                {/*            </select>*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
-
-                                {/*<div className="form-content-body">*/}
-                                {/*    <div className="form-region-object">*/}
-                                {/*        <span className="icon" style={{ marginRight: '10px' }}>*/}
-                                {/*            <img width={30} height={30} src={mapIcon} alt="icon" />*/}
-                                {/*        </span>*/}
-                                {/*        <div className="form-content-region-object">*/}
-                                {/*            <select*/}
-                                {/*                className='select-region'*/}
-                                {/*                value={formState.region}*/}
-                                {/*                onChange={(e) => handleInputChange('region', e.target.value)}*/}
-                                {/*            >*/}
-                                {/*                <option value="" disabled hidden>Территориальный блок</option>*/}
-                                {/*                <option value="Регион расположения объекта недвижимости">Регион расположения объекта недвижимости</option>*/}
-                                {/*                <option value="регион1">регион1</option>*/}
-                                {/*                <option value="регион2">регион2</option>*/}
-                                {/*                <option value="регион3">регион3</option>*/}
-                                {/*            </select>*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
 
                                 <div className="form-content-email">
                                     <span className="icon" style={{ marginRight: '10px' }}>

@@ -23,7 +23,7 @@ import NorificationAlert from "../Notification/NorificationAlert";
 const Foreigners: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const [formState, setFormState] = useState({
-        businessProcess: '',
+        // businessProcess: '',
         externalId: '',
         lastName: '',
         firstName: '',
@@ -76,7 +76,7 @@ const Foreigners: React.FC = () => {
     // условие - Отчество, комментарий - не обязательное
     useEffect(() => {
         const requiredFields: (keyof typeof formState)[] = [
-            'businessProcess', 'externalId', 'tbObjectName', 'lastName', 'firstName', 'initiatorEmail'
+            'externalId', 'tbObjectName', 'lastName', 'firstName', 'initiatorEmail'
         ];
         const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
         setSuccessSubmit(validValue);
@@ -204,24 +204,24 @@ const Foreigners: React.FC = () => {
                 <div className="main">
                     <div className="form">
                         <div className="form-block" style={{ height: '600px'}}>
-                            <h2 style={{ fontSize: 20 }}>Иностранные граждане. Проверка благонадежности</h2>
+                            <h2 style={{ fontSize: 20 }}>Иностранные граждане. Проверка благонадежности. Жилищный кредит</h2>
                             <form >
-                                <div className="form-content-request">
-                                    <span className="icon" style={{ marginRight: '10px' }}>
-                                        <img width={30} height={30} src={categoryChoice} alt="icon" />
-                                    </span>
-                                    <div className="input-block-category">
-                                        <select
-                                            className='select-realty'
-                                            value={formState.businessProcess}
-                                            onChange={(e) => handleInputChange('businessProcess', e.target.value)}
-                                        >
-                                            <option value="" disabled hidden>Категория запроса</option>
-                                            <option value="Реструктуризация">Реструктуризация</option>
-                                            <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                {/*<div className="form-content-request">*/}
+                                {/*    <span className="icon" style={{ marginRight: '10px' }}>*/}
+                                {/*        <img width={30} height={30} src={categoryChoice} alt="icon" />*/}
+                                {/*    </span>*/}
+                                {/*    <div className="input-block-category">*/}
+                                {/*        <select*/}
+                                {/*            className='select-realty'*/}
+                                {/*            value={formState.businessProcess}*/}
+                                {/*            onChange={(e) => handleInputChange('businessProcess', e.target.value)}*/}
+                                {/*        >*/}
+                                {/*            <option value="" disabled hidden>Категория запроса</option>*/}
+                                {/*            <option value="Реструктуризация">Реструктуризация</option>*/}
+                                {/*            <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>*/}
+                                {/*        </select>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
 
                                 <div className="form-content-credit-contract">
                                     <span className="icon" style={{ marginRight: '10px' }}>
