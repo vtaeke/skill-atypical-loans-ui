@@ -12,7 +12,7 @@ interface Props {}
 interface Request {
     title: string;
     type: 'Верификация отчетов' | 'VIP. Верификация отчетов' | 'Нетиповая и сверхлимитная сделки' |
-        'Сделка по не транзакционным продуктам' | 'Иностранные граждане';
+        'Сделка по нетранзакционным продуктам' | 'Иностранные граждане';
     status: 'Выполнена' | 'Отказано' | 'На согласовании' | 'Ошибка' | 'Создана' | 'В Работе';
 }
 
@@ -35,17 +35,18 @@ interface Request {
 interface Props {
     selectedStatusFilters: string[];
     selectedTypeFilters: string[];
+    searchInput: string;
 }
 
-const RequestsList: React.FC<Props> = ({selectedStatusFilters, selectedTypeFilters}) => {
+const RequestsList: React.FC<Props> = ({selectedStatusFilters, selectedTypeFilters, searchInput}) => {
     const [fileList, setFileList] = useState<File[]>([]);
     const [requests, setRequests] = useState<Request[]>([
         { title: '135-000-001-002', type: 'Верификация отчетов', status: 'Выполнена' },
         { title: '135-000-001-002', type: 'VIP. Верификация отчетов', status: 'Отказано' },
         { title: '135-000-001-003', type: 'Нетиповая и сверхлимитная сделки', status: 'На согласовании' },
-        { title: '135-000-001-005', type: 'Сделка по не транзакционным продуктам', status: 'Выполнена' },
+        { title: '135-000-001-005', type: 'Сделка по нетранзакционным продуктам', status: 'Выполнена' },
         { title: '135-000-001-007', type: 'Иностранные граждане', status: 'Отказано' },
-        { title: '135-000-001-012', type: 'Сделка по не транзакционным продуктам', status: 'На согласовании' },
+        { title: '135-000-001-012', type: 'Сделка по нетранзакционным продуктам', status: 'На согласовании' },
         { title: '135-000-001-0015', type: 'Верификация отчетов', status: 'Ошибка' },
     ]);
 
@@ -80,16 +81,19 @@ const RequestsList: React.FC<Props> = ({selectedStatusFilters, selectedTypeFilte
         return requests.filter((request) => {
             const statusMatch = selectedStatusFilters.length === 0 || selectedStatusFilters.includes(request.status);
             const typeMatch = selectedTypeFilters.length === 0 || selectedTypeFilters.includes(request.type);
-            return statusMatch && typeMatch;
+            const searchMatch = !searchInput || request.title.includes(searchInput);
+            return statusMatch && typeMatch && searchMatch;
         });
-    }, [requests, selectedStatusFilters, selectedTypeFilters]);
+    }, [requests, selectedStatusFilters, selectedTypeFilters, searchInput]);
 
     if (filteredRequests.length === 0) {
-        return <div className="no-results">
-            <img width={490} height={320} src={noResultsIcon} alt=""/>
-            <h4 style={{ margin: '15px 0 8px 0'}}>Заявки не найдены</h4>
-            <h4 style={{color: 'rgba(255, 255, 255, 0.56)'}}>Попробуйте поискать что-нибудь еще</h4>
-        </div>;
+        return (
+            <div className="no-results">
+                <img width={490} height={320} src={noResultsIcon} alt=""/>
+                <h4 style={{ margin: '15px 0 8px 0'}}>Заявки не найдены</h4>
+                <h4 style={{color: 'rgba(255, 255, 255, 0.56)'}}>Попробуйте поискать что-нибудь еще</h4>
+            </div>
+        );
     }
     return (
         <div className="request-list-main">

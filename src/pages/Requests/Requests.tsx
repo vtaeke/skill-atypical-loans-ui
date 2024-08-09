@@ -30,12 +30,20 @@ const Requests: React.FC = () => {
     const [selectedTypeFilters, setSelectedTypeFilters] = useState<string[]>([]);
     const [selectedButtonType, setSelectedButtonType] = useState<string[]>([]);
     const [selectedButtonStatus, setSelectedButtonStatus] = useState<string[]>([]);
+    const [searchInput, setSearchInput] = useState('')
+
+    // console.log('searchInput', searchInput)
 
     const navigate = useNavigate();
 
     const handleFilterClick = () => {
         setShowFilterWindow(!showFilterWindow);
     };
+
+    // const handleSearchInput = (string: string) => {
+    //     setSearchInput(string)
+    //     console.log('searchInput', searchInput)
+    // }
 
     const handleStatusFilterClick = (status: string) => {
         setSelectedStatusFilters((prevFilters) =>
@@ -75,6 +83,11 @@ const Requests: React.FC = () => {
 
     const handleResetFilter = (status:string) => {
         setSelectedStatusFilters((prevFilters) =>
+            prevFilters.includes(status)
+                ? prevFilters.filter((filter) => filter !== status)
+                : [...prevFilters, status]
+        );
+        setSelectedButtonStatus((prevFilters) =>
             prevFilters.includes(status)
                 ? prevFilters.filter((filter) => filter !== status)
                 : [...prevFilters, status]
@@ -145,7 +158,7 @@ const Requests: React.FC = () => {
                                 <div className="form-block-description">
                                     <p className="my-order" style={{ paddingRight: '40px'}}>Мои заявки</p>
                                     <p style={{ paddingRight: '10px'}}>№ КД</p>
-                                    <input className="input-block-search" type="text" placeholder="Поиск"/>
+                                    <input onChange={(e) => setSearchInput(e.target.value)} className="input-block-search" type="text" placeholder="Поиск"/>
                                     <div className="selected-status-filters">
                                         {selectedStatusFilters.map((filter) => (
                                             <span key={filter} className="selected-filter">{filter}
@@ -247,8 +260,8 @@ const Requests: React.FC = () => {
                                                 <div className="filter-type-category">
                                                     <p>6.</p>
                                                     <button
-                                                        className={`ft-style ${selectedButtonType.includes('Сделка по не транзакционным продуктам') ? 'gradient-text' : ''}`}
-                                                        onClick={() => handleTypeFilterClick('Сделка по не транзакционным продуктам')}>Сделка по не транзакционным продуктам</button>
+                                                        className={`ft-style ${selectedButtonType.includes('Сделка по нетранзакционным продуктам') ? 'gradient-text' : ''}`}
+                                                        onClick={() => handleTypeFilterClick('Сделка по нетранзакционным продуктам')}>Сделка по не транзакционным продуктам</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -288,6 +301,7 @@ const Requests: React.FC = () => {
                                     <RequestsList
                                         selectedStatusFilters={selectedStatusFilters}
                                         selectedTypeFilters={selectedTypeFilters}
+                                        searchInput={searchInput}
                                     />
                                 </div>
 
