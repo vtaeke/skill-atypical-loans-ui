@@ -40,6 +40,7 @@ const Foreigners: React.FC = () => {
     const [successSubmit, setSuccessSubmit] = useState(false)
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+    const [showErrors, setShowErrors] = useState(false);
 
     const navigate = useNavigate();
 
@@ -54,10 +55,10 @@ const Foreigners: React.FC = () => {
             if (!emailReg.test(formState.initiatorEmail)) {
                 setEmailError(
                     <>
-                        <span style={{color: 'rgb(239, 107, 37)'}}>
+                        <span style={{color: 'rgb(239, 107, 37)', fontSize: '12px'}}>
                             Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
                         </span>
-                        <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
+                        <span style={{ color: '#fff', fontSize: '12px'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
                     </>)
             } else {
                 setEmailError(null)
@@ -118,23 +119,28 @@ const Foreigners: React.FC = () => {
     //v3 вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        Object.entries(formState).forEach(([field, value]) => {
-            dispatch(updateFormField(field, value))
-        })
 
-        const formData = new FormData()
-        Object.entries(formState).forEach(([field, value]) => {
-            formData.append(field, value)
-        });
-        fileList.forEach(file => {
-            formData.append('files', file)
-        });
+        setShowErrors(true); // Показываем ошибки при отправке формы
 
-        setNotificationMsg('Заявка успешно создана!')
-        setShowNotification(true)
+        if (successSubmit) {
+            Object.entries(formState).forEach(([field, value]) => {
+                dispatch(updateFormField(field, value))
+            })
 
-        console.log('Данные формы отправлены в Redux:', formState);
-        console.log('Прикрепленные файлы:', fileList);
+            const formData = new FormData()
+            Object.entries(formState).forEach(([field, value]) => {
+                formData.append(field, value)
+            });
+            fileList.forEach(file => {
+                formData.append('files', file)
+            });
+
+            setNotificationMsg('Заявка успешно создана!')
+            setShowNotification(true)
+
+            console.log('Данные формы отправлены в Redux:', formState);
+            console.log('Прикрепленные файлы:', fileList);
+        }
     };
 
     // const handleSubmit = (event: React.FormEvent) => {
@@ -194,7 +200,7 @@ const Foreigners: React.FC = () => {
                 </div>
                 <div className="header">
                     <div style={{ marginTop: '15px', marginBottom: '15px' }}>
-                        <span style={{ color: 'rgb(165, 165, 165)' }}>Нетиповые заявки /</span>
+                        <span style={{ color: 'rgb(165, 165, 165)'}}>Нетиповые заявки /</span>
                         <span style={{ color: '#fff' }}>Создание заявки</span>
                     </div>
                     <button className='my-order' style={{ color: '#fff' }} onClick={() => handleCardClick('/requests')}>Мои заявки</button>
@@ -234,6 +240,11 @@ const Foreigners: React.FC = () => {
                                             value={formState.externalId}
                                             onChange={(e) => handleInputChange('externalId', e.target.value)}
                                         />
+                                        {showErrors && !formState.externalId && (
+                                            <div className="error-message">
+                                                <span className="span-error-info">Обязательное поле</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -265,6 +276,19 @@ const Foreigners: React.FC = () => {
                                             value={formState.middleName}
                                             onChange={(e) => handleInputChange('middleName', e.target.value)}
                                         />
+                                        <div style={{ display: 'flex'}}>
+                                            {showErrors && !formState.lastName && (
+                                                <div className="error-message" style={{ marginRight: '102px'}}>
+                                                    <span className="span-error-info">Обязательное поле</span> Фамилия
+                                                </div>
+                                            )}
+                                            {showErrors && !formState.firstName && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span> Имя
+                                                </div>
+                                            )}
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -285,6 +309,11 @@ const Foreigners: React.FC = () => {
                                                 <option value="СБЕР2">СБЕР</option>
                                                 <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
                                             </select>
+                                            {showErrors && !formState.tbObjectName && (
+                                                <div className="error-message" style={{ marginBottom: '3px'}}>
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -317,19 +346,17 @@ const Foreigners: React.FC = () => {
                                 {emailError && (
                                     <div style={{fontSize: '14px'}}>{emailError}</div>
                                 )}
-                                {fileList.length === 0 && (
-                                    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>
+                                {/*{fileList.length === 0 && (*/}
+                                {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
+                                {/*)}*/}
+                                {showErrors && fileList.length === 0 && (
+                                    <div className="error-message">
+                                        <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>
                                 )}
                                 <div className="form-button" style={{ marginTop: '20px'}}>
                                     <button
-                                        style={successSubmit ? {} : {
-                                            backgroundColor: '#ccc',
-                                            color: '#fff',
-                                            cursor: 'not-allowed',
-                                            opacity: 0.5,
-                                        }}
                                         onClick={handleSubmit}
-                                        disabled={!successSubmit} type="submit" className="create-request-btn">Создать заявку</button>
+                                        type="submit" className="create-request-btn">Создать заявку</button>
                                 </div>
 
                             </form>

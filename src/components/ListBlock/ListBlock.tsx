@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RequestsCard from '../RequestsCard/RequestsCard';
+import './ListBlock.scss'
 
 interface ListBlockProps {
     requests: {

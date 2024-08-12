@@ -57,6 +57,8 @@
 .form-block {
   width: 900px;
   height: 600px;
+  overflow-y: scroll;
+  scrollbar-width: none;
 }
 
 //.right-block {
@@ -117,12 +119,14 @@
 }
 
 
-.form-button {
+.form-button-verify {
   text-align: center;
+  margin: 20px 0px 25px 0px;
 }
 
 .form-block .form-button {
   display: flex;
+  justify-content: center;
   //margin-top: 20px;
 }
 

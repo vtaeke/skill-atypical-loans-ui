@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { updateFormField, resetForm } from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import '../VerifyPages/VerifyRequest.scss';
+import '../GeneralStyles/GeneralStyles.scss'
 import categoryChoice from "../../resources/categoryChoice.svg";
 import numberIcon from "../../resources/numberIcon.svg";
 import peopleIcon from "../../resources/peopleIcon.svg";
@@ -39,6 +40,8 @@ const NonTransactionalRequest: React.FC = () => {
     const [successSubmit, setSuccessSubmit] = useState(false)
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+    const [fieldErrors, setFieldErrors] = useState<{[key:string]:string}>({});
+    const [showErrors, setShowErrors] = useState(false);
 
     const navigate = useNavigate();
 
@@ -53,7 +56,7 @@ const NonTransactionalRequest: React.FC = () => {
             if (!emailReg.test(formState.initiatorEmail)) {
                 setEmailError(
                     <>
-                        <span style={{color: 'rgb(239, 107, 37)'}}>
+                        <span className="span-error-info">
                             Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
                         </span>
                         <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
@@ -71,14 +74,35 @@ const NonTransactionalRequest: React.FC = () => {
     //     setSuccessSubmit(validValue)
     // }, [formState, fileList])
 
-    // условие - Отчество, комментарий - не обязательное
+    // // условие - Отчество, комментарий - не обязательное
+    // useEffect(() => {
+    //     const requiredFields: (keyof typeof formState)[] = [
+    //         'businessProcess', 'externalId', 'objectType', 'objectCost', 'lastName', 'firstName', 'dealMembersNumber', 'initiatorEmail'
+    //     ];
+    //     // const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
+    //     // setSuccessSubmit(validValue);
+    //
+    //     const errors: {[key: string]:string} = {}
+    //     requiredFields.forEach(field => {
+    //         if (formState[field] === '') {
+    //             errors[field] = 'Заполните обязательно поле'
+    //         }
+    //     })
+    //
+    //     setFieldErrors(errors)
+    //
+    //     // const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
+    //     // setSuccessSubmit(validValue);
+    // }, [formState, fileList]);
+
     useEffect(() => {
         const requiredFields: (keyof typeof formState)[] = [
-            'businessProcess', 'externalId', 'objectType', 'objectCost', 'lastName', 'firstName', 'initiatorEmail'
+            'businessProcess', 'externalId', 'objectType', 'objectCost', 'lastName', 'firstName', 'dealMembersNumber', 'initiatorEmail'
         ];
         const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
         setSuccessSubmit(validValue);
     }, [formState, fileList]);
+
 
     // const assistantStateRef = useRef<AssistantAppState>();
     // const assistantRef = useRef<ReturnType<typeof createAssistant>>();
@@ -113,26 +137,55 @@ const NonTransactionalRequest: React.FC = () => {
     };
 
     //v3 вывод в консоль файлов, которые были добавлены
+    // const handleSubmit = (event: React.FormEvent) => {
+    //     event.preventDefault();
+    //     Object.entries(formState).forEach(([field, value]) => {
+    //         dispatch(updateFormField(field, value))
+    //     })
+    //
+    //     const formData = new FormData()
+    //     Object.entries(formState).forEach(([field, value]) => {
+    //         formData.append(field, value)
+    //     });
+    //     fileList.forEach(file => {
+    //         formData.append('files', file)
+    //     });
+    //
+    //     setNotificationMsg('Заявка успешно создана!')
+    //     setShowNotification(true)
+    //
+    //     console.log('Данные формы отправлены в Redux:', formState);
+    //     console.log('Прикрепленные файлы:', fileList);
+    // };
+
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        Object.entries(formState).forEach(([field, value]) => {
-            dispatch(updateFormField(field, value))
-        })
 
-        const formData = new FormData()
-        Object.entries(formState).forEach(([field, value]) => {
-            formData.append(field, value)
-        });
-        fileList.forEach(file => {
-            formData.append('files', file)
-        });
+        setShowErrors(true); // Показываем ошибки при отправке формы
 
-        setNotificationMsg('Заявка успешно создана!')
-        setShowNotification(true)
+        if (successSubmit) {
+            // Если форма заполнена корректно
+            Object.entries(formState).forEach(([field, value]) => {
+                dispatch(updateFormField(field, value));
+            });
 
-        console.log('Данные формы отправлены в Redux:', formState);
-        console.log('Прикрепленные файлы:', fileList);
+            const formData = new FormData();
+            Object.entries(formState).forEach(([field, value]) => {
+                formData.append(field, value);
+            });
+            fileList.forEach(file => {
+                formData.append('files', file);
+            });
+
+            setNotificationMsg('Заявка успешно создана!')
+            setShowNotification(true)
+
+            // Логика отправки данных и отображение успешного уведомления
+            console.log('Данные формы отправлены в Redux:', formState);
+            console.log('Прикрепленные файлы:', fileList);
+        }
     };
+
 
     // const handleSubmit = (event: React.FormEvent) => {
     //     event.preventDefault();
@@ -210,10 +263,15 @@ const NonTransactionalRequest: React.FC = () => {
                                             <option value="Реструктуризация">Реструктуризация</option>
                                             <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
                                         </select>
+                                        {showErrors && !formState.businessProcess && (
+                                            <div className="error-message">
+                                                <span className="span-error-info">Обязательное поле</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
-                                <div className="form-content-credit-contract">
+                                <div className="form-content-credit-contract" style={{marginTop: '3px'}}>
                                     <span className="icon" style={{ marginRight: '10px' }}>
                                         <img width={30} height={30} src={numberIcon} alt="icon" />
                                     </span>
@@ -224,6 +282,11 @@ const NonTransactionalRequest: React.FC = () => {
                                             value={formState.externalId}
                                             onChange={(e) => handleInputChange('externalId', e.target.value)}
                                         />
+                                        {showErrors && !formState.externalId && (
+                                            <div className="error-message">
+                                                <span className="span-error-info">Обязательное поле</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -255,6 +318,18 @@ const NonTransactionalRequest: React.FC = () => {
                                             value={formState.middleName}
                                             onChange={(e) => handleInputChange('middleName', e.target.value)}
                                         />
+                                        <div style={{ display: 'flex'}}>
+                                            {showErrors && !formState.lastName && (
+                                                <div className="error-message" style={{ marginRight: '102px'}}>
+                                                    <span className="span-error-info">Обязательное поле</span> Фамилия
+                                                </div>
+                                            )}
+                                            {showErrors && !formState.firstName && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span> Имя
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -269,6 +344,10 @@ const NonTransactionalRequest: React.FC = () => {
                                             value={formState.dealMembersNumber}
                                             onChange={(e) => handleInputChange('dealMembersNumber', e.target.value)}
                                         />
+                                        {showErrors && !formState.externalId && (
+                                            <div className="error-message">
+                                                <span className="span-error-info">Обязательное поле</span></div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -277,7 +356,7 @@ const NonTransactionalRequest: React.FC = () => {
                                         <span className="icon" style={{ marginRight: '10px' }}>
                                             <img width={30} height={30} src={houseIcon} alt="icon" />
                                         </span>
-                                        <div className="form-content-real-property">
+                                        <div className="form-content-real-property" style={{marginTop: '1px'}}>
                                             <select
                                                 className='select-realty'
                                                 value={formState.objectType}
@@ -287,6 +366,10 @@ const NonTransactionalRequest: React.FC = () => {
                                                 <option value="Объект недвижимости">Объект недвижимости</option>
                                                 <option value="ИЖС">ИЖС</option>
                                             </select>
+                                            {/*{showErrors && !formState.externalId && (*/}
+                                            {/*    <div className="error-message">*/}
+                                            {/*        <span className="span-error-info">Заполните обязательное поле: </span>Объект недвижимости</div>*/}
+                                            {/*)}*/}
                                         </div>
                                         <div className="form-content-real-property">
                                             <input
@@ -296,7 +379,12 @@ const NonTransactionalRequest: React.FC = () => {
                                                 value={formState.objectCost}
                                                 onChange={(e) => handleInputChange('objectCost', e.target.value)}
                                             />
+                                            {showErrors && !formState.externalId && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span></div>
+                                            )}
                                         </div>
+
                                     </div>
                                     <button className='button-realty-add'>Добавить</button>
                                 </div>
@@ -312,6 +400,13 @@ const NonTransactionalRequest: React.FC = () => {
                                             value={formState.initiatorEmail}
                                             onChange={(e) => handleInputChange('initiatorEmail', e.target.value)}
                                         />
+                                        {/*{showErrors && !formState.initiatorEmail && (*/}
+                                        {/*    <div className="error-message">*/}
+                                        {/*        <span className="span-error-info">Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:*/}
+                                        {/*        </span>*/}
+                                        {/*        <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>*/}
+                                        {/*    </div>*/}
+                                        {/*)}*/}
                                         {emailError && (
                                             <img className='errorImg' src={errorIcon} alt=""/>
                                         )}
@@ -328,20 +423,17 @@ const NonTransactionalRequest: React.FC = () => {
                                     {emailError && (
                                         <div style={{fontSize: '14px'}}>{emailError}</div>
                                     )}
-                                    {fileList.length === 0 && (
-                                        <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>
+                                    {/*{fileList.length === 0 && (*/}
+                                    {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
+                                    {/*)}*/}
+                                    {showErrors && fileList.length === 0 && (
+                                        <div className="error-message">
+                                            <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>
                                     )}
                                 </div>
 
                                 <div className="form-button">
-                                    <button
-                                        style={successSubmit ? {} : {
-                                            backgroundColor: '#ccc',
-                                            color: '#fff',
-                                            cursor: 'not-allowed',
-                                            opacity: 0.5,
-                                        }}
-                                        disabled={!successSubmit} type="submit" className="create-request-btn">Создать заявку</button>
+                                    <button type="submit" className="create-request-btn">Создать заявку</button>
                                 </div>
 
                             </form>

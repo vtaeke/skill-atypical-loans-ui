@@ -38,6 +38,7 @@ const ConclusionTransactions: React.FC = () => {
     const [successSubmit, setSuccessSubmit] = useState(false)
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+    const [showErrors, setShowErrors] = useState(false);
 
     const navigate = useNavigate();
 
@@ -114,23 +115,28 @@ const ConclusionTransactions: React.FC = () => {
     //v3 вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        Object.entries(formState).forEach(([field, value]) => {
-            dispatch(updateFormField(field, value))
-        })
 
-        const formData = new FormData()
-        Object.entries(formState).forEach(([field, value]) => {
-            formData.append(field, value)
-        });
-        fileList.forEach(file => {
-            formData.append('files', file)
-        });
+        setShowErrors(true); // Показываем ошибки при отправке формы
 
-        setNotificationMsg('Заявка успешно создана!')
-        setShowNotification(true)
+        if (successSubmit) {
+            Object.entries(formState).forEach(([field, value]) => {
+                dispatch(updateFormField(field, value))
+            })
 
-        console.log('Данные формы отправлены в Redux:', formState);
-        console.log('Прикрепленные файлы:', fileList);
+            const formData = new FormData()
+            Object.entries(formState).forEach(([field, value]) => {
+                formData.append(field, value)
+            });
+            fileList.forEach(file => {
+                formData.append('files', file)
+            });
+
+            setNotificationMsg('Заявка успешно создана!')
+            setShowNotification(true)
+
+            console.log('Данные формы отправлены в Redux:', formState);
+            console.log('Прикрепленные файлы:', fileList);
+        }
     };
 
     // const handleSubmit = (event: React.FormEvent) => {
@@ -229,6 +235,11 @@ const ConclusionTransactions: React.FC = () => {
                                                             placeholder="Номер кредитного договора"
                                                             value={formState.externalId}
                                                             onChange={(e) => handleInputChange('externalId', e.target.value)}/>
+                                                        {showErrors && !formState.externalId && (
+                                                            <div className="error-message">
+                                                                <span className="span-error-info">Обязательное поле</span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <div className="form-content-fio">
@@ -256,6 +267,18 @@ const ConclusionTransactions: React.FC = () => {
                                                             placeholder="Отчество"
                                                             value={formState.middleName}
                                                             onChange={(e) => handleInputChange('middleName', e.target.value)}/>
+                                                        <div style={{ display: 'flex'}}>
+                                                            {showErrors && !formState.lastName && (
+                                                                <div className="error-message" style={{ marginRight: '102px'}}>
+                                                                    <span className="span-error-info">Обязательное поле</span> Фамилия
+                                                                </div>
+                                                            )}
+                                                            {showErrors && !formState.firstName && (
+                                                                <div className="error-message">
+                                                                    <span className="span-error-info">Обязательное поле</span> Имя
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="form-content-body">
@@ -277,6 +300,11 @@ const ConclusionTransactions: React.FC = () => {
                                                                 <option value="СБЕР2">СБЕР</option>
                                                                 <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
                                                             </select>
+                                                            {showErrors && !formState.tbObjectName && (
+                                                                <div className="error-message" style={{ marginBottom: '5px'}}>
+                                                                    <span className="span-error-info">Обязательное поле</span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -306,8 +334,12 @@ const ConclusionTransactions: React.FC = () => {
                                                 {emailError && (
                                                     <div style={{fontSize: '14px'}}>{emailError}</div>
                                                 )}
-                                                {fileList.length === 0 && (
-                                                    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>
+                                                {/*{fileList.length === 0 && (*/}
+                                                {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
+                                                {/*)}*/}
+                                                {showErrors && fileList.length === 0 && (
+                                                    <div className="error-message">
+                                                        <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>
                                                 )}
                                             </div>
                                         )}
@@ -325,6 +357,11 @@ const ConclusionTransactions: React.FC = () => {
                                                             placeholder="Номер кредитного договора"
                                                             value={formState.externalId}
                                                             onChange={(e) => handleInputChange('externalId', e.target.value)}/>
+                                                        {showErrors && !formState.externalId && (
+                                                            <div className="error-message">
+                                                                <span className="span-error-info">Обязательное поле</span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <div className="form-content-fio">
@@ -352,6 +389,18 @@ const ConclusionTransactions: React.FC = () => {
                                                             placeholder="Отчество"
                                                             value={formState.middleName}
                                                             onChange={(e) => handleInputChange('middleName', e.target.value)}/>
+                                                        <div style={{ display: 'flex'}}>
+                                                            {showErrors && !formState.lastName && (
+                                                                <div className="error-message" style={{ marginRight: '102px'}}>
+                                                                    <span className="span-error-info">Обязательное поле</span> Фамилия
+                                                                </div>
+                                                            )}
+                                                            {showErrors && !formState.firstName && (
+                                                                <div className="error-message">
+                                                                    <span className="span-error-info">Обязательное поле</span> Имя
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="form-content-body">
@@ -373,6 +422,11 @@ const ConclusionTransactions: React.FC = () => {
                                                                 <option value="СБЕР2">СБЕР</option>
                                                                 <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
                                                             </select>
+                                                            {showErrors && !formState.tbObjectName && (
+                                                                <div className="error-message" style={{ marginBottom: '5px'}}>
+                                                                    <span className="span-error-info">Обязательное поле</span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -402,8 +456,12 @@ const ConclusionTransactions: React.FC = () => {
                                                 {emailError && (
                                                     <div style={{fontSize: '14px'}}>{emailError}</div>
                                                 )}
-                                                {fileList.length === 0 && (
-                                                    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>
+                                                {/*{fileList.length === 0 && (*/}
+                                                {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
+                                                {/*)}*/}
+                                                {showErrors && fileList.length === 0 && (
+                                                    <div className="error-message">
+                                                        <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>
                                                 )}
                                             </div>
                                         )}
@@ -413,14 +471,7 @@ const ConclusionTransactions: React.FC = () => {
 
 
                                 <div className="form-button" style={{ marginTop: '20px'}}>
-                                    <button
-                                        style={successSubmit ? {} : {
-                                            backgroundColor: '#ccc',
-                                            color: '#fff',
-                                            cursor: 'not-allowed',
-                                            opacity: 0.5,
-                                        }}
-                                        disabled={!successSubmit} type="submit" className="create-request-btn">Создать заявку</button>
+                                    <button className="create-request-btn">Создать заявку</button>
                                 </div>
 
                             </form>

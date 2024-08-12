@@ -41,6 +41,7 @@ const VipVerifyRequest: React.FC = () => {
     const [successSubmit, setSuccessSubmit] = useState(false)
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+    const [showErrors, setShowErrors] = useState(false);
 
     const navigate = useNavigate();
 
@@ -118,23 +119,28 @@ const VipVerifyRequest: React.FC = () => {
     //v3 вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        Object.entries(formState).forEach(([field, value]) => {
-            dispatch(updateFormField(field, value))
-        })
 
-        const formData = new FormData()
-        Object.entries(formState).forEach(([field, value]) => {
-            formData.append(field, value)
-        });
-        fileList.forEach(file => {
-            formData.append('files', file)
-        });
+        setShowErrors(true);
 
-        setNotificationMsg('Заявка успешно создана!')
-        setShowNotification(true)
+        if (successSubmit) {
+            Object.entries(formState).forEach(([field, value]) => {
+                dispatch(updateFormField(field, value))
+            })
 
-        console.log('Данные формы отправлены в Redux:', formState);
-        console.log('Прикрепленные файлы:', fileList);
+            const formData = new FormData()
+            Object.entries(formState).forEach(([field, value]) => {
+                formData.append(field, value)
+            });
+            fileList.forEach(file => {
+                formData.append('files', file)
+            });
+
+            setNotificationMsg('Заявка успешно создана!')
+            setShowNotification(true)
+
+            console.log('Данные формы отправлены в Redux:', formState);
+            console.log('Прикрепленные файлы:', fileList);
+        }
     };
 
     // const handleSubmit = (event: React.FormEvent) => {
@@ -217,6 +223,11 @@ const VipVerifyRequest: React.FC = () => {
                                             <option value="Реструктуризация">Реструктуризация</option>
                                             <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
                                         </select>
+                                        {showErrors && !formState.businessProcess && (
+                                            <div className="error-message">
+                                                <span className="span-error-info">Обязательное поле</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -231,6 +242,11 @@ const VipVerifyRequest: React.FC = () => {
                                             value={formState.externalId}
                                             onChange={(e) => handleInputChange('externalId', e.target.value)}
                                         />
+                                        {showErrors && !formState.externalId && (
+                                            <div className="error-message">
+                                                <span className="span-error-info">Обязательное поле</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -280,6 +296,11 @@ const VipVerifyRequest: React.FC = () => {
                                                 <option value="СБЕР2">СБЕР</option>
                                                 <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
                                             </select>
+                                            {showErrors && !formState.tbObjectName && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -300,6 +321,11 @@ const VipVerifyRequest: React.FC = () => {
                                                 <option value="регион2">регион2</option>
                                                 <option value="регион3">регион3</option>
                                             </select>
+                                            {showErrors && !formState.objectRegionCode && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -332,6 +358,18 @@ const VipVerifyRequest: React.FC = () => {
                                             value={formState.middleName}
                                             onChange={(e) => handleInputChange('middleName', e.target.value)}
                                         />
+                                        <div style={{ display: 'flex'}}>
+                                            {showErrors && !formState.lastName && (
+                                                <div className="error-message" style={{ marginRight: '102px'}}>
+                                                    <span className="span-error-info">Обязательное поле</span> Фамилия
+                                                </div>
+                                            )}
+                                            {showErrors && !formState.firstName && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span> Имя
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -363,19 +401,17 @@ const VipVerifyRequest: React.FC = () => {
                                 {emailError && (
                                     <div style={{fontSize: '12px'}}>{emailError}</div>
                                 )}
-                                {fileList.length === 0 && (
-                                    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>
+                                {/*{fileList.length === 0 && (*/}
+                                {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
+                                {/*)}*/}
+                                {showErrors && fileList.length === 0 && (
+                                    <div className="error-message">
+                                        <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>
                                 )}
-                                <div className="form-button">
+                                <div className="form-button-verify">
                                     <button
-                                        style={successSubmit ? {} : {
-                                            backgroundColor: '#ccc',
-                                            color: '#fff',
-                                            cursor: 'not-allowed',
-                                            opacity: 0.5,
-                                        }}
                                         onClick={handleSubmit}
-                                        disabled={!successSubmit} type="submit" className="create-request-btn">Создать заявку</button>
+                                        type="submit" className="create-request-btn">Создать заявку</button>
                                 </div>
 
                             </form>
