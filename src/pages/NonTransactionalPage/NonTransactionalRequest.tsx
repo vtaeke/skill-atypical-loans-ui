@@ -365,13 +365,14 @@ const NonTransactionalRequest: React.FC = () => {
                                                 onChange={(e) => handleInputChange('objectType', e.target.value)}
                                             >
                                                 <option value="" disabled hidden>Объект недвижимости</option>
-                                                <option value="Объект недвижимости">Объект недвижимости</option>
+                                                <option value="СНТ">СНТ</option>
                                                 <option value="ИЖС">ИЖС</option>
                                             </select>
-                                            {/*{showErrors && !formState.externalId && (*/}
-                                            {/*    <div className="error-message">*/}
-                                            {/*        <span className="span-error-info">Заполните обязательное поле: </span>Объект недвижимости</div>*/}
-                                            {/*)}*/}
+                                            {showErrors && !formState.objectType && (
+                                                <div className="error-message" style={{marginLeft: '270px'}}>
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="form-content-real-property">
                                             <input
@@ -442,7 +443,7 @@ const NonTransactionalRequest: React.FC = () => {
                                     )}
                                 </div>
 
-                                <div className="form-button">
+                                <div className="form-button-verify" >
                                     <button type="submit" className="create-request-btn">Создать заявку</button>
                                 </div>
 

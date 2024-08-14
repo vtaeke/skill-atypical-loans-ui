@@ -110,13 +110,6 @@ const VerifyRequest: React.FC = () => {
         setFileList(newFileList);
     };
 
-    // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (event.target.files) {
-    //         const filesArray = Array.from(event.target.files);
-    //         setFileList([...fileList, ...filesArray]);
-    //     }
-    // };
-
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const filesArray = Array.from(event.target.files);
@@ -151,27 +144,6 @@ const VerifyRequest: React.FC = () => {
             console.log('Прикрепленные файлы:', fileList);
         }
     };
-
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     // for (const field in formState) {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // }
-    //     // Object.keys(formState).forEach((field) => {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // })
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //     setNotificationMsg('Заявка успешно создана!')
-    //     setShowNotification(true)
-    //
-    //     // setTimeout(() => {
-    //     //     setShowNotification(false)
-    //     // }, 4000)
-    //
-    //     console.log('Данные формы отправлены в Redux:', formState);
-    // };
 
     //v2 handleSubmit send to back-end
     // const handleSubmit = async(event: React.FormEvent) => {
@@ -283,40 +255,6 @@ const VerifyRequest: React.FC = () => {
                                             )}
                                         </div>
                                     </div>
-                                    {/*<div className="input-block-category">*/}
-                                    {/*    <label style={{display: 'flex', justifyContent: 'flex-end'}}*/}
-                                    {/*           htmlFor="businessProcessSelect">*/}
-                                    {/*        <select*/}
-                                    {/*            id="businessProcessSelect"*/}
-                                    {/*            className='select-realty-category'*/}
-                                    {/*            value={formState.businessProcess}*/}
-                                    {/*            onChange={(e) => handleInputChange('businessProcess', e.target.value)}*/}
-                                    {/*        >*/}
-                                    {/*            <option value="" disabled hidden>Категория запроса</option>*/}
-                                    {/*            <option value="Реструктуризация">Реструктуризация</option>*/}
-                                    {/*            <option value="Жилые дома, земельные участки">Жилые дома, земельные*/}
-                                    {/*                участки*/}
-                                    {/*            </option>*/}
-                                    {/*        </select>*/}
-                                    {/*        <div className="img-icon-down">*/}
-                                    {/*            <svg width="33.512817" height="10.858643" viewBox="0 0 33.5128 10.8586"*/}
-                                    {/*                 fill="none" xmlns="http://www.w3.org/2000/svg">*/}
-                                    {/*                <line id="Line 1" x1="0.256348" y1="0.486938" x2="16.910767"*/}
-                                    {/*                      y2="10.429321" stroke="#FFFFFF" stroke-opacity="0.560000"*/}
-                                    {/*                      stroke-width="1.000000"/>*/}
-                                    {/*                <line id="Line 1" x1="16.602051" y1="10.371704" x2="33.256470"*/}
-                                    {/*                      y2="0.429321" stroke="#FFFFFF" stroke-opacity="0.560000"*/}
-                                    {/*                      stroke-width="1.000000"/>*/}
-                                    {/*            </svg>*/}
-                                    {/*        </div>*/}
-                                    {/*    </label>*/}
-
-                                    {/*    {showErrors && !formState.businessProcess && (*/}
-                                    {/*        <div className="error-message">*/}
-                                    {/*            <span className="span-error-info">Обязательное поле</span>*/}
-                                    {/*        </div>*/}
-                                    {/*    )}*/}
-                                    {/*</div>*/}
                                 </div>
 
                                 <div className="form-content-credit-contract">
@@ -350,9 +288,14 @@ const VerifyRequest: React.FC = () => {
                                                 onChange={(e) => handleInputChange('objectType', e.target.value)}
                                             >
                                                 <option value="" disabled hidden>Объект недвижимости</option>
-                                                <option value="Объект недвижимости">Объект недвижимости</option>
+                                                <option value="СНТ">СНТ</option>
                                                 <option value="ИЖС">ИЖС</option>
                                             </select>
+                                            {showErrors && !formState.objectType && (
+                                                <div className="error-message" style={{marginLeft: '270px'}}>
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="form-content-real-property">
                                             <input
@@ -362,6 +305,11 @@ const VerifyRequest: React.FC = () => {
                                                 value={formState.objectCost}
                                                 onChange={(e) => handleInputChange('objectCost', e.target.value)}
                                             />
+                                            {showErrors && !formState.objectCost && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <button className='button-realty-add'>Добавить</button>

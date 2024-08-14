@@ -263,10 +263,15 @@ const VipVerifyRequest: React.FC = () => {
                                                 value={formState.objectType}
                                                 onChange={(e) => handleInputChange('objectType', e.target.value)}
                                             >
-                                                <option value="" disabled hidden>Тип запроса</option>
-                                                <option value="Объект недвижимости">Объект недвижимости</option>
+                                                <option value="" disabled hidden>Объект недвижимости</option>
                                                 <option value="ИЖС">ИЖС</option>
+                                                <option value="СНТ">СНТ</option>
                                             </select>
+                                            {showErrors && !formState.objectType && (
+                                                <div className="error-message" style={{marginLeft: '270px'}}>
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="form-content-real-property">
                                             <input
@@ -276,6 +281,11 @@ const VipVerifyRequest: React.FC = () => {
                                                 value={formState.objectCost}
                                                 onChange={(e) => handleInputChange('objectCost', e.target.value)}
                                             />
+                                            {showErrors && !formState.objectCost && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <button className='button-realty-add'>Добавить</button>
