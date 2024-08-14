@@ -54,17 +54,8 @@
   cursor: pointer;
 }
 
-.form-block {
-  width: 900px;
-  height: 600px;
-}
-
-//.right-block {
-//  height: 750px;
-//}
-
 .right-block-request {
-  height: 600px;
+  height: 635px;
   width: calc((100% - 50px) / 4);
   margin-right: 20px;
   margin-left: 20px;
@@ -78,9 +69,6 @@
   display: flex;
 }
 
-.input-block-category {
-  width: 818px;
-}
 
 .form-content-request input{
   //width: calc(100% - 56px);
@@ -91,7 +79,7 @@
   background-color: rgb(48, 48, 48);
   border: none;
   color: white;
-  border-radius: 5px;
+  border-radius: 16px;
   margin-bottom: 10px;
 }
 
@@ -105,24 +93,21 @@
 
 .input-block-contract input {
   //width: calc(100% - 56px);
-  width: 100%;
+  width: 817px;
   //height: 25px;
 
   padding: 10px;
   background-color: rgb(48, 48, 48);
   border: none;
   color: white;
-  border-radius: 5px;
+  border-radius: 16px;
   margin-bottom: 10px;
 }
 
 
-.form-button {
-  text-align: center;
-}
-
 .form-block .form-button {
   display: flex;
+  justify-content: center;
   //margin-top: 20px;
 }
 
@@ -130,7 +115,7 @@
   width: 300px;
   height: 35px;
   border: none;
-  border-radius: 10px;
+  border-radius: 16px;
   display: inline-block;
   //margin: 0 auto;
   margin: 0 0 -10px 0;
@@ -152,7 +137,7 @@
 }
 
 .form-content-real-property {
-  width: 395px;
+  width: 393px;
   height: 52px;
   margin-right: 30px;
 }
@@ -163,9 +148,17 @@
   background-color: rgb(48, 48, 48);
   border: none;
   color: white;
-  border-radius: 5px;
+  border-radius: 16px;
   margin-bottom: 10px;
   //padding-left: 46px;
+}
+
+
+.img-icon-down {
+  position: absolute;
+  margin: 8px 16px 8px 0;
+  background: transparent;
+  border: none;
 }
 
 .select-realty {
@@ -178,12 +171,19 @@
   border: none;
   color: #fff;
   //color: rgba(255, 255, 255, 0.28);
-  border-radius: 5px;
+  border-radius: 16px;
   margin-bottom: 10px;
 }
 
+.input-block-category {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+}
+
+
 .select-bank {
-  width: 835px;
+  width: 837px;
   height: 35px;
   //width: calc(100% - 56px);
   //padding: 10px;
@@ -192,12 +192,12 @@
   border: none;
   color: #fff;
   //color: rgba(255, 255, 255, 0.28);
-  border-radius: 5px;
+  border-radius: 16px;
   margin-bottom: 10px;
 }
 
 .select-region {
-  width: 835px;
+  width: 837px;
   height: 35px;
   //width: calc(100% - 56px);
   //padding: 10px;
@@ -206,7 +206,7 @@
   border: none;
   color: #fff;
   //color: rgba(255, 255, 255, 0.28);
-  border-radius: 5px;
+  border-radius: 16px;
   margin-bottom: 10px;
 }
 
@@ -254,7 +254,7 @@
   border: none;
   color: #fff;
   //color: rgba(255, 255, 255, 0.28);
-  border-radius: 5px;
+  border-radius: 16px;
   margin-bottom: 10px;
 }
 
@@ -281,14 +281,14 @@
 
 .input-block-email input{
   //width: calc(100% - 56px);
-  width: 100%;
+  width: 817px;
   //height: 25px;
 
   padding: 10px;
   background-color: rgb(48, 48, 48);
   border: none;
   color: white;
-  border-radius: 5px;
+  border-radius: 16px;
   margin-bottom: 10px;
 }
 
@@ -305,7 +305,7 @@
   background-color: rgb(48, 48, 48);
   border: none;
   color: white;
-  border-radius: 5px;
+  border-radius: 16px;
   margin-bottom: 10px;
   padding-left: 26px;
 }

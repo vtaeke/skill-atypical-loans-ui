@@ -11,6 +11,7 @@ import NonTransactionalRequest from "./pages/NonTransactionalPage/NonTransaction
 import SettlementOfProblemDebt from "./pages/SettlementOfProblemDebt/SettlementOfProblemDebt";
 import Foreigners from "./pages/Foreigners/Foreigners";
 import ConclusionTransactions from "./pages/ConclusionTransactions/ConclusionTransactions";
+import Requests from "./pages/Requests/Requests";
 
 const router = createBrowserRouter([
     {
@@ -23,7 +24,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/requests",
-        element: <RequestsList />,
+        element: <Requests />,
     },
     {
         path: "/verify",

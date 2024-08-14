@@ -1,15 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import { AssistantAppState, createAssistant, createSmartappDebugger } from "@sberdevices/assistant-client";
 import SearchBlock from "../../components/SearchBlock/SearchBlock";
 import ListBlock from "../../components/ListBlock/ListBlock";
 import HintsBlock from "../../components/HintBlock/HintBlock";
-import "./RequestsList.scss";
+import noResultsIcon from '../../resources/noResultsIcon.svg'
+import {useNavigate} from "react-router-dom";
+import './RequestsList.scss'
 
 interface Props {}
 
 interface Request {
     title: string;
-    status: 'Выполнена' | 'Отказано' | 'На согласовании';
+    type: 'Верификация отчетов' | 'VIP. Верификация отчетов' | 'Нетиповая и сверхлимитная сделки' |
+        'Сделка по нетранзакционным продуктам' | 'Иностранные граждане';
+    status: 'Выполнена' | 'Отказано' | 'На согласовании' | 'Ошибка' | 'Создана' | 'В Работе';
 }
 
 // const initialize = (getState: () => any) => {
@@ -28,13 +32,30 @@ interface Request {
 //     return createAssistant({ getState });
 // }
 
-const RequestsList: React.FC<Props> = ({}) => {
+interface Props {
+    selectedStatusFilters: string[];
+    selectedTypeFilters: string[];
+    searchInput: string;
+}
+
+const RequestsList: React.FC<Props> = ({selectedStatusFilters, selectedTypeFilters, searchInput}) => {
     const [fileList, setFileList] = useState<File[]>([]);
     const [requests, setRequests] = useState<Request[]>([
-        { title: 'Запрос 1', status: 'Выполнена' },
-        { title: 'Запрос 2', status: 'Отказано' },
-        { title: 'Запрос 3', status: 'На согласовании' }
+        { title: '135-000-001-002', type: 'Верификация отчетов', status: 'Выполнена' },
+        { title: '135-000-001-002', type: 'VIP. Верификация отчетов', status: 'Отказано' },
+        { title: '135-000-001-003', type: 'Нетиповая и сверхлимитная сделки', status: 'На согласовании' },
+        { title: '135-000-001-005', type: 'Сделка по нетранзакционным продуктам', status: 'Выполнена' },
+        { title: '135-000-001-007', type: 'Иностранные граждане', status: 'Отказано' },
+        { title: '135-000-001-012', type: 'Сделка по нетранзакционным продуктам', status: 'На согласовании' },
+        { title: '135-000-001-0015', type: 'Верификация отчетов', status: 'Ошибка' },
+        { title: '135-000-001-0325', type: 'Верификация отчетов', status: 'Выполнена' },
     ]);
+
+    const navigate = useNavigate();
+
+    const handleCardClick = (path: string) => {
+        navigate(path);
+    };
 
     // const assistantStateRef = useRef<AssistantAppState>();
     // const assistantRef = useRef<ReturnType<typeof createAssistant>>();
@@ -55,22 +76,30 @@ const RequestsList: React.FC<Props> = ({}) => {
     //     });
     // }, []);
 
-    const handleFileRemove = (index: number) => {
-        const newFileList = [...fileList];
-        newFileList.splice(index, 1);
-        setFileList(newFileList);
-    };
-    
+    console.log('selectedStatusFilters', selectedStatusFilters)
+    console.log('selectedTypeFilters', selectedTypeFilters)
+    const filteredRequests = useMemo(() => {
+        return requests.filter((request) => {
+            const statusMatch = selectedStatusFilters.length === 0 || selectedStatusFilters.includes(request.status);
+            const typeMatch = selectedTypeFilters.length === 0 || selectedTypeFilters.includes(request.type);
+            const searchMatch = !searchInput || request.title.includes(searchInput);
+            return statusMatch && typeMatch && searchMatch;
+        });
+    }, [requests, selectedStatusFilters, selectedTypeFilters, searchInput]);
+
+    if (filteredRequests.length === 0) {
+        return (
+            <div className="no-results">
+                <img width={490} height={320} src={noResultsIcon} alt=""/>
+                <h4 style={{ margin: '15px 0 8px 0'}}>Заявки не найдены</h4>
+                <h4 style={{color: 'rgba(255, 255, 255, 0.56)'}}>Попробуйте поискать что-нибудь еще</h4>
+            </div>
+        );
+    }
     return (
-        <div className="app">
-            <div className="left-block">
-                <SearchBlock items={[]} />
-            </div>
-            <div className="center-block">
-                <ListBlock requests={requests} />
-            </div>
-            <div className="right-block">
-                <HintsBlock fileList={fileList}  onFileRemove={handleFileRemove} setFileList={setFileList}/>
+        <div className="request-list-main">
+            <div className="request-list-body">
+                <ListBlock requests={filteredRequests} />
             </div>
         </div>
     );

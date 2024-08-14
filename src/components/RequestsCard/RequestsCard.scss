@@ -7,10 +7,18 @@
   font-display: swap;
 }
 
+h4 {
+  font-weight: 500;
+  margin: 0;
+  padding: 0
+}
+
 .request-card {
+  width: 1180px;
+  height: 45px;
   border-radius: 16px;
   background: rgb(48,48,48);
-  padding: 20px;
+  padding: 5px;
   margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
@@ -23,6 +31,8 @@
   }
 
   .request-title {
+    margin-left: 15px;
+    width: 450px;
     color: rgb(255, 255, 255);
     font-family: 'SB Sans Text';
     font-size: 16px;
@@ -33,6 +43,7 @@
   }
 
   .request-status {
+    margin-right: 15px;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -44,6 +55,18 @@
     letter-spacing: 0px;
     text-align: left;
   }
+}
+
+.form-button-requests {
+    margin-bottom: 20px;
+    position: absolute;
+    bottom: 0;
+    right: calc(100% - 63%);
+}
+
+.request-card-table-body {
+  display: flex;
+
 }
 
 p {

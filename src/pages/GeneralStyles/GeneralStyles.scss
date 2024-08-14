@@ -1,0 +1,48 @@
+.form-block {
+  width: 900px;
+  height: 635px;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+.select-realty-category {
+  cursor: pointer;
+  width: 837px;
+  padding: 10px;
+  background-color: rgb(48, 48, 48);
+  border: none;
+  color: white;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  //appearance: none;
+  position: relative;
+}
+
+.form-content-request .form-content-body {
+  margin-bottom: 5px;
+}
+
+.form-content-body {
+  margin-bottom: 5px;
+}
+.form-content-credit-contract {
+  margin-bottom: 5px;
+}
+.form-content-form-bank {
+  margin-bottom: 5px;
+}
+
+.form-button-verify {
+  text-align: center;
+  margin: 5px 0px 20px 0px;
+}
+
+
+.error-message {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.span-error-info {
+  color: rgb(239, 107, 37);
+}
