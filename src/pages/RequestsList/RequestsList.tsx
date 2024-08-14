@@ -48,6 +48,7 @@ const RequestsList: React.FC<Props> = ({selectedStatusFilters, selectedTypeFilte
         { title: '135-000-001-007', type: 'Иностранные граждане', status: 'Отказано' },
         { title: '135-000-001-012', type: 'Сделка по нетранзакционным продуктам', status: 'На согласовании' },
         { title: '135-000-001-0015', type: 'Верификация отчетов', status: 'Ошибка' },
+        { title: '135-000-001-0325', type: 'Верификация отчетов', status: 'Выполнена' },
     ]);
 
     const navigate = useNavigate();
