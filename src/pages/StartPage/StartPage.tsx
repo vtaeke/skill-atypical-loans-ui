@@ -119,7 +119,9 @@ const StartPage: React.FC = () => {
                     <img width={35} height={38} src={clipBoardRegularFile} alt="Create Request" />
                     <p>Урегулирование задолженности</p>
                 </div>
-                <div className="card" onClick={() => handleCardClick('/form')}>
+                <div className="card"
+                     // onClick={() => handleCardClick('/form')}
+                >
                     <img width={35} height={38} src={clipBoardRegistry} alt="Create Request" />
                     <p>Реестры</p>
                 </div>
