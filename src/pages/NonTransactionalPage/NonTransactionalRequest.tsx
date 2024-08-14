@@ -254,20 +254,22 @@ const NonTransactionalRequest: React.FC = () => {
                                         <img width={30} height={30} src={categoryChoice} alt="icon" />
                                     </span>
                                     <div className="input-block-category">
-                                        <select
-                                            className='select-realty'
-                                            value={formState.businessProcess}
-                                            onChange={(e) => handleInputChange('businessProcess', e.target.value)}
-                                        >
-                                            <option value="" disabled hidden>Категория запроса</option>
-                                            <option value="Реструктуризация">Реструктуризация</option>
-                                            <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
-                                        </select>
-                                        {showErrors && !formState.businessProcess && (
-                                            <div className="error-message">
-                                                <span className="span-error-info">Обязательное поле</span>
-                                            </div>
-                                        )}
+                                        <div>
+                                            <select
+                                                className='select-realty-category'
+                                                value={formState.businessProcess}
+                                                onChange={(e) => handleInputChange('businessProcess', e.target.value)}
+                                            >
+                                                <option value="" disabled hidden>Категория запроса</option>
+                                                <option value="Реструктуризация">Реструктуризация</option>
+                                                <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
+                                            </select>
+                                            {showErrors && !formState.businessProcess && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -421,7 +423,15 @@ const NonTransactionalRequest: React.FC = () => {
                                         onChange={(e) => handleInputChange('comment', e.target.value)}
                                     ></textarea>
                                     {emailError && (
-                                        <div style={{fontSize: '14px'}}>{emailError}</div>
+                                        <div style={{fontSize: '12px', marginBottom: '5px'}}>{emailError}</div>
+                                    )}
+                                    {showErrors && !formState.initiatorEmail && (
+                                        <div className="error-message">
+                                             <span style={{color: 'rgb(239, 107, 37)'}}>
+                                                 Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
+                                             </span>
+                                             <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
+                                        </div>
                                     )}
                                     {/*{fileList.length === 0 && (*/}
                                     {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}

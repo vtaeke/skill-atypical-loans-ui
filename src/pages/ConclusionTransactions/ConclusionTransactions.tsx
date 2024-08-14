@@ -201,7 +201,7 @@ const ConclusionTransactions: React.FC = () => {
 
                 <div className="main">
                     <div className="form">
-                        <div className="form-block" style={{ height: '620px'}}>
+                        <div className="form-block">
                             <h2 style={{ fontSize: 20 }}>Заключение нетиповой и сверхлимитной сделки</h2>
                             <form onSubmit={handleSubmit}>
                                 <div className="form-content-request">
@@ -209,7 +209,7 @@ const ConclusionTransactions: React.FC = () => {
                                         <img width={30} height={30} src={categoryChoice} alt="icon" />
                                     </span>
                                     <div className="input-block-category">
-                                        <select
+                                        <select className="select-realty-category"
                                             value={formState.businessProcess}
                                             onChange={(e) => handleInputChange('businessProcess', e.target.value)}
                                         >
@@ -332,7 +332,15 @@ const ConclusionTransactions: React.FC = () => {
                                                     ></textarea>
                                                 </div>
                                                 {emailError && (
-                                                    <div style={{fontSize: '14px'}}>{emailError}</div>
+                                                    <div style={{fontSize: '12px', marginBottom: '5px'}}>{emailError}</div>
+                                                )}
+                                                {showErrors && !formState.initiatorEmail && (
+                                                    <div className="error-message">
+                                                    <span style={{color: 'rgb(239, 107, 37)'}}>
+                                                         Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
+                                                    </span>
+                                                    <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
+                                                    </div>
                                                 )}
                                                 {/*{fileList.length === 0 && (*/}
                                                 {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
@@ -454,7 +462,15 @@ const ConclusionTransactions: React.FC = () => {
                                                 ></textarea>
                                                 </div>
                                                 {emailError && (
-                                                    <div style={{fontSize: '14px'}}>{emailError}</div>
+                                                    <div style={{fontSize: '12px', marginBottom: '5px'}}>{emailError}</div>
+                                                )}
+                                                {showErrors && !formState.initiatorEmail && (
+                                                    <div className="error-message">
+                                                    <span style={{color: 'rgb(239, 107, 37)'}}>
+                                                         Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
+                                                    </span>
+                                                        <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
+                                                    </div>
                                                 )}
                                                 {/*{fileList.length === 0 && (*/}
                                                 {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
@@ -477,7 +493,7 @@ const ConclusionTransactions: React.FC = () => {
                             </form>
                         </div>
                     </div>
-                    <div className="right-block-request" style={{ height: '620px'}}>
+                    <div className="right-block-request">
                         <HintsBlock fileList={fileList} onFileRemove={handleFileRemove} setFileList={setFileList} />
                     </div>
                 </div>

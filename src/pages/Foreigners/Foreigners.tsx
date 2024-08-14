@@ -209,7 +209,7 @@ const Foreigners: React.FC = () => {
 
                 <div className="main">
                     <div className="form">
-                        <div className="form-block" style={{ height: '600px'}}>
+                        <div className="form-block">
                             <h2 style={{ fontSize: 20 }}>Иностранные граждане. Проверка благонадежности. Жилищный кредит</h2>
                             <form >
                                 {/*<div className="form-content-request">*/}
@@ -344,7 +344,15 @@ const Foreigners: React.FC = () => {
                                     ></textarea>
                                 </div>
                                 {emailError && (
-                                    <div style={{fontSize: '14px'}}>{emailError}</div>
+                                    <div style={{fontSize: '12px', marginBottom: '5px'}}>{emailError}</div>
+                                )}
+                                {showErrors && !formState.initiatorEmail && (
+                                    <div className="error-message">
+                                         <span style={{color: 'rgb(239, 107, 37)'}}>
+                                             Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
+                                         </span>
+                                        <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
+                                    </div>
                                 )}
                                 {/*{fileList.length === 0 && (*/}
                                 {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
@@ -362,7 +370,7 @@ const Foreigners: React.FC = () => {
                             </form>
                         </div>
                     </div>
-                    <div className="right-block-request" style={{ height: '600px'}}>
+                    <div className="right-block-request">
                         <HintsBlock fileList={fileList} onFileRemove={handleFileRemove} setFileList={setFileList} />
                     </div>
                 </div>

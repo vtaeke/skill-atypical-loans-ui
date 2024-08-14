@@ -252,7 +252,7 @@ const VerifyRequest: React.FC = () => {
 
                 <div className="main">
                     <div className="form">
-                        <div className="form-block" style={{height: '635px'}}>
+                        <div className="form-block">
                             <h2 style={{ fontSize: 20 }}>Запрос на верификацию отчетов</h2>
                             <form >
                                 <div className="form-content-request">
@@ -260,21 +260,63 @@ const VerifyRequest: React.FC = () => {
                                         <img width={30} height={30} src={categoryChoice} alt="icon" />
                                     </span>
                                     <div className="input-block-category">
-                                        <select
-                                            className='select-realty'
-                                            value={formState.businessProcess}
-                                            onChange={(e) => handleInputChange('businessProcess', e.target.value)}
-                                        >
-                                            <option value="" disabled hidden>Категория запроса</option>
-                                            <option value="Реструктуризация">Реструктуризация</option>
-                                            <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
-                                        </select>
-                                        {showErrors && !formState.businessProcess && (
-                                            <div className="error-message">
-                                                <span className="span-error-info">Обязательное поле</span>
-                                            </div>
-                                        )}
+                                        <div>
+                                            <select
+                                                className='select-realty-category'
+                                                value={formState.businessProcess}
+                                                onChange={(e) => handleInputChange('businessProcess', e.target.value)}
+                                            >
+                                                <option value="" disabled hidden>Категория запроса</option>
+                                                <option value="Реструктуризация">Реструктуризация</option>
+                                                <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
+                                            </select>
+                                            {/*<div className="img-icon-down">*/}
+                                            {/*    <svg width="33.512817" height="10.858643" viewBox="0 0 33.5128 10.8586" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
+                                            {/*        <line id="Line 1" x1="0.256348" y1="0.486938" x2="16.910767" y2="10.429321" stroke="#FFFFFF" stroke-opacity="0.560000" stroke-width="1.000000"/>*/}
+                                            {/*        <line id="Line 1" x1="16.602051" y1="10.371704" x2="33.256470" y2="0.429321" stroke="#FFFFFF" stroke-opacity="0.560000" stroke-width="1.000000"/>*/}
+                                            {/*    </svg>*/}
+                                            {/*</div>*/}
+                                            {showErrors && !formState.businessProcess && (
+                                                <div className="error-message">
+                                                    <span className="span-error-info">Обязательное поле</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
+                                    {/*<div className="input-block-category">*/}
+                                    {/*    <label style={{display: 'flex', justifyContent: 'flex-end'}}*/}
+                                    {/*           htmlFor="businessProcessSelect">*/}
+                                    {/*        <select*/}
+                                    {/*            id="businessProcessSelect"*/}
+                                    {/*            className='select-realty-category'*/}
+                                    {/*            value={formState.businessProcess}*/}
+                                    {/*            onChange={(e) => handleInputChange('businessProcess', e.target.value)}*/}
+                                    {/*        >*/}
+                                    {/*            <option value="" disabled hidden>Категория запроса</option>*/}
+                                    {/*            <option value="Реструктуризация">Реструктуризация</option>*/}
+                                    {/*            <option value="Жилые дома, земельные участки">Жилые дома, земельные*/}
+                                    {/*                участки*/}
+                                    {/*            </option>*/}
+                                    {/*        </select>*/}
+                                    {/*        <div className="img-icon-down">*/}
+                                    {/*            <svg width="33.512817" height="10.858643" viewBox="0 0 33.5128 10.8586"*/}
+                                    {/*                 fill="none" xmlns="http://www.w3.org/2000/svg">*/}
+                                    {/*                <line id="Line 1" x1="0.256348" y1="0.486938" x2="16.910767"*/}
+                                    {/*                      y2="10.429321" stroke="#FFFFFF" stroke-opacity="0.560000"*/}
+                                    {/*                      stroke-width="1.000000"/>*/}
+                                    {/*                <line id="Line 1" x1="16.602051" y1="10.371704" x2="33.256470"*/}
+                                    {/*                      y2="0.429321" stroke="#FFFFFF" stroke-opacity="0.560000"*/}
+                                    {/*                      stroke-width="1.000000"/>*/}
+                                    {/*            </svg>*/}
+                                    {/*        </div>*/}
+                                    {/*    </label>*/}
+
+                                    {/*    {showErrors && !formState.businessProcess && (*/}
+                                    {/*        <div className="error-message">*/}
+                                    {/*            <span className="span-error-info">Обязательное поле</span>*/}
+                                    {/*        </div>*/}
+                                    {/*    )}*/}
+                                    {/*</div>*/}
                                 </div>
 
                                 <div className="form-content-credit-contract">
@@ -445,7 +487,15 @@ const VerifyRequest: React.FC = () => {
                                     ></textarea>
                                 </div>
                                 {emailError && (
-                                    <div style={{fontSize: '12px'}}>{emailError}</div>
+                                    <div style={{fontSize: '12px', marginBottom: '5px'}}>{emailError}</div>
+                                )}
+                                {showErrors && !formState.initiatorEmail && (
+                                    <div className="error-message">
+                                         <span style={{color: 'rgb(239, 107, 37)'}}>
+                                             Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
+                                         </span>
+                                        <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
+                                    </div>
                                 )}
                                 {/*{fileList.length === 0 && (*/}
                                 {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
@@ -463,7 +513,7 @@ const VerifyRequest: React.FC = () => {
                             </form>
                         </div>
                     </div>
-                    <div className="right-block-request" style={{height: '635px'}}>
+                    <div className="right-block-request">
                         <HintsBlock fileList={fileList} onFileRemove={handleFileRemove} setFileList={setFileList} />
                     </div>
                 </div>
