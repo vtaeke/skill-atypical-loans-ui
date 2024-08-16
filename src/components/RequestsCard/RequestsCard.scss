@@ -59,7 +59,8 @@ h4 {
 
 .form-button-requests {
     margin-bottom: 20px;
-    position: absolute;
+    //position: absolute;
+    text-align: center;
     bottom: 0;
     right: calc(100% - 63%);
 }
@@ -67,6 +68,20 @@ h4 {
 .request-card-table-body {
   display: flex;
 
+}
+
+.input-block-search {
+  position: relative;
+}
+
+.clear-search {
+  position: relative;
+  right: 35px;
+  transform: translateY(20%);
+  background-color: transparent;
+  width: 0px;
+  border: none;
+  cursor: pointer;
 }
 
 p {
