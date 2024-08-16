@@ -36,6 +36,49 @@ const Requests: React.FC = () => {
 
     const navigate = useNavigate();
 
+    const statusFilters = [
+        {
+            name: 'Выполнена',
+            icon: (
+                <svg style={{ marginLeft: '5px' }} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#2AC673" fill-opacity="1.000000"/>
+                </svg>
+            ),
+        },
+        {
+            name: 'Отказано',
+            icon: (
+                <svg style={{ marginLeft: '5px' }} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#EF6B25" fill-opacity="1.000000"/>
+                </svg>
+            ),
+        },
+        {
+            name: 'В работе',
+            icon: (
+                <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#FFFFFF" fill-opacity="0.960000"/>
+                </svg>
+            )
+        },
+        {
+            name: 'Создана',
+            icon: (
+                <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#FFFFFF" fill-opacity="0.550000"/>
+                </svg>
+            )
+        },
+        {
+            name: 'Ошибка',
+            icon: (
+                <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#DC283A" fill-opacity="1.000000"/>
+                </svg>
+            )
+        }
+    ];
+
     const handleFilterClick = () => {
         setShowFilterWindow(!showFilterWindow);
     };
@@ -156,12 +199,22 @@ const Requests: React.FC = () => {
                         <div className="form-block" style={{ width: '1230px'}}>
                             <div className="form-block-header">
                                 <div className="form-block-description">
-                                    <p className="my-order" style={{ paddingRight: '40px'}}>Мои заявки</p>
-                                    <p style={{ paddingRight: '10px'}}>№ КД</p>
-                                    <input onChange={(e) => setSearchInput(e.target.value)} className="input-block-search" type="text" placeholder="Поиск"/>
+                                    <p className="my-order">Мои заявки</p>
+                                    <p style={{ width: '55px', paddingRight: '10px'}}>№ КД</p>
+                                    {/*<input onChange={(e) => setSearchInput(e.target.value)} className="input-block-search" type="text" placeholder="Поиск"/>*/}
+                                    <input onChange={(e)=> setSearchInput(e.target.value)}
+                                        className="input-block-search" type="text" placeholder="Поиск" value={searchInput}
+                                    />
+                                    {searchInput && (
+                                        <button className="clear-search" onClick={()=> setSearchInput('')}>
+                                            <img width={16} height={16} src={closeImg} alt=""/>
+                                        </button>
+                                    )}
                                     <div className="selected-status-filters">
                                         {selectedStatusFilters.map((filter) => (
-                                            <span key={filter} className="selected-filter">{filter}
+                                            <span key={filter} className="selected-filter">
+                                                {filter}
+                                                {statusFilters.find((status) => status.name === filter)?.icon}
                                                 <button onClick={() => handleResetFilter(filter)}>
                                                     <img width={11} height={11} src={closeImg}/>
                                                 </button>
@@ -182,46 +235,16 @@ const Requests: React.FC = () => {
                                         <div className="filter-header">
                                             <p>Статус</p>
                                             <div className="filter-buttons">
-                                                <button
-                                                    className={`fb-style ${selectedButtonStatus.includes('Выполнена') ? 'gradient-text' : ''}`}
-                                                    onClick={()=> handleStatusFilterClick('Выполнена')}
-                                                >Выполнена
-                                                    <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#2AC673" fill-opacity="1.000000"/>
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    className={`fb-style ${selectedButtonStatus.includes('Отказано') ? 'gradient-text' : ''}`}
-                                                    onClick={()=> handleStatusFilterClick('Отказано')}
-                                                >Отказано
-                                                    <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#EF6B25" fill-opacity="1.000000"/>
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    className={`fb-style ${selectedButtonStatus.includes('В работе') ? 'gradient-text' : ''}`}
-                                                    onClick={()=> handleStatusFilterClick('В работе')}
-                                                >В работе
-                                                    <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#FFFFFF" fill-opacity="0.960000"/>
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    className={`fb-style ${selectedButtonStatus.includes('Создана') ? 'gradient-text' : ''}`}
-                                                    onClick={()=> handleStatusFilterClick('Создана')}
-                                                >Создана
-                                                    <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#FFFFFF" fill-opacity="0.550000"/>
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    className={`fb-style ${selectedButtonStatus.includes('Ошибка') ? 'gradient-text' : ''}`}
-                                                    onClick={()=> handleStatusFilterClick('Ошибка')}
-                                                >Ошибка
-                                                    <svg style={{marginLeft: '5px'}} width="10.000000" height="10.000000" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <circle id="Oval 2" cx="5.000000" cy="5.000000" r="5.000000" fill="#DC283A" fill-opacity="1.000000"/>
-                                                    </svg>
-                                                </button>
+                                                {statusFilters.map((filter) => (
+                                                    <button
+                                                        key={filter.name}
+                                                        className={`fb-style ${selectedButtonStatus.includes(filter.name) ? 'gradient-text' : ''}`}
+                                                        onClick={() => handleStatusFilterClick(filter.name)}
+                                                    >
+                                                        {filter.name}
+                                                        {filter.icon}
+                                                    </button>
+                                                ))}
                                             </div>
                                         </div>
                                         <div className="filter-body">
@@ -281,7 +304,7 @@ const Requests: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="hide-filter-block" style={{ marginTop: '5px'}}>
+                            <div className="hide-filter-block">
                                 {selectedTypeFilters.map((filter) => (
                                     <span key={filter} className="selected-type">{filter}
                                         <button onClick={() => handleResetType(filter)}>

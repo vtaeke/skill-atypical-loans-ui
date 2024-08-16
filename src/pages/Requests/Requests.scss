@@ -49,6 +49,7 @@
 }
 
 .my-order {
+  padding-right: 30px;
   cursor: pointer;
   background-color: transparent;
   border: none;
@@ -100,17 +101,19 @@
 }
 
 .selected-status-filters {
+  width: 430px;
   margin-left: 25px;
 }
 
 .selected-filter {
-  width: 135px;
+  //width: 135px;
   height: 30px;
   background-color: rgb(8, 8, 8);
   border-radius: 12px;
   font-size: 14px;
-  padding: 8px 8px 8px 8px;
-  margin-right: 8px;
+  padding: 8px 8px 0px 8px;
+  display: inline-block;
+  margin: 0px 8px 8px 0px;
 }
 
 .selected-filter button {
@@ -120,14 +123,20 @@
   cursor: pointer;
 }
 
+.hide-filter-block {
+  width: 1150px;
+  margin-top: 5px;
+}
+
 .selected-type {
-  width: 135px;
+  display: inline-block;
+  //width: 135px;
   height: 30px;
   background-color: rgb(8, 8, 8);
   border-radius: 12px;
   font-size: 14px;
-  padding: 8px 8px 8px 8px;
-  margin-right: 8px;
+  padding: 8px 8px 0px 8px;
+  margin: 8px 8px 0px 0px;
 }
 
 .selected-type button {
@@ -153,7 +162,6 @@
 
 .form-block .form-button {
   display: flex;
-  //margin-top: 20px;
 }
 
 .table-description {
@@ -261,7 +269,6 @@
 .footer-verify {
   margin-top: 7px;
   display: flex;
-  //margin: 0 auto;
   align-items: center;
   margin-bottom: 20px;
 }
