@@ -28,7 +28,7 @@ const Notification: React.FC<NotificationProps> = ({message, onClose}) => {
                 <button className='my-order-btn' onClick={() => handleCardClick('/requests')}>Перейти в "Мои заявки"</button>
             </div>
             <div className="notification-header">
-                <button className='btn-close-notify' onClick={onClose}><img width={36} height={28} src={buttonClose} alt=""/></button>
+                <button className='btn-close-notify' onClick={() => handleCardClick('/')}><img width={36} height={28} src={buttonClose} alt=""/></button>
             </div>
         </div>
     )

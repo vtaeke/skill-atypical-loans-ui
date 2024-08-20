@@ -12,6 +12,7 @@ import SettlementOfProblemDebt from "./pages/SettlementOfProblemDebt/SettlementO
 import Foreigners from "./pages/Foreigners/Foreigners";
 import ConclusionTransactions from "./pages/ConclusionTransactions/ConclusionTransactions";
 import Requests from "./pages/Requests/Requests";
+import Registers from "./pages/Registers/Registers";
 
 const router = createBrowserRouter([
     {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
     {
         path: "/conclusion-transactions",
         element: <ConclusionTransactions />,
+    },
+    {
+        path: "/registers",
+        element: <Registers />,
     },
 ]);
 

@@ -116,11 +116,11 @@ const Foreigners: React.FC = () => {
         }
     };
 
-    //v3 вывод в консоль файлов, которые были добавлены
+    //вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
-        setShowErrors(true); // Показываем ошибки при отправке формы
+        setShowErrors(true);
 
         if (successSubmit) {
             Object.entries(formState).forEach(([field, value]) => {
