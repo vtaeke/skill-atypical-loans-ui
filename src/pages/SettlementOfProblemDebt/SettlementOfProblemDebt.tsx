@@ -113,7 +113,7 @@ const SettlementOfProblemDebt: React.FC = () => {
         }
     };
 
-    //v3 вывод в консоль файлов, которые были добавлены
+    //вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 

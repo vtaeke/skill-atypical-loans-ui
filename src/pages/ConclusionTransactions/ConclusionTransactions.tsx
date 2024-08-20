@@ -72,10 +72,21 @@ const ConclusionTransactions: React.FC = () => {
     // }, [formState, fileList])
 
     // условие - Отчество, комментарий - не обязательное
+    // useEffect(() => {
+    //     const requiredFields: (keyof typeof formState)[] = [
+    //         'businessProcess', 'externalId', 'tbObjectName', 'lastName', 'firstName', 'initiatorEmail'
+    //     ];
+    //     const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
+    //     setSuccessSubmit(validValue);
+    // }, [formState, fileList]);
+
     useEffect(() => {
-        const requiredFields: (keyof typeof formState)[] = [
-            'businessProcess', 'externalId', 'tbObjectName', 'lastName', 'firstName', 'initiatorEmail'
-        ];
+        let requiredFields: (keyof typeof formState)[] = [];
+        if (formState.businessProcess === 'Индивидуальные схемы кредитования') {
+            requiredFields = [ 'businessProcess', 'externalId', 'tbObjectName', 'initiatorEmail']
+        } else if (formState.businessProcess === 'Кредит на индивидуальных условиях') {
+            requiredFields = [ 'businessProcess', 'externalId', 'lastName', 'firstName', 'initiatorEmail']
+        }
         const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
         setSuccessSubmit(validValue);
     }, [formState, fileList]);
@@ -112,11 +123,11 @@ const ConclusionTransactions: React.FC = () => {
         }
     };
 
-    //v3 вывод в консоль файлов, которые были добавлены
+    //вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
-        setShowErrors(true); // Показываем ошибки при отправке формы
+        setShowErrors(true);
 
         if (successSubmit) {
             Object.entries(formState).forEach(([field, value]) => {
@@ -226,9 +237,9 @@ const ConclusionTransactions: React.FC = () => {
                                         {formState.businessProcess === 'Индивидуальные схемы кредитования' && (
                                             <div>
                                                 <div className="form-content-credit-contract">
-                                            <span className="icon" style={{marginRight: '10px'}}>
-                                                <img width={30} height={30} src={numberIcon} alt="icon"/>
-                                            </span>
+                                                    <span className="icon" style={{marginRight: '10px'}}>
+                                                        <img width={30} height={30} src={numberIcon} alt="icon"/>
+                                                    </span>
                                                     <div className="input-block-contract">
                                                         <input
                                                             type="text"
@@ -242,45 +253,7 @@ const ConclusionTransactions: React.FC = () => {
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="form-content-fio">
-                                                <span className="icon" style={{marginRight: '10px'}}>
-                                                    <img width={30} height={30} src={peopleIcon} alt="icon"/>
-                                                </span>
-                                                    <div className="input-block">
-                                                        <input
-                                                            style={{marginRight: '10px'}}
-                                                            className='fio'
-                                                            type="text"
-                                                            placeholder="Фамилия"
-                                                            value={formState.lastName}
-                                                            onChange={(e) => handleInputChange('lastName', e.target.value)}/>
-                                                        <input
-                                                            style={{marginRight: '10px'}}
-                                                            className='fio'
-                                                            type="text"
-                                                            placeholder="Имя"
-                                                            value={formState.firstName}
-                                                            onChange={(e) => handleInputChange('firstName', e.target.value)}/>
-                                                        <input
-                                                            className='fio'
-                                                            type="text"
-                                                            placeholder="Отчество"
-                                                            value={formState.middleName}
-                                                            onChange={(e) => handleInputChange('middleName', e.target.value)}/>
-                                                        <div style={{ display: 'flex'}}>
-                                                            {showErrors && !formState.lastName && (
-                                                                <div className="error-message" style={{ marginRight: '102px'}}>
-                                                                    <span className="span-error-info">Обязательное поле</span> Фамилия
-                                                                </div>
-                                                            )}
-                                                            {showErrors && !formState.firstName && (
-                                                                <div className="error-message">
-                                                                    <span className="span-error-info">Обязательное поле</span> Имя
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
+
                                                 <div className="form-content-body">
                                                     <div className="form-content-bank">
                                                     <span className="icon" style={{marginRight: '10px'}}>
@@ -292,9 +265,7 @@ const ConclusionTransactions: React.FC = () => {
                                                                 value={formState.tbObjectName}
                                                                 onChange={(e) => handleInputChange('tbObjectName', e.target.value)}
                                                             >
-                                                                <option value="Центральный аппарат">Территориальный
-                                                                    банк
-                                                                </option>
+                                                                <option value="" disabled>Название организации</option>
                                                                 <option value="Сбер">Сбер</option>
                                                                 <option value="Сбербанк">Сбербанк</option>
                                                                 <option value="СБЕР2">СБЕР</option>
@@ -406,33 +377,6 @@ const ConclusionTransactions: React.FC = () => {
                                                             {showErrors && !formState.firstName && (
                                                                 <div className="error-message">
                                                                     <span className="span-error-info">Обязательное поле</span> Имя
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="form-content-body">
-                                                    <div className="form-content-bank">
-                                                    <span className="icon" style={{marginRight: '10px'}}>
-                                                        <img width={30} height={30} src={homeLine} alt="icon"/>
-                                                    </span>
-                                                        <div className="form-content-form-bank">
-                                                            <select
-                                                                className='select-bank'
-                                                                value={formState.tbObjectName}
-                                                                onChange={(e) => handleInputChange('tbObjectName', e.target.value)}
-                                                            >
-                                                                <option value="Центральный аппарат">Территориальный
-                                                                    банк
-                                                                </option>
-                                                                <option value="Сбер">Сбер</option>
-                                                                <option value="Сбербанк">Сбербанк</option>
-                                                                <option value="СБЕР2">СБЕР</option>
-                                                                <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
-                                                            </select>
-                                                            {showErrors && !formState.tbObjectName && (
-                                                                <div className="error-message" style={{ marginBottom: '5px'}}>
-                                                                    <span className="span-error-info">Обязательное поле</span>
                                                                 </div>
                                                             )}
                                                         </div>
