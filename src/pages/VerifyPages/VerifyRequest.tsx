@@ -374,6 +374,7 @@ const VerifyRequest: React.FC = () => {
                                             <div className="error-message" style={{marginLeft: '40px'}}>
                                                 <span className="span-error-info">Обязательное поле</span>
                                             </div>
+
                                         )}
                                     </div>
                                 </div>
