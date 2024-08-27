@@ -31,6 +31,7 @@ const NonTransactionalRequest: React.FC = () => {
         objectCost: '',
         initiatorEmail: '',
         comment: '',
+        estateObjects: [] as {objectType: string; objectCost: string}[],
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
@@ -42,6 +43,7 @@ const NonTransactionalRequest: React.FC = () => {
     const [alertMessage, setAlertMessage] = useState('');
     const [fieldErrors, setFieldErrors] = useState<{[key:string]:string}>({});
     const [showErrors, setShowErrors] = useState(false);
+    const [addRealtyObjects, setAddRealtyObjects] = useState<{ objectType: string; objectCost: string }[]>([]);
 
     const navigate = useNavigate();
 
@@ -166,12 +168,14 @@ const NonTransactionalRequest: React.FC = () => {
         if (successSubmit) {
             // Если форма заполнена корректно
             Object.entries(formState).forEach(([field, value]) => {
-                dispatch(updateFormField(field, value));
+                // dispatch(updateFormField(field, value));
+                dispatch(updateFormField(field, typeof value === 'string' ? value: ''))
             });
 
             const formData = new FormData();
             Object.entries(formState).forEach(([field, value]) => {
-                formData.append(field, value);
+                // formData.append(field, value);
+                formData.append(field, typeof value === 'string' ? value : JSON.stringify(value))
             });
             fileList.forEach(file => {
                 formData.append('files', file);
@@ -228,6 +232,39 @@ const NonTransactionalRequest: React.FC = () => {
     const closeAlert = () => {
         setShowAlert(false);
     };
+
+    const handleAddRealtyObject = () => {
+        const newObject = {
+            objectType: formState.objectType,
+            objectCost: formState.objectCost,
+        }
+
+        setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
+
+        setFormState(prevState => {
+            const updateFormState = {
+                ...prevState,
+                estateObjects: [...(prevState.estateObjects || []), newObject],
+                objectType: '',
+                objectCost: '',
+            };
+            console.log('Updated formState.estateObjects:', updateFormState.estateObjects);
+            return updateFormState;
+        })
+    }
+
+    const handleAddRealtyRemove = (index: number) => {
+        setFormState(prevState => {
+            const updateRealtyObject = prevState.estateObjects.filter((_, i) => i !== index)
+
+            return {
+                ...prevState,
+                estateObjects: updateRealtyObject
+            }
+        })
+
+        setAddRealtyObjects(prevObjects => prevObjects.filter((_, i) => i !== index))
+    }
 
     return (
         <div className="app" style={{ height: '100vh'}}>
@@ -298,6 +335,7 @@ const NonTransactionalRequest: React.FC = () => {
                                     </span>
                                     <div className="input-block">
                                         <input
+                                            maxLength={84}
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
@@ -306,6 +344,7 @@ const NonTransactionalRequest: React.FC = () => {
                                             onChange={(e) => handleInputChange('lastName', e.target.value)}
                                         />
                                         <input
+                                            maxLength={84}
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
@@ -314,6 +353,7 @@ const NonTransactionalRequest: React.FC = () => {
                                             onChange={(e) => handleInputChange('firstName', e.target.value)}
                                         />
                                         <input
+                                            maxLength={84}
                                             className='fio'
                                             type="text"
                                             placeholder="Отчество"
@@ -353,6 +393,26 @@ const NonTransactionalRequest: React.FC = () => {
                                     </div>
                                 </div>
 
+                                <div>
+                                    {addRealtyObjects.map((object, index) => (
+                                        <div className="hidden-realty-block" key={index}>
+                                            <div className="hidden-realty-body">
+                                                <span style={{ padding: '8px 40px 8px 10px'}}>{object.objectType}</span>
+                                                <span>{object.objectCost}</span>
+                                                <button
+                                                    type="button"
+                                                    style={{
+                                                        marginLeft: 'auto', // this will push the button to the right
+                                                        background: "transparent",
+                                                        border: 'none',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                    onClick={() => handleAddRealtyRemove(index)}>
+                                                    <img src={closeImg} width={14} height={14} alt=""/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
                                 <div className="form-content-body">
                                     <div className="form-content-realty">
                                         <span className="icon" style={{ marginRight: '10px' }}>
@@ -389,7 +449,8 @@ const NonTransactionalRequest: React.FC = () => {
                                         </div>
 
                                     </div>
-                                    <button className='button-realty-add'>Добавить</button>
+                                    <button type="button" onClick={handleAddRealtyObject} className='button-realty-add'>Добавить</button>
+                                </div>
                                 </div>
 
                                 <div className="form-content-email">

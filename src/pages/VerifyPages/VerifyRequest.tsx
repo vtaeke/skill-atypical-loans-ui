@@ -32,6 +32,7 @@ const VerifyRequest: React.FC = () => {
         middleName: '',
         initiatorEmail: '',
         comment: '',
+        estateObjects: [] as {objectType: string; objectCost: string}[],
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
@@ -42,6 +43,7 @@ const VerifyRequest: React.FC = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [showErrors, setShowErrors] = useState(false);
+    const [addRealtyObjects, setAddRealtyObjects] = useState<{ objectType: string; objectCost: string }[]>([]);
 
     const navigate = useNavigate();
 
@@ -126,12 +128,14 @@ const VerifyRequest: React.FC = () => {
 
         if (successSubmit) {
             Object.entries(formState).forEach(([field, value]) => {
-                dispatch(updateFormField(field, value))
+                // dispatch(updateFormField(field, value))
+                dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
             })
 
             const formData = new FormData()
             Object.entries(formState).forEach(([field, value]) => {
-                formData.append(field, value)
+                // formData.append(field, value)
+                formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
             });
             fileList.forEach(file => {
                 formData.append('files', file)
@@ -207,6 +211,39 @@ const VerifyRequest: React.FC = () => {
         setShowAlert(false);
     };
 
+    const handleAddRealtyObject = () => {
+        const newObject = {
+            objectType: formState.objectType,
+            objectCost: formState.objectCost,
+        }
+
+        setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
+
+        setFormState(prevState => {
+            const updateFormState = {
+                ...prevState,
+                estateObjects: [...(prevState.estateObjects || []), newObject],
+                objectType: '',
+                objectCost: '',
+            };
+            console.log('Updated formState.estateObjects:', updateFormState.estateObjects);
+            return updateFormState;
+        })
+    }
+
+    const handleAddRealtyRemove = (index: number) => {
+        setFormState(prevState => {
+            const updateRealtyObject = prevState.estateObjects.filter((_, i) => i !== index)
+
+            return {
+                ...prevState,
+                estateObjects: updateRealtyObject
+            }
+        })
+
+        setAddRealtyObjects(prevObjects=> prevObjects.filter((_, i) => i !== index))
+    }
+
     return (
         <div className="app">
             <div className="container">
@@ -276,43 +313,69 @@ const VerifyRequest: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="form-content-body">
-                                    <div className="form-content-realty">
+                                <div>
+                                    {addRealtyObjects.map((object, index) => (
+                                        <div className="hidden-realty-block" key={index}>
+                                            <div className="hidden-realty-body">
+                                                <span style={{ padding: '8px 40px 8px 10px'}}>{object.objectType}</span>
+                                                <span>{object.objectCost}</span>
+                                                <button
+                                                    type="button"
+                                                    style={{
+                                                        marginLeft: 'auto', // this will push the button to the right
+                                                        background: "transparent",
+                                                        border: 'none',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                    onClick={() => handleAddRealtyRemove(index)}>
+                                                    <img src={closeImg} width={14} height={14} alt=""/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <div className="form-content-body">
+                                        <div className="form-content-realty">
                                         <span className="icon" style={{ marginRight: '10px' }}>
                                             <img width={30} height={30} src={houseIcon} alt="icon" />
                                         </span>
-                                        <div className="form-content-real-property">
-                                            <select
-                                                className='select-realty'
-                                                value={formState.objectType}
-                                                onChange={(e) => handleInputChange('objectType', e.target.value)}
-                                            >
-                                                <option value="" disabled hidden>Объект недвижимости</option>
-                                                <option value="СНТ">СНТ</option>
-                                                <option value="ИЖС">ИЖС</option>
-                                            </select>
-                                            {showErrors && !formState.objectType && (
-                                                <div className="error-message" style={{marginLeft: '270px'}}>
-                                                    <span className="span-error-info">Обязательное поле</span>
-                                                </div>
-                                            )}
+                                            <div className="form-content-real-property">
+                                                <select
+                                                    className='select-realty'
+                                                    value={formState.objectType}
+                                                    onChange={(e) => handleInputChange('objectType', e.target.value)}
+                                                >
+                                                    <option value="" disabled hidden>Объект недвижимости</option>
+                                                    <option value="ИЖС">ИЖС</option>
+                                                    <option value="СНТ">СНТ</option>
+                                                </select>
+                                                {showErrors && !formState.objectType && (
+                                                    <div className="error-message" style={{marginLeft: '270px'}}>
+                                                        <span className="span-error-info">Обязательное поле</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="form-content-real-property">
+                                                <input
+                                                    style={{ width: "395px", height: '16px' }}
+                                                    type="text"
+                                                    placeholder="Стоимость"
+                                                    value={formState.objectCost}
+                                                    onChange={(e) => handleInputChange('objectCost', e.target.value)}
+                                                />
+                                                {/*{showErrors && !formState.objectCost && (*/}
+                                                {/*    <div className="error-message">*/}
+                                                {/*        <span className="span-error-info">Обязательное поле</span>*/}
+                                                {/*    </div>*/}
+                                                {/*)}*/}
+                                            </div>
                                         </div>
-                                        <div className="form-content-real-property">
-                                            <input
-                                                style={{ width: "395px", height: '16px' }}
-                                                type="text"
-                                                placeholder="Стоимость"
-                                                value={formState.objectCost}
-                                                onChange={(e) => handleInputChange('objectCost', e.target.value)}
-                                            />
-                                            {showErrors && !formState.objectCost && (
-                                                <div className="error-message">
-                                                    <span className="span-error-info">Обязательное поле</span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <button type="button" onClick={handleAddRealtyObject} className='button-realty-add'>Добавить</button>
+                                        {showErrors && (!formState?.estateObjects || formState?.estateObjects.length === 0) && (
+                                            <div className="error-message" style={{marginLeft: '40px'}}>
+                                                <span className="span-error-info">Обязательное поле</span>
+                                            </div>
+                                        )}
                                     </div>
-                                    <button className='button-realty-add'>Добавить</button>
                                 </div>
 
                                 <div className="form-content-body">
@@ -372,6 +435,7 @@ const VerifyRequest: React.FC = () => {
                                     </span>
                                     <div className="input-block">
                                         <input
+                                            maxLength={84}
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
@@ -380,6 +444,7 @@ const VerifyRequest: React.FC = () => {
                                             onChange={(e) => handleInputChange('lastName', e.target.value)}
                                         />
                                         <input
+                                            maxLength={84}
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
@@ -388,6 +453,7 @@ const VerifyRequest: React.FC = () => {
                                             onChange={(e) => handleInputChange('firstName', e.target.value)}
                                         />
                                         <input
+                                            maxLength={84}
                                             className='fio'
                                             type="text"
                                             placeholder="Отчество"

@@ -1,4 +1,4 @@
-import {ADD_FILES, FormActionTypes, RESET_FORM, UPDATE_FORM_FIELD} from '../action/formActions';
+import {ADD_FILES, ADD_REALTY_OBJECT, FormActionTypes, RESET_FORM, UPDATE_FORM_FIELD} from '../action/formActions';
 
 interface FormState {
     businessProcess: string,
@@ -13,7 +13,8 @@ interface FormState {
     initiatorEmail: string,
     vip: string,
     comment: string,
-    files: File[]
+    files: File[],
+    addRealtyObjects: {objectType: string, objectCost: string}[],
 }
 
 const initialState: FormState = {
@@ -29,7 +30,8 @@ const initialState: FormState = {
     initiatorEmail: '',
     vip: '',
     comment: '',
-    files: []
+    files: [],
+    addRealtyObjects: [],
 };
 
 const formReducer = (state = initialState, action: FormActionTypes): FormState => {
@@ -45,7 +47,12 @@ const formReducer = (state = initialState, action: FormActionTypes): FormState =
             return {
                 ...state,
                 files: [...state.files, ...action.payload]
-            }
+            };
+        case ADD_REALTY_OBJECT:
+            return {
+                ...state,
+                addRealtyObjects: [...state.addRealtyObjects, action.payload]
+            };
         default:
             return state;
     }

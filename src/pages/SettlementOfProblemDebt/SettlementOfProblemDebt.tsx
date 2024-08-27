@@ -253,6 +253,7 @@ const SettlementOfProblemDebt: React.FC = () => {
                                     </span>
                                     <div className="input-block">
                                         <input
+                                            maxLength={84}
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
@@ -261,6 +262,7 @@ const SettlementOfProblemDebt: React.FC = () => {
                                             onChange={(e) => handleInputChange('lastName', e.target.value)}
                                         />
                                         <input
+                                            maxLength={84}
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
@@ -269,6 +271,7 @@ const SettlementOfProblemDebt: React.FC = () => {
                                             onChange={(e) => handleInputChange('firstName', e.target.value)}
                                         />
                                         <input
+                                            maxLength={84}
                                             className='fio'
                                             type="text"
                                             placeholder="Отчество"
