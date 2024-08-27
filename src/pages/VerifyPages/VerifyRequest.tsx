@@ -20,19 +20,59 @@ import NorificationAlert from "../Notification/NorificationAlert";
 
 const VerifyRequest: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
+    // const [formState, setFormState] = useState({
+    //     businessProcess: '',
+    //     externalId: '',
+    //     objectType: '',
+    //     objectCost: '',
+    //     tbObjectName: '',
+    //     objectRegionCode: '',
+    //     lastName: '',
+    //     firstName: '',
+    //     middleName: '',
+    //     initiatorEmail: '',
+    //     comment: '',
+    //     estateObjects: [] as {objectType: string; objectCost: string}[],
+    // });
     const [formState, setFormState] = useState({
-        businessProcess: '',
-        externalId: '',
-        objectType: '',
-        objectCost: '',
-        tbObjectName: '',
-        objectRegionCode: '',
-        lastName: '',
-        firstName: '',
-        middleName: '',
-        initiatorEmail: '',
-        comment: '',
-        estateObjects: [] as {objectType: string; objectCost: string}[],
+        taskInitiator: {
+            externalId: "",
+            source: "",
+            tbName: "",
+            initiatorEmail: "",
+            initiatorID: ""
+        },
+        businessProcess: {
+            type: "",
+            category: ""
+        },
+        taskInfo: {
+            dealMembersNumber: 0,
+            client: {
+                firstName: "",
+                middleName: "",
+                lastName: ""
+            },
+            organization: {
+                orgname: ""
+            },
+            estateObjects: [
+                {
+                    objectType: "",
+                    objectCost: 0,
+                    tbObjectName: 0,
+                    objectRegionCode: "",
+                    currency: "RUB"
+                }
+            ]
+        },
+        clientManagerComment: "",
+        documentsInfo: [
+            {
+                otrId: "",
+                fileName: ""
+            }
+        ]
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
@@ -49,13 +89,13 @@ const VerifyRequest: React.FC = () => {
 
     useEffect(() => {
         const validateEmail = () => {
-            if (formState.initiatorEmail === '') {
+            if (formState.taskInitiator.initiatorEmail === '') {
                 setEmailError(null)
                 return;
             }
 
             const emailReg = /^[a-zA-Z0-9._%+-]+@(sberbank.ru|sber.ru|omega.sbrf.ru)$/;
-            if (!emailReg.test(formState.initiatorEmail)) {
+            if (!emailReg.test(formState.taskInitiator.initiatorEmail)) {
                 setEmailError(
                     <>
                         <span style={{color: 'rgb(239, 107, 37)'}}>
@@ -68,7 +108,7 @@ const VerifyRequest: React.FC = () => {
             }
         }
         validateEmail()
-    }, [formState.initiatorEmail])
+    }, [formState.taskInitiator.initiatorEmail])
 
     // условие - проверка на все поля
     // useEffect(() => {
@@ -78,11 +118,24 @@ const VerifyRequest: React.FC = () => {
 
     // условие - Отчество, комментарий - не обязательное
     useEffect(() => {
-        const requiredFields: (keyof typeof formState)[] = [
-            'businessProcess', 'externalId', 'objectType', 'objectCost', 'tbObjectName', 'objectRegionCode', 'lastName',
-            'firstName', 'initiatorEmail'
-        ];
-        const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
+        // const requiredFields: (keyof typeof formState)[] = [
+        //     'businessProcess', 'externalId', 'objectType', 'objectCost', 'tbObjectName', 'objectRegionCode', 'lastName',
+        //     'firstName', 'initiatorEmail'
+        // ];
+        console.log("Form state updated============: ", formState);
+        const requiredFields = [
+            formState.businessProcess.type,
+            formState.businessProcess.category,
+            formState.taskInitiator.externalId,
+            formState.taskInitiator.initiatorEmail,
+            formState.taskInfo.client.firstName,
+            formState.taskInfo.client.lastName,
+            formState.taskInfo.estateObjects[0].objectType,
+            formState.taskInfo.estateObjects[0].objectCost,
+            formState.taskInfo.estateObjects[0].objectRegionCode,
+        ]
+        // const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
+        const validValue = requiredFields.every(field => field !== '') && fileList.length > 0;
         setSuccessSubmit(validValue);
     }, [formState, fileList]);
 
@@ -183,12 +236,181 @@ const VerifyRequest: React.FC = () => {
     //     }
     // }
     //
-    const handleInputChange = (field: string, value: string) => {
-        setFormState(prevState => ({
-            ...prevState,
-            [field]: value
-        }));
+    // const handleInputChange = (field: string, value: string) => {
+    //     setFormState(prevState => ({
+    //         ...prevState,
+    //         [field]: value
+    //     }));
+    // };
+    //
+    // const handleInputChange = (field:string, value: string, group?: string) => {
+    //     setFormState(prevState => ({
+    //         ...prevState,
+    //         [group || field]: group ? {...prevState[group], [field]: value} : value
+    //     }));
+    // }
+    //
+    // const handleInputChange = (field: string, value: string | number | any[]) => {
+    //     console.log(`Поле: ${field}, Значение: ${value}`);
+    //     const fieldParts = field.split('.');
+    //     const topLevelField = fieldParts[0] as keyof typeof formState; // Приводим к типу ключа объекта formState
+    //
+    //     if (topLevelField === 'taskInitiator' && fieldParts[1] === 'externalId') {
+    //         setFormState((prevState) => ({
+    //             ...prevState,
+    //             taskInitiator: {
+    //                 ...prevState.taskInitiator,
+    //                 externalId: value as string,
+    //                 creditContractNumber: value as string, // Обновить поле creditContractNumber
+    //             },
+    //         }));
+    //     }
+    //
+    //     if (field === 'taskInitiator.initiatorEmail') {
+    //         setFormState((prevState) => ({
+    //             ...prevState,
+    //             taskInitiator: {
+    //                 ...prevState.taskInitiator,
+    //                 initiatorEmail: value as string,
+    //             },
+    //         }));
+    //     }
+    //
+    //     if (topLevelField === 'taskInfo' && fieldParts[1] === 'client') {
+    //         const fieldName = fieldParts[2];
+    //         setFormState((prevState => ({
+    //             ...prevState,
+    //             taskInfo: {
+    //                 ...prevState.taskInfo,
+    //                 client: {
+    //                     ...prevState.taskInfo.client,
+    //                     [fieldName]: value,
+    //                 }
+    //             }
+    //         })))
+    //     }
+    //
+    //     if (field === 'estateObjects.tbObjectName') {
+    //         //@ts-ignore
+    //         setFormState((prevState) => ({
+    //             ...prevState,
+    //             taskInfo: {
+    //                 ...prevState.taskInfo,
+    //                 estateObjects: prevState.taskInfo.estateObjects.map((obj) => ({
+    //                     ...obj,
+    //                     tbObjectName: String(value),
+    //                 })),
+    //             },
+    //         }));
+    //     } else if (topLevelField === 'taskInfo' && fieldParts[1] === 'estateObjects') {
+    //         const index = parseInt(fieldParts[2], 10);
+    //         const fieldName = fieldParts[3];
+    //
+    //         setFormState((prevState) => ({
+    //             ...prevState,
+    //             taskInfo: {
+    //                 ...prevState.taskInfo,
+    //                 estateObjects: prevState.taskInfo.estateObjects.map((obj, i) => {
+    //                     if (i === index) {
+    //                         return { ...obj, [fieldName]: value };
+    //                     }
+    //                     return obj;
+    //                 }),
+    //             },
+    //         }));
+    //     } else if (topLevelField === 'taskInfo') {
+    //         const section = fieldParts[0] as keyof typeof formState; // Приводим к типу ключа объекта formState
+    //         const fieldName = fieldParts[1];
+    //
+    //         setFormState((prevState) => ({
+    //             ...prevState,
+    //             [section]: {
+    //                 //@ts-ignore
+    //                 ...prevState[section],
+    //                 [fieldName]: value,
+    //             },
+    //         }));
+    //     } else {
+    //         setFormState((prevState) => ({
+    //             ...prevState,
+    //             [field]: value,
+    //         }));
+    //     }
+    // };
+
+    //v2
+    const handleInputChange = (field: string, value: string | number | any[]) => {
+        console.log(`Поле: ${field}, Значение: ${value}`);
+        const fieldParts = field.split('.');
+        const topLevelField = fieldParts[0] as keyof typeof formState;
+
+
+
+        if (topLevelField === 'taskInitiator') {
+            if (fieldParts[1] === 'externalId') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInitiator: {
+                        ...prevState.taskInitiator,
+                        externalId: value as string,
+                    },
+                }));
+            } else if (fieldParts[1] === 'initiatorEmail') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInitiator: {
+                        ...prevState.taskInitiator,
+                        initiatorEmail: value as string,
+                    },
+                }));
+            }
+        } else if (topLevelField === 'taskInfo') {
+            if (fieldParts[1] === 'client') {
+                const fieldName = fieldParts[2];
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        client: {
+                            ...prevState.taskInfo.client,
+                            [fieldName]: value,
+                        },
+                    },
+                }));
+            } else if (fieldParts[1] === 'estateObjects') {
+                const index = parseInt(fieldParts[2], 10);
+                const fieldName = fieldParts[3];
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        estateObjects: prevState.taskInfo.estateObjects.map((obj, i) => {
+                            if (i === index) {
+                                return { ...obj, [fieldName]: value };
+                            }
+                            return obj;
+                        }),
+                    },
+                }));
+            } else {
+                const fieldName = fieldParts[1];
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        [fieldName]: value,
+                    },
+                }));
+            }
+        } else {
+            setFormState((prevState) => ({
+                ...prevState,
+                [field]: value,
+            }));
+        }
     };
+
+
 
     const closeNotification = () => {
         setShowNotification(false)
@@ -213,33 +435,51 @@ const VerifyRequest: React.FC = () => {
 
     const handleAddRealtyObject = () => {
         const newObject = {
-            objectType: formState.objectType,
-            objectCost: formState.objectCost,
+            objectType: formState.taskInfo.estateObjects[0].objectType,
+            objectCost: formState.taskInfo.estateObjects[0].objectCost,
         }
 
+
+        //@ts-ignore
         setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
 
-        setFormState(prevState => {
-            const updateFormState = {
-                ...prevState,
-                estateObjects: [...(prevState.estateObjects || []), newObject],
-                objectType: '',
-                objectCost: '',
-            };
-            console.log('Updated formState.estateObjects:', updateFormState.estateObjects);
-            return updateFormState;
-        })
+        // setFormState(prevState => {
+        //     const updateFormState = {
+        //         ...prevState,
+        //         estateObjects: [...(prevState.estateObjects || []), newObject],
+        //         objectType: '',
+        //         objectCost: '',
+        //     };
+        //     console.log('Updated formState.estateObjects:', updateFormState.estateObjects);
+        //     return updateFormState;
+        // })
+        //@ts-ignore
+        setFormState(prevState => ({
+            ...prevState,
+            taskInfo: {
+                ...prevState.taskInfo,
+                estateObjects: [...prevState.taskInfo.estateObjects, newObject],
+            }
+        }))
     }
 
     const handleAddRealtyRemove = (index: number) => {
-        setFormState(prevState => {
-            const updateRealtyObject = prevState.estateObjects.filter((_, i) => i !== index)
+        // setFormState(prevState => {
+        //     const updateRealtyObject = prevState.estateObjects.filter((_, i) => i !== index)
+        //
+        //     return {
+        //         ...prevState,
+        //         estateObjects: updateRealtyObject
+        //     }
+        // })
 
-            return {
-                ...prevState,
-                estateObjects: updateRealtyObject
+        setFormState(prevState => ({
+           ...prevState,
+            taskInfo: {
+               ...prevState.taskInfo,
+                estateObjects: prevState.taskInfo.estateObjects.filter((_, i) => i !== index)
             }
-        })
+        }))
 
         setAddRealtyObjects(prevObjects=> prevObjects.filter((_, i) => i !== index))
     }
@@ -272,10 +512,11 @@ const VerifyRequest: React.FC = () => {
                                         <div>
                                             <select
                                                 className='select-realty-category'
+                                                //@ts-ignore
                                                 value={formState.businessProcess}
                                                 onChange={(e) => handleInputChange('businessProcess', e.target.value)}
                                             >
-                                                <option value="" disabled hidden>Категория запроса</option>
+                                                <option value="" hidden>Категория запроса</option>
                                                 <option value="Реструктуризация">Реструктуризация</option>
                                                 <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
                                             </select>
@@ -302,10 +543,10 @@ const VerifyRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Номер кредитного договора"
-                                            value={formState.externalId}
-                                            onChange={(e) => handleInputChange('externalId', e.target.value)}
+                                            value={formState.taskInitiator.externalId}
+                                            onChange={(e) => handleInputChange('taskInitiator.externalId', e.target.value)}
                                         />
-                                        {showErrors && !formState.externalId && (
+                                        {showErrors && !formState.taskInitiator.externalId && (
                                             <div className="error-message">
                                                 <span className="span-error-info">Обязательное поле</span>
                                             </div>
@@ -322,7 +563,7 @@ const VerifyRequest: React.FC = () => {
                                                 <button
                                                     type="button"
                                                     style={{
-                                                        marginLeft: 'auto', // this will push the button to the right
+                                                        marginLeft: 'auto',
                                                         background: "transparent",
                                                         border: 'none',
                                                         cursor: 'pointer'
@@ -341,26 +582,21 @@ const VerifyRequest: React.FC = () => {
                                             <div className="form-content-real-property">
                                                 <select
                                                     className='select-realty'
-                                                    value={formState.objectType}
-                                                    onChange={(e) => handleInputChange('objectType', e.target.value)}
+                                                    value={formState.taskInfo?.estateObjects[0].objectType}
+                                                    onChange={(e) => handleInputChange('taskInfo.estateObjects.0.objectType', e.target.value)}
                                                 >
                                                     <option value="" disabled hidden>Объект недвижимости</option>
                                                     <option value="ИЖС">ИЖС</option>
                                                     <option value="СНТ">СНТ</option>
                                                 </select>
-                                                {showErrors && !formState.objectType && (
-                                                    <div className="error-message" style={{marginLeft: '270px'}}>
-                                                        <span className="span-error-info">Обязательное поле</span>
-                                                    </div>
-                                                )}
                                             </div>
                                             <div className="form-content-real-property">
                                                 <input
                                                     style={{ width: "395px", height: '16px' }}
                                                     type="text"
                                                     placeholder="Стоимость"
-                                                    value={formState.objectCost}
-                                                    onChange={(e) => handleInputChange('objectCost', e.target.value)}
+                                                    value={formState.taskInfo?.estateObjects[0].objectCost || ''}
+                                                    onChange={(e) => handleInputChange('taskInfo.estateObjects.0.objectCost', e.target.value)}
                                                 />
                                                 {/*{showErrors && !formState.objectCost && (*/}
                                                 {/*    <div className="error-message">*/}
@@ -370,7 +606,7 @@ const VerifyRequest: React.FC = () => {
                                             </div>
                                         </div>
                                         <button type="button" onClick={handleAddRealtyObject} className='button-realty-add'>Добавить</button>
-                                        {showErrors && (!formState?.estateObjects || formState?.estateObjects.length === 0) && (
+                                        {showErrors && (!formState.taskInfo?.estateObjects[0].objectType || formState?.taskInfo.estateObjects.length === 0) && (
                                             <div className="error-message" style={{marginLeft: '40px'}}>
                                                 <span className="span-error-info">Обязательное поле</span>
                                             </div>
@@ -387,16 +623,16 @@ const VerifyRequest: React.FC = () => {
                                         <div className="form-content-form-bank">
                                             <select
                                                 className='select-bank'
-                                                value={formState.tbObjectName}
-                                                onChange={(e) => handleInputChange('tbObjectName', e.target.value)}
+                                                value={formState.taskInfo.estateObjects[0].tbObjectName}
+                                                onChange={(e) => handleInputChange('taskInfo.estateObjects.0.tbObjectName', e.target.value)}
                                             >
-                                                <option value="" disabled hidden>Территориальный банк расположения объекта недвижимости</option>
+                                                <option value="" hidden>Территориальный банк расположения объекта недвижимости</option>
                                                 <option value="Сбер">Сбер</option>
                                                 <option value="Сбербанк">Сбербанк</option>
                                                 <option value="СБЕР2">СБЕР</option>
                                                 <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
                                             </select>
-                                            {showErrors && !formState.tbObjectName && (
+                                            {showErrors && !formState.taskInfo.estateObjects[0].tbObjectName && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
@@ -413,15 +649,15 @@ const VerifyRequest: React.FC = () => {
                                         <div className="form-content-region-object">
                                             <select
                                                 className='select-region'
-                                                value={formState.objectRegionCode}
-                                                onChange={(e) => handleInputChange('objectRegionCode', e.target.value)}
+                                                value={formState.taskInfo.estateObjects[0].objectRegionCode}
+                                                onChange={(e) => handleInputChange('taskInfo.estateObjects.0.objectRegionCode', e.target.value)}
                                             >
                                                 <option value="" disabled hidden>Регион расположения объекта недвижимости</option>
                                                 <option value="регион1">регион1</option>
                                                 <option value="регион2">регион2</option>
                                                 <option value="регион3">регион3</option>
                                             </select>
-                                            {showErrors && !formState.objectRegionCode && (
+                                            {showErrors && !formState.taskInfo.estateObjects[0].objectRegionCode && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
@@ -441,8 +677,8 @@ const VerifyRequest: React.FC = () => {
                                             className='fio'
                                             type="text"
                                             placeholder="Фамилия"
-                                            value={formState.lastName}
-                                            onChange={(e) => handleInputChange('lastName', e.target.value)}
+                                            value={formState.taskInfo.client.lastName}
+                                            onChange={(e) => handleInputChange('taskInfo.client.lastName', e.target.value)}
                                         />
                                         <input
                                             maxLength={84}
@@ -450,24 +686,24 @@ const VerifyRequest: React.FC = () => {
                                             className='fio'
                                             type="text"
                                             placeholder="Имя"
-                                            value={formState.firstName}
-                                            onChange={(e) => handleInputChange('firstName', e.target.value)}
+                                            value={formState.taskInfo.client.firstName}
+                                            onChange={(e) => handleInputChange('taskInfo.client.firstName', e.target.value)}
                                         />
                                         <input
                                             maxLength={84}
                                             className='fio'
                                             type="text"
                                             placeholder="Отчество"
-                                            value={formState.middleName}
-                                            onChange={(e) => handleInputChange('middleName', e.target.value)}
+                                            value={formState.taskInfo.client.middleName}
+                                            onChange={(e) => handleInputChange('taskInfo.client.middleName', e.target.value)}
                                         />
                                         <div style={{ display: 'flex'}}>
-                                            {showErrors && !formState.lastName && (
+                                            {showErrors && !formState.taskInfo.client.lastName && (
                                                 <div className="error-message" style={{ marginRight: '102px'}}>
                                                     <span className="span-error-info">Обязательное поле</span> Фамилия
                                                 </div>
                                             )}
-                                            {showErrors && !formState.firstName && (
+                                            {showErrors && !formState.taskInfo.client.firstName && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span> Имя
                                                 </div>
@@ -484,8 +720,8 @@ const VerifyRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Email"
-                                            value={formState.initiatorEmail}
-                                            onChange={(e) => handleInputChange('initiatorEmail', e.target.value)}
+                                            value={formState.taskInitiator.initiatorEmail}
+                                            onChange={(e) => handleInputChange('taskInitiator.initiatorEmail', e.target.value)}
                                         />
                                         {emailError && (
                                             <img className='errorImg' src={errorIcon} alt=""/>
@@ -497,14 +733,14 @@ const VerifyRequest: React.FC = () => {
                                     <textarea
                                         maxLength={1000}
                                         placeholder="Комментарий"
-                                        value={formState.comment}
-                                        onChange={(e) => handleInputChange('comment', e.target.value)}
+                                        value={formState.clientManagerComment}
+                                        onChange={(e) => handleInputChange('clientManagerComment', e.target.value)}
                                     ></textarea>
                                 </div>
                                 {emailError && (
                                     <div style={{fontSize: '12px', marginBottom: '5px'}}>{emailError}</div>
                                 )}
-                                {showErrors && !formState.initiatorEmail && (
+                                {showErrors && !formState.taskInitiator.initiatorEmail && (
                                     <div className="error-message">
                                          <span style={{color: 'rgb(239, 107, 37)'}}>
                                              Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
