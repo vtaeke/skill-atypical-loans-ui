@@ -20,15 +20,55 @@ import NorificationAlert from "../Notification/NorificationAlert";
 
 const ConclusionTransactions: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
+    // const [formState, setFormState] = useState({
+    //     businessProcess: '',
+    //     externalId: '',
+    //     lastName: '',
+    //     firstName: '',
+    //     middleName: '',
+    //     tbObjectName: '',
+    //     initiatorEmail: '',
+    //     comment: '',
+    // });
     const [formState, setFormState] = useState({
-        businessProcess: '',
-        externalId: '',
-        lastName: '',
-        firstName: '',
-        middleName: '',
-        tbObjectName: '',
-        initiatorEmail: '',
-        comment: '',
+        taskInitiator: {
+            externalId: "",
+            source: "",
+            tbName: "",
+            initiatorEmail: "",
+            initiatorID: ""
+        },
+        businessProcess: {
+            type: "",
+            category: ""
+        },
+        taskInfo: {
+            dealMembersNumber: 0,
+            client: {
+                firstName: "",
+                middleName: "",
+                lastName: ""
+            },
+            organization: {
+                orgname: ""
+            },
+            estateObjects: [
+                {
+                    objectType: "",
+                    objectCost: 0,
+                    tbObjectName: 0,
+                    objectRegionCode: "",
+                    currency: "RUB"
+                }
+            ]
+        },
+        clientManagerComment: "",
+        documentsInfo: [
+            {
+                otrId: "",
+                fileName: ""
+            }
+        ]
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
@@ -44,13 +84,13 @@ const ConclusionTransactions: React.FC = () => {
 
     useEffect(() => {
         const validateEmail = () => {
-            if (formState.initiatorEmail === '') {
+            if (formState.taskInitiator.initiatorEmail === '') {
                 setEmailError(null)
                 return;
             }
 
             const emailReg = /^[a-zA-Z0-9._%+-]+@(sberbank.ru|sber.ru|omega.sbrf.ru)$/;
-            if (!emailReg.test(formState.initiatorEmail)) {
+            if (!emailReg.test(formState.taskInitiator.initiatorEmail)) {
                 setEmailError(
                     <>
                         <span style={{color: 'rgb(239, 107, 37)'}}>
@@ -63,7 +103,7 @@ const ConclusionTransactions: React.FC = () => {
             }
         }
         validateEmail()
-    }, [formState.initiatorEmail])
+    }, [formState.taskInitiator.initiatorEmail])
 
     // условие - проверка на все поля
     // useEffect(() => {
@@ -80,14 +120,32 @@ const ConclusionTransactions: React.FC = () => {
     //     setSuccessSubmit(validValue);
     // }, [formState, fileList]);
 
+    // условие - Отчество, комментарий - не обязательное
     useEffect(() => {
         let requiredFields: (keyof typeof formState)[] = [];
-        if (formState.businessProcess === 'Индивидуальные схемы кредитования') {
-            requiredFields = [ 'businessProcess', 'externalId', 'tbObjectName', 'initiatorEmail']
-        } else if (formState.businessProcess === 'Кредит на индивидуальных условиях') {
-            requiredFields = [ 'businessProcess', 'externalId', 'lastName', 'firstName', 'initiatorEmail']
+        if (formState.businessProcess.type === 'Индивидуальные схемы кредитования') {
+            requiredFields = [
+                'taskInitiator',
+                'taskInfo',
+                'clientManagerComment'
+            ];
+        } else if (formState.businessProcess.type === 'Кредит на индивидуальных условиях') {
+            requiredFields = [
+                'taskInitiator',
+                'taskInfo',
+                'clientManagerComment'
+            ];
         }
-        const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
+        const validValue = requiredFields.every(field => {
+            let fieldValue = formState[field];
+            if (field === 'taskInitiator' && typeof fieldValue === 'object' && fieldValue !== null && 'externalId' in fieldValue && 'initiatorEmail' in fieldValue) {
+                return fieldValue.externalId !== '' && fieldValue.initiatorEmail !== '';
+            } else if (field === 'taskInfo' && typeof fieldValue === 'object' && fieldValue !== null && 'dealMembersNumber' in fieldValue && 'client' in fieldValue) {
+                return fieldValue.dealMembersNumber > 0 && fieldValue.client && fieldValue.client.firstName !== '' && fieldValue.client.lastName !== '';
+            } else {
+                return fieldValue !== '';
+            }
+        }) && fileList.length > 0;
         setSuccessSubmit(validValue);
     }, [formState, fileList]);
 
@@ -131,12 +189,12 @@ const ConclusionTransactions: React.FC = () => {
 
         if (successSubmit) {
             Object.entries(formState).forEach(([field, value]) => {
-                dispatch(updateFormField(field, value))
+                dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
             })
 
             const formData = new FormData()
             Object.entries(formState).forEach(([field, value]) => {
-                formData.append(field, value)
+                formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
             });
             fileList.forEach(file => {
                 formData.append('files', file)
@@ -171,11 +229,83 @@ const ConclusionTransactions: React.FC = () => {
     //     console.log('Данные формы отправлены в Redux:', formState);
     // };
 
-    const handleInputChange = (field: string, value: string) => {
-        setFormState(prevState => ({
-            ...prevState,
-            [field]: value
-        }));
+    const handleInputChange = (field: string, value: string | number | any[]) => {
+        console.log(`Поле: ${field}, Значение: ${value}`);
+        const fieldParts = field.split('.');
+        const topLevelField = fieldParts[0] as keyof typeof formState;
+
+
+
+        if (topLevelField === 'taskInitiator') {
+            if (fieldParts[1] === 'externalId') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInitiator: {
+                        ...prevState.taskInitiator,
+                        externalId: value as string,
+                    },
+                }));
+            } else if (fieldParts[1] === 'initiatorEmail') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInitiator: {
+                        ...prevState.taskInitiator,
+                        initiatorEmail: value as string,
+                    },
+                }));
+            } else if (fieldParts[1] === 'tbName') {
+                setFormState((prevState => ({
+                    ...prevState,
+                    taskInitiator: {
+                        ...prevState.taskInitiator,
+                        tbName: value as string,
+                    }
+                })))
+            }
+        } else if (topLevelField === 'taskInfo') {
+            if (fieldParts[1] === 'client') {
+                const fieldName = fieldParts[2];
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        client: {
+                            ...prevState.taskInfo.client,
+                            [fieldName]: value,
+                        },
+                    },
+                }));
+            } else if (fieldParts[1] === 'estateObjects') {
+                const index = parseInt(fieldParts[2], 10);
+                const fieldName = fieldParts[3];
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        estateObjects: prevState.taskInfo.estateObjects.map((obj, i) => {
+                            if (i === index) {
+                                return { ...obj, [fieldName]: value };
+                            }
+                            return obj;
+                        }),
+                    },
+                }));
+            } else {
+                const fieldName = fieldParts[1];
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        [fieldName]: value,
+                    },
+                }));
+            }
+        } else {
+            setFormState((prevState) => ({
+                ...prevState,
+                [field]: value,
+            }));
+        }
     };
 
     const closeNotification = () => {
@@ -221,10 +351,11 @@ const ConclusionTransactions: React.FC = () => {
                                     </span>
                                     <div className="input-block-category">
                                         <select className="select-realty-category"
+                                            //@ts-ignore
                                             value={formState.businessProcess}
                                             onChange={(e) => handleInputChange('businessProcess', e.target.value)}
                                         >
-                                            <option value='' disabled>Категория запроса</option>
+                                            <option value='' >Категория запроса</option>
                                             <option value='Индивидуальные схемы кредитования'>Индивидуальные схемы кредитования</option>
                                             <option value='Кредит на индивидуальных условиях'>Кредит на индивидуальных условиях</option>
                                         </select>
@@ -234,6 +365,7 @@ const ConclusionTransactions: React.FC = () => {
                                 {formState.businessProcess && (
                                     <>
                                         { /* Индивидуальные схемы кредитования */ }
+                                        {/*@ts-ignore*/}
                                         {formState.businessProcess === 'Индивидуальные схемы кредитования' && (
                                             <div>
                                                 <div className="form-content-credit-contract">
@@ -244,9 +376,9 @@ const ConclusionTransactions: React.FC = () => {
                                                         <input
                                                             type="text"
                                                             placeholder="Номер кредитного договора"
-                                                            value={formState.externalId}
-                                                            onChange={(e) => handleInputChange('externalId', e.target.value)}/>
-                                                        {showErrors && !formState.externalId && (
+                                                            value={formState.taskInitiator.externalId}
+                                                            onChange={(e) => handleInputChange('taskInitiator.externalId', e.target.value)}/>
+                                                        {showErrors && !formState.taskInitiator.externalId && (
                                                             <div className="error-message">
                                                                 <span className="span-error-info">Обязательное поле</span>
                                                             </div>
@@ -262,16 +394,16 @@ const ConclusionTransactions: React.FC = () => {
                                                         <div className="form-content-form-bank">
                                                             <select
                                                                 className='select-bank'
-                                                                value={formState.tbObjectName}
-                                                                onChange={(e) => handleInputChange('tbObjectName', e.target.value)}
+                                                                value={formState.taskInitiator.tbName}
+                                                                onChange={(e) => handleInputChange('taskInitiator.tbName', e.target.value)}
                                                             >
-                                                                <option value="" disabled>Название организации</option>
+                                                                <option value="" disabled>Территориальный банк расположения объекта недвижимости</option>
                                                                 <option value="Сбер">Сбер</option>
                                                                 <option value="Сбербанк">Сбербанк</option>
                                                                 <option value="СБЕР2">СБЕР</option>
                                                                 <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
                                                             </select>
-                                                            {showErrors && !formState.tbObjectName && (
+                                                            {showErrors && !formState.taskInitiator.tbName && (
                                                                 <div className="error-message" style={{ marginBottom: '5px'}}>
                                                                     <span className="span-error-info">Обязательное поле</span>
                                                                 </div>
@@ -287,8 +419,8 @@ const ConclusionTransactions: React.FC = () => {
                                                         <input
                                                             type="text"
                                                             placeholder="Email"
-                                                            value={formState.initiatorEmail}
-                                                            onChange={(e) => handleInputChange('initiatorEmail', e.target.value)}/>
+                                                            value={formState.taskInitiator.initiatorEmail}
+                                                            onChange={(e) => handleInputChange('taskInitiator.initiatorEmail', e.target.value)}/>
                                                         {emailError && (
                                                             <img className='errorImg' src={errorIcon} alt=""/>
                                                         )}
@@ -298,14 +430,14 @@ const ConclusionTransactions: React.FC = () => {
                                                     <textarea
                                                         maxLength={1000}
                                                         placeholder="Комментарий"
-                                                        value={formState.comment}
-                                                        onChange={(e) => handleInputChange('comment', e.target.value)}
+                                                        value={formState.clientManagerComment}
+                                                        onChange={(e) => handleInputChange('clientManagerComment', e.target.value)}
                                                     ></textarea>
                                                 </div>
                                                 {emailError && (
                                                     <div style={{fontSize: '12px', marginBottom: '5px'}}>{emailError}</div>
                                                 )}
-                                                {showErrors && !formState.initiatorEmail && (
+                                                {showErrors && !formState.taskInitiator.initiatorEmail && (
                                                     <div className="error-message">
                                                     <span style={{color: 'rgb(239, 107, 37)'}}>
                                                          Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
@@ -324,6 +456,7 @@ const ConclusionTransactions: React.FC = () => {
                                         )}
 
                                         { /* Кредит на индивидуальных условиях */ }
+                                        {/*@ts-ignore*/}
                                         {formState.businessProcess === 'Кредит на индивидуальных условиях' && (
                                             <div>
                                                 <div className="form-content-credit-contract">
@@ -334,9 +467,9 @@ const ConclusionTransactions: React.FC = () => {
                                                         <input
                                                             type="text"
                                                             placeholder="Номер кредитного договора"
-                                                            value={formState.externalId}
-                                                            onChange={(e) => handleInputChange('externalId', e.target.value)}/>
-                                                        {showErrors && !formState.externalId && (
+                                                            value={formState.taskInitiator.externalId}
+                                                            onChange={(e) => handleInputChange('taskInitiator.externalId', e.target.value)}/>
+                                                        {showErrors && !formState.taskInitiator.externalId && (
                                                             <div className="error-message">
                                                                 <span className="span-error-info">Обязательное поле</span>
                                                             </div>
@@ -354,30 +487,30 @@ const ConclusionTransactions: React.FC = () => {
                                                             className='fio'
                                                             type="text"
                                                             placeholder="Фамилия"
-                                                            value={formState.lastName}
-                                                            onChange={(e) => handleInputChange('lastName', e.target.value)}/>
+                                                            value={formState.taskInfo.client.lastName}
+                                                            onChange={(e) => handleInputChange('taskInfo.client.lastName', e.target.value)}/>
                                                         <input
                                                             maxLength={84}
                                                             style={{marginRight: '10px'}}
                                                             className='fio'
                                                             type="text"
                                                             placeholder="Имя"
-                                                            value={formState.firstName}
-                                                            onChange={(e) => handleInputChange('firstName', e.target.value)}/>
+                                                            value={formState.taskInfo.client.firstName}
+                                                            onChange={(e) => handleInputChange('taskInfo.client.firstName', e.target.value)}/>
                                                         <input
                                                             maxLength={84}
                                                             className='fio'
                                                             type="text"
                                                             placeholder="Отчество"
-                                                            value={formState.middleName}
-                                                            onChange={(e) => handleInputChange('middleName', e.target.value)}/>
+                                                            value={formState.taskInfo.client.middleName}
+                                                            onChange={(e) => handleInputChange('taskInfo.client.middleName', e.target.value)}/>
                                                         <div style={{ display: 'flex'}}>
-                                                            {showErrors && !formState.lastName && (
+                                                            {showErrors && !formState.taskInfo.client.lastName && (
                                                                 <div className="error-message" style={{ marginRight: '102px'}}>
                                                                     <span className="span-error-info">Обязательное поле</span> Фамилия
                                                                 </div>
                                                             )}
-                                                            {showErrors && !formState.firstName && (
+                                                            {showErrors && !formState.taskInfo.client.firstName && (
                                                                 <div className="error-message">
                                                                     <span className="span-error-info">Обязательное поле</span> Имя
                                                                 </div>
@@ -393,8 +526,8 @@ const ConclusionTransactions: React.FC = () => {
                                                         <input
                                                             type="text"
                                                             placeholder="Email"
-                                                            value={formState.initiatorEmail}
-                                                            onChange={(e) => handleInputChange('initiatorEmail', e.target.value)}/>
+                                                            value={formState.taskInitiator.initiatorEmail}
+                                                            onChange={(e) => handleInputChange('taskInitiator.initiatorEmail', e.target.value)}/>
                                                         {emailError && (
                                                             <img className='errorImg' src={errorIcon} alt=""/>
                                                         )}
@@ -404,14 +537,14 @@ const ConclusionTransactions: React.FC = () => {
                                                 <textarea
                                                     maxLength={1000}
                                                     placeholder="Комментарий"
-                                                    value={formState.comment}
+                                                    value={formState.clientManagerComment}
                                                     onChange={(e) => handleInputChange('comment', e.target.value)}
                                                 ></textarea>
                                                 </div>
                                                 {emailError && (
                                                     <div style={{fontSize: '12px', marginBottom: '5px'}}>{emailError}</div>
                                                 )}
-                                                {showErrors && !formState.initiatorEmail && (
+                                                {showErrors && !formState.taskInitiator.initiatorEmail && (
                                                     <div className="error-message">
                                                     <span style={{color: 'rgb(239, 107, 37)'}}>
                                                          Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:

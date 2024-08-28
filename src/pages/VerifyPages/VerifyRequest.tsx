@@ -125,13 +125,13 @@ const VerifyRequest: React.FC = () => {
         console.log("Form state updated============: ", formState);
         const requiredFields = [
             formState.businessProcess.type,
-            formState.businessProcess.category,
+            // formState.businessProcess.category,
             formState.taskInitiator.externalId,
             formState.taskInitiator.initiatorEmail,
             formState.taskInfo.client.firstName,
             formState.taskInfo.client.lastName,
-            formState.taskInfo.estateObjects[0].objectType,
-            formState.taskInfo.estateObjects[0].objectCost,
+            // formState.taskInfo.estateObjects[0].objectType,
+            // formState.taskInfo.estateObjects[0].objectCost,
             formState.taskInfo.estateObjects[0].objectRegionCode,
         ]
         // const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
@@ -364,6 +364,17 @@ const VerifyRequest: React.FC = () => {
                     },
                 }));
             }
+        }
+        if (topLevelField === 'businessProcess') {
+            if (fieldParts[1] === 'type') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    businessProcess: {
+                        ...prevState.businessProcess,
+                        type: value as string,
+                    },
+                }));
+            }
         } else if (topLevelField === 'taskInfo') {
             if (fieldParts[1] === 'client') {
                 const fieldName = fieldParts[2];
@@ -433,32 +444,51 @@ const VerifyRequest: React.FC = () => {
         setShowAlert(false);
     };
 
+    // const handleAddRealtyObject = () => {
+    //     const newObject = {
+    //         objectType: formState.taskInfo.estateObjects[0].objectType,
+    //         objectCost: formState.taskInfo.estateObjects[0].objectCost,
+    //     }
+    //     //@ts-ignore
+    //     setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
+    //     // setFormState(prevState => {
+    //     //     const updateFormState = {
+    //     //         ...prevState,
+    //     //         estateObjects: [...(prevState.estateObjects || []), newObject],
+    //     //         objectType: '',
+    //     //         objectCost: '',
+    //     //     };
+    //     //     console.log('Updated formState.estateObjects:', updateFormState.estateObjects);
+    //     //     return updateFormState;
+    //     // })
+    //     //@ts-ignore
+    //     setFormState(prevState => ({
+    //         ...prevState,
+    //         taskInfo: {
+    //             ...prevState.taskInfo,
+    //             estateObjects: [...prevState.taskInfo.estateObjects, newObject],
+    //         }
+    //     }))
+    // }
+
+    //v2
     const handleAddRealtyObject = () => {
         const newObject = {
             objectType: formState.taskInfo.estateObjects[0].objectType,
             objectCost: formState.taskInfo.estateObjects[0].objectCost,
         }
-
-
         //@ts-ignore
         setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
-
-        // setFormState(prevState => {
-        //     const updateFormState = {
-        //         ...prevState,
-        //         estateObjects: [...(prevState.estateObjects || []), newObject],
-        //         objectType: '',
-        //         objectCost: '',
-        //     };
-        //     console.log('Updated formState.estateObjects:', updateFormState.estateObjects);
-        //     return updateFormState;
-        // })
         //@ts-ignore
         setFormState(prevState => ({
             ...prevState,
             taskInfo: {
                 ...prevState.taskInfo,
-                estateObjects: [...prevState.taskInfo.estateObjects, newObject],
+                estateObjects: [
+                    { objectType: '', objectCost: '' }, // Сбросить поля первого объекта
+                    ...prevState.taskInfo.estateObjects.slice(1), // Оставить остальные объекты
+                    newObject, // Добавить новый объект
+                ],
             }
         }))
     }
@@ -513,8 +543,8 @@ const VerifyRequest: React.FC = () => {
                                             <select
                                                 className='select-realty-category'
                                                 //@ts-ignore
-                                                value={formState.businessProcess}
-                                                onChange={(e) => handleInputChange('businessProcess', e.target.value)}
+                                                value={formState.businessProcess.type}
+                                                onChange={(e) => handleInputChange('businessProcess.type', e.target.value)}
                                             >
                                                 <option value="" hidden>Категория запроса</option>
                                                 <option value="Реструктуризация">Реструктуризация</option>
@@ -526,7 +556,7 @@ const VerifyRequest: React.FC = () => {
                                             {/*        <line id="Line 1" x1="16.602051" y1="10.371704" x2="33.256470" y2="0.429321" stroke="#FFFFFF" stroke-opacity="0.560000" stroke-width="1.000000"/>*/}
                                             {/*    </svg>*/}
                                             {/*</div>*/}
-                                            {showErrors && !formState.businessProcess && (
+                                            {showErrors && !formState.businessProcess.type && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
@@ -606,11 +636,16 @@ const VerifyRequest: React.FC = () => {
                                             </div>
                                         </div>
                                         <button type="button" onClick={handleAddRealtyObject} className='button-realty-add'>Добавить</button>
-                                        {showErrors && (!formState.taskInfo?.estateObjects[0].objectType || formState?.taskInfo.estateObjects.length === 0) && (
+                                        {/*{showErrors && (!formState.taskInfo?.estateObjects[0].objectType || formState?.taskInfo.estateObjects.length === 0) && (*/}
+                                        {/*    <div className="error-message" style={{marginLeft: '40px'}}>*/}
+                                        {/*        <span className="span-error-info">Обязательное поле</span>*/}
+                                        {/*    </div>*/}
+
+                                        {/*)}*/}
+                                        {showErrors && (addRealtyObjects.length === 0) && (
                                             <div className="error-message" style={{marginLeft: '40px'}}>
                                                 <span className="span-error-info">Обязательное поле</span>
                                             </div>
-
                                         )}
                                     </div>
                                 </div>

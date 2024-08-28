@@ -16,8 +16,16 @@ const HintsBlock: React.FC<HintsBlockProps> = ({ fileList, onFileRemove, setFile
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const filesArray = Array.from(event.target.files);
-            // setLocalFileList([...fileList, ...filesArray]);
-            setFileList([...fileList, ...filesArray]);
+            const validFiles = filesArray.filter((file) => {
+                const fileNamePattern = /^[^.]+\.([a-zA-Z0-9]+)$/;
+                return fileNamePattern.test(file.name);
+            });
+            if (validFiles.length === filesArray.length) {
+                setFileList([...fileList, ...validFiles]);
+            } else {
+                // Показать сообщение об ошибке или уведомление, если шаблон имени файла недействителен
+                console.error('Недопустимый шаблон имени файла');
+            }
         }
     };
 
