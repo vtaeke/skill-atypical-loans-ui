@@ -120,7 +120,7 @@ const StartPage: React.FC = () => {
                     <p>Урегулирование задолженности</p>
                 </div>
                 <div className="card"
-                     // onClick={() => handleCardClick('/form')}
+                     // onClick={() => handleCardClick('/registers')}
                 >
                     <img width={35} height={38} src={clipBoardRegistry} alt="Create Request" />
                     <p>Реестры</p>
