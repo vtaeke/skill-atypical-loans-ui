@@ -71,20 +71,6 @@ interface FormState {
 
 const VipVerifyRequest: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
-    // const [formState, setFormState] = useState({
-    //     businessProcess: '',
-    //     externalId: '',
-    //     objectType: '',
-    //     objectCost: '',
-    //     tbObjectName: '',
-    //     objectRegionCode: '',
-    //     lastName: '',
-    //     firstName: '',
-    //     middleName: '',
-    //     initiatorEmail: '',
-    //     comment: '',
-    //     estateObjects: [] as {objectType: string; objectCost: string}[],
-    // });
 
     const [formState, setFormState] = useState({
         taskInitiator: {
@@ -162,18 +148,9 @@ const VipVerifyRequest: React.FC = () => {
         validateEmail()
     }, [formState.taskInitiator.initiatorEmail])
 
-    // условие - проверка на все поля
-    // useEffect(() => {
-    //     const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
-    //     setSuccessSubmit(validValue)
-    // }, [formState, fileList])
 
     // условие - Отчество, комментарий - не обязательное
     useEffect(() => {
-        // const requiredFields: (keyof typeof formState)[] = [
-        //     'businessProcess', 'externalId', 'objectType', 'objectCost', 'tbObjectName', 'objectRegionCode', 'lastName',
-        //     'firstName', 'initiatorEmail'
-        // ];
         console.log("Form state updated============: ", formState);
         const requiredFields = [
             formState.businessProcess.type,
@@ -251,24 +228,6 @@ const VipVerifyRequest: React.FC = () => {
             console.log('Прикрепленные файлы:', fileList);
         }
     };
-
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     // for (const field in formState) {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // }
-    //     // Object.keys(formState).forEach((field) => {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // })
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //
-    //     setNotificationMsg('Заявка успешно создана!')
-    //     setShowNotification(true)
-    //
-    //     console.log('Данные формы отправлены в Redux:', formState);
-    // };
 
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);
@@ -374,28 +333,6 @@ const VipVerifyRequest: React.FC = () => {
         setShowAlert(false);
     };
 
-    // const handleAddRealtyObject = () => {
-    //     const newObject = {
-    //         objectType: formState.taskInfo.estateObjects[0].objectType,
-    //         objectCost: formState.taskInfo.estateObjects[0].objectCost,
-    //     }
-    //     //@ts-ignore
-    //     setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
-    //     //@ts-ignore
-    //     setFormState(prevState => ({
-    //         ...prevState,
-    //         taskInfo: {
-    //             ...prevState.taskInfo,
-    //             estateObjects: [
-    //                 { objectType: '', objectCost: '' }, // Сбросить поля первого объекта
-    //                 ...prevState.taskInfo.estateObjects.slice(1), // Оставить остальные объекты
-    //                 newObject, // Добавить новый объект
-    //             ],
-    //         }
-    //     }))
-    // }
-
-    //v2
     const handleAddRealtyObject = () => {
         const newObject = {
             objectType: formState.taskInfo.estateObjects[0].objectType,

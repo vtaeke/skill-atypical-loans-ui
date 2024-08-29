@@ -18,21 +18,59 @@ import {AppDispatch} from "../../redux/store";
 import Notification from "../Notification/Notification";
 import NorificationAlert from "../Notification/NorificationAlert";
 
+interface EstateObject {
+    objectType: string;
+    objectCost: string | number;
+    tbObjectName?: number;
+    objectRegionCode?: string;
+    currency?: string;
+}
+
+interface Client {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+}
+
+interface Organization {
+    orgname: string;
+}
+
+interface TaskInfo {
+    dealMembersNumber: number;
+    client: Client;
+    organization: Organization;
+    estateObjects: EstateObject[];
+}
+
+interface TaskInitiator {
+    externalId: string;
+    source: string;
+    tbName: string;
+    initiatorEmail: string;
+    initiatorID: string;
+}
+
+interface BusinessProcess {
+    type: string;
+    category: string;
+}
+
+interface DocumentInfo {
+    otrId: string;
+    fileName: string;
+}
+
+interface FormState {
+    taskInitiator: TaskInitiator;
+    businessProcess: BusinessProcess;
+    taskInfo: TaskInfo;
+    clientManagerComment: string;
+    documentsInfo: DocumentInfo[];
+}
+
 const NonTransactionalRequest: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
-    // const [formState, setFormState] = useState({
-    //     businessProcess: '',
-    //     externalId: '',
-    //     lastName: '',
-    //     firstName: '',
-    //     middleName: '',
-    //     dealMembersNumber: '',
-    //     objectType: '',
-    //     objectCost: '',
-    //     initiatorEmail: '',
-    //     comment: '',
-    //     estateObjects: [] as {objectType: string; objectCost: string}[],
-    // });
 
     const [formState, setFormState] = useState({
         taskInitiator: {
@@ -111,38 +149,8 @@ const NonTransactionalRequest: React.FC = () => {
         validateEmail()
     }, [formState.taskInitiator.initiatorEmail])
 
-    // условие - проверка на все поля
-    // useEffect(() => {
-    //     const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
-    //     setSuccessSubmit(validValue)
-    // }, [formState, fileList])
-
-    // // условие - Отчество, комментарий - не обязательное
-    // useEffect(() => {
-    //     const requiredFields: (keyof typeof formState)[] = [
-    //         'businessProcess', 'externalId', 'objectType', 'objectCost', 'lastName', 'firstName', 'dealMembersNumber', 'initiatorEmail'
-    //     ];
-    //     // const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
-    //     // setSuccessSubmit(validValue);
-    //
-    //     const errors: {[key: string]:string} = {}
-    //     requiredFields.forEach(field => {
-    //         if (formState[field] === '') {
-    //             errors[field] = 'Заполните обязательно поле'
-    //         }
-    //     })
-    //
-    //     setFieldErrors(errors)
-    //
-    //     // const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
-    //     // setSuccessSubmit(validValue);
-    // }, [formState, fileList]);
 
     useEffect(() => {
-        // const requiredFields: (keyof typeof formState)[] = [
-        //     'businessProcess', 'externalId', 'objectType', 'objectCost', 'tbObjectName', 'objectRegionCode', 'lastName',
-        //     'firstName', 'initiatorEmail'
-        // ];
         console.log("Form state updated============: ", formState);
         const requiredFields = [
             formState.businessProcess.type,
@@ -194,28 +202,6 @@ const NonTransactionalRequest: React.FC = () => {
         }
     };
 
-    //вывод в консоль файлов, которые были добавлены
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //
-    //     const formData = new FormData()
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         formData.append(field, value)
-    //     });
-    //     fileList.forEach(file => {
-    //         formData.append('files', file)
-    //     });
-    //
-    //     setNotificationMsg('Заявка успешно создана!')
-    //     setShowNotification(true)
-    //
-    //     console.log('Данные формы отправлены в Redux:', formState);
-    //     console.log('Прикрепленные файлы:', fileList);
-    // };
-
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -245,25 +231,6 @@ const NonTransactionalRequest: React.FC = () => {
             console.log('Прикрепленные файлы:', fileList);
         }
     };
-
-
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     // for (const field in formState) {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // }
-    //     // Object.keys(formState).forEach((field) => {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // })
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //
-    //     setNotificationMsg('Заявка успешно создана!')
-    //     setShowNotification(true)
-    //
-    //     console.log('Данные формы отправлены в Redux:', formState);
-    // };
 
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);

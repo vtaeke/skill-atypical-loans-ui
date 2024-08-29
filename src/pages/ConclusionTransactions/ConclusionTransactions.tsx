@@ -18,18 +18,60 @@ import Notification from "../Notification/Notification";
 import '../SettlementOfProblemDebt/SettlementOfProblemDebt.scss'
 import NorificationAlert from "../Notification/NorificationAlert";
 
+interface EstateObject {
+    objectType: string;
+    objectCost: string | number;
+    tbObjectName?: number;
+    objectRegionCode?: string;
+    currency?: string;
+}
+
+interface Client {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+}
+
+interface Organization {
+    orgname: string;
+}
+
+interface TaskInfo {
+    dealMembersNumber: number;
+    client: Client;
+    organization: Organization;
+    estateObjects: EstateObject[];
+}
+
+interface TaskInitiator {
+    externalId: string;
+    source: string;
+    tbName: string;
+    initiatorEmail: string;
+    initiatorID: string;
+}
+
+interface BusinessProcess {
+    type: string;
+    category: string;
+}
+
+interface DocumentInfo {
+    otrId: string;
+    fileName: string;
+}
+
+interface FormState {
+    taskInitiator: TaskInitiator;
+    businessProcess: BusinessProcess;
+    taskInfo: TaskInfo;
+    clientManagerComment: string;
+    documentsInfo: DocumentInfo[];
+}
+
 const ConclusionTransactions: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
-    // const [formState, setFormState] = useState({
-    //     businessProcess: '',
-    //     externalId: '',
-    //     lastName: '',
-    //     firstName: '',
-    //     middleName: '',
-    //     tbObjectName: '',
-    //     initiatorEmail: '',
-    //     comment: '',
-    // });
+
     const [formState, setFormState] = useState({
         taskInitiator: {
             externalId: "",
@@ -104,21 +146,6 @@ const ConclusionTransactions: React.FC = () => {
         }
         validateEmail()
     }, [formState.taskInitiator.initiatorEmail])
-
-    // условие - проверка на все поля
-    // useEffect(() => {
-    //     const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
-    //     setSuccessSubmit(validValue)
-    // }, [formState, fileList])
-
-    // условие - Отчество, комментарий - не обязательное
-    // useEffect(() => {
-    //     const requiredFields: (keyof typeof formState)[] = [
-    //         'businessProcess', 'externalId', 'tbObjectName', 'lastName', 'firstName', 'initiatorEmail'
-    //     ];
-    //     const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
-    //     setSuccessSubmit(validValue);
-    // }, [formState, fileList]);
 
     // условие - Отчество, комментарий - не обязательное
     useEffect(() => {
@@ -207,27 +234,6 @@ const ConclusionTransactions: React.FC = () => {
             console.log('Прикрепленные файлы:', fileList);
         }
     };
-
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     // for (const field in formState) {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // }
-    //     // Object.keys(formState).forEach((field) => {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // })
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //     setNotificationMsg('Заявка успешно создана!')
-    //     setShowNotification(true)
-    //
-    //     // setTimeout(() => {
-    //     //     setShowNotification(false)
-    //     // }, 4000)
-    //
-    //     console.log('Данные формы отправлены в Redux:', formState);
-    // };
 
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);
@@ -538,7 +544,7 @@ const ConclusionTransactions: React.FC = () => {
                                                     maxLength={1000}
                                                     placeholder="Комментарий"
                                                     value={formState.clientManagerComment}
-                                                    onChange={(e) => handleInputChange('comment', e.target.value)}
+                                                    onChange={(e) => handleInputChange('clientManagerComment', e.target.value)}
                                                 ></textarea>
                                                 </div>
                                                 {emailError && (

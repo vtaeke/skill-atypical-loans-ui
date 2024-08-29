@@ -25,7 +25,10 @@ interface AddRealtyAction {
     type: typeof ADD_REALTY_OBJECT;
     payload: {
         objectType: string;
-        objectCost: string;
+        objectCost: number;
+        tbObjectName: string;
+        objectRegionCode: string;
+        currency: string;
     };
 }
 
@@ -45,9 +48,9 @@ export const addFiles = (files: File[]): AddFilesAction => ({
     payload: files
 })
 
-export const addRealtyObject = (objectType: string, objectCost: string):AddRealtyAction => {
+export const addRealtyObject = (objectType: string, objectCost: number, tbObjectName: string, objectRegionCode: string, currency: string): AddRealtyAction => {
     return {
         type: ADD_REALTY_OBJECT,
-        payload: {objectType, objectCost}
+        payload: { objectType, objectCost, tbObjectName, objectRegionCode, currency }
     }
 }

@@ -18,22 +18,60 @@ import {AppDispatch} from "../../redux/store";
 import Notification from "../Notification/Notification";
 import NorificationAlert from "../Notification/NorificationAlert";
 
+interface EstateObject {
+    objectType: string;
+    objectCost: string | number;
+    tbObjectName?: number;
+    objectRegionCode?: string;
+    currency?: string;
+}
+
+interface Client {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+}
+
+interface Organization {
+    orgname: string;
+}
+
+interface TaskInfo {
+    dealMembersNumber: number;
+    client: Client;
+    organization: Organization;
+    estateObjects: EstateObject[];
+}
+
+interface TaskInitiator {
+    externalId: string;
+    source: string;
+    tbName: string;
+    initiatorEmail: string;
+    initiatorID: string;
+}
+
+interface BusinessProcess {
+    type: string;
+    category: string;
+}
+
+interface DocumentInfo {
+    otrId: string;
+    fileName: string;
+}
+
+interface FormState {
+    taskInitiator: TaskInitiator;
+    businessProcess: BusinessProcess;
+    taskInfo: TaskInfo;
+    clientManagerComment: string;
+    documentsInfo: DocumentInfo[];
+}
+
 const VerifyRequest: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
-    // const [formState, setFormState] = useState({
-    //     businessProcess: '',
-    //     externalId: '',
-    //     objectType: '',
-    //     objectCost: '',
-    //     tbObjectName: '',
-    //     objectRegionCode: '',
-    //     lastName: '',
-    //     firstName: '',
-    //     middleName: '',
-    //     initiatorEmail: '',
-    //     comment: '',
-    //     estateObjects: [] as {objectType: string; objectCost: string}[],
-    // });
+
     const [formState, setFormState] = useState({
         taskInitiator: {
             externalId: "",
@@ -110,18 +148,8 @@ const VerifyRequest: React.FC = () => {
         validateEmail()
     }, [formState.taskInitiator.initiatorEmail])
 
-    // условие - проверка на все поля
-    // useEffect(() => {
-    //     const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
-    //     setSuccessSubmit(validValue)
-    // }, [formState, fileList])
-
     // условие - Отчество, комментарий - не обязательное
     useEffect(() => {
-        // const requiredFields: (keyof typeof formState)[] = [
-        //     'businessProcess', 'externalId', 'objectType', 'objectCost', 'tbObjectName', 'objectRegionCode', 'lastName',
-        //     'firstName', 'initiatorEmail'
-        // ];
         console.log("Form state updated============: ", formState);
         const requiredFields = [
             formState.businessProcess.type,
@@ -235,110 +263,7 @@ const VerifyRequest: React.FC = () => {
     //         setShowNotification(true);
     //     }
     // }
-    //
-    // const handleInputChange = (field: string, value: string) => {
-    //     setFormState(prevState => ({
-    //         ...prevState,
-    //         [field]: value
-    //     }));
-    // };
-    //
-    // const handleInputChange = (field:string, value: string, group?: string) => {
-    //     setFormState(prevState => ({
-    //         ...prevState,
-    //         [group || field]: group ? {...prevState[group], [field]: value} : value
-    //     }));
-    // }
-    //
-    // const handleInputChange = (field: string, value: string | number | any[]) => {
-    //     console.log(`Поле: ${field}, Значение: ${value}`);
-    //     const fieldParts = field.split('.');
-    //     const topLevelField = fieldParts[0] as keyof typeof formState; // Приводим к типу ключа объекта formState
-    //
-    //     if (topLevelField === 'taskInitiator' && fieldParts[1] === 'externalId') {
-    //         setFormState((prevState) => ({
-    //             ...prevState,
-    //             taskInitiator: {
-    //                 ...prevState.taskInitiator,
-    //                 externalId: value as string,
-    //                 creditContractNumber: value as string, // Обновить поле creditContractNumber
-    //             },
-    //         }));
-    //     }
-    //
-    //     if (field === 'taskInitiator.initiatorEmail') {
-    //         setFormState((prevState) => ({
-    //             ...prevState,
-    //             taskInitiator: {
-    //                 ...prevState.taskInitiator,
-    //                 initiatorEmail: value as string,
-    //             },
-    //         }));
-    //     }
-    //
-    //     if (topLevelField === 'taskInfo' && fieldParts[1] === 'client') {
-    //         const fieldName = fieldParts[2];
-    //         setFormState((prevState => ({
-    //             ...prevState,
-    //             taskInfo: {
-    //                 ...prevState.taskInfo,
-    //                 client: {
-    //                     ...prevState.taskInfo.client,
-    //                     [fieldName]: value,
-    //                 }
-    //             }
-    //         })))
-    //     }
-    //
-    //     if (field === 'estateObjects.tbObjectName') {
-    //         //@ts-ignore
-    //         setFormState((prevState) => ({
-    //             ...prevState,
-    //             taskInfo: {
-    //                 ...prevState.taskInfo,
-    //                 estateObjects: prevState.taskInfo.estateObjects.map((obj) => ({
-    //                     ...obj,
-    //                     tbObjectName: String(value),
-    //                 })),
-    //             },
-    //         }));
-    //     } else if (topLevelField === 'taskInfo' && fieldParts[1] === 'estateObjects') {
-    //         const index = parseInt(fieldParts[2], 10);
-    //         const fieldName = fieldParts[3];
-    //
-    //         setFormState((prevState) => ({
-    //             ...prevState,
-    //             taskInfo: {
-    //                 ...prevState.taskInfo,
-    //                 estateObjects: prevState.taskInfo.estateObjects.map((obj, i) => {
-    //                     if (i === index) {
-    //                         return { ...obj, [fieldName]: value };
-    //                     }
-    //                     return obj;
-    //                 }),
-    //             },
-    //         }));
-    //     } else if (topLevelField === 'taskInfo') {
-    //         const section = fieldParts[0] as keyof typeof formState; // Приводим к типу ключа объекта formState
-    //         const fieldName = fieldParts[1];
-    //
-    //         setFormState((prevState) => ({
-    //             ...prevState,
-    //             [section]: {
-    //                 //@ts-ignore
-    //                 ...prevState[section],
-    //                 [fieldName]: value,
-    //             },
-    //         }));
-    //     } else {
-    //         setFormState((prevState) => ({
-    //             ...prevState,
-    //             [field]: value,
-    //         }));
-    //     }
-    // };
 
-    //v2
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);
         const fieldParts = field.split('.');
@@ -427,10 +352,6 @@ const VerifyRequest: React.FC = () => {
         setShowNotification(false)
     }
 
-    // const handleCardClick = (path: string) => {
-    //     navigate(path);
-    // };
-
     const handleCardClick = (path: string) => {
         if (Object.values(formState).some(val => val !== '') || fileList.length > 0) {
             setAlertMessage('');
@@ -444,34 +365,7 @@ const VerifyRequest: React.FC = () => {
         setShowAlert(false);
     };
 
-    // const handleAddRealtyObject = () => {
-    //     const newObject = {
-    //         objectType: formState.taskInfo.estateObjects[0].objectType,
-    //         objectCost: formState.taskInfo.estateObjects[0].objectCost,
-    //     }
-    //     //@ts-ignore
-    //     setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
-    //     // setFormState(prevState => {
-    //     //     const updateFormState = {
-    //     //         ...prevState,
-    //     //         estateObjects: [...(prevState.estateObjects || []), newObject],
-    //     //         objectType: '',
-    //     //         objectCost: '',
-    //     //     };
-    //     //     console.log('Updated formState.estateObjects:', updateFormState.estateObjects);
-    //     //     return updateFormState;
-    //     // })
-    //     //@ts-ignore
-    //     setFormState(prevState => ({
-    //         ...prevState,
-    //         taskInfo: {
-    //             ...prevState.taskInfo,
-    //             estateObjects: [...prevState.taskInfo.estateObjects, newObject],
-    //         }
-    //     }))
-    // }
 
-    //v2
     const handleAddRealtyObject = () => {
         const newObject = {
             objectType: formState.taskInfo.estateObjects[0].objectType,
@@ -494,14 +388,6 @@ const VerifyRequest: React.FC = () => {
     }
 
     const handleAddRealtyRemove = (index: number) => {
-        // setFormState(prevState => {
-        //     const updateRealtyObject = prevState.estateObjects.filter((_, i) => i !== index)
-        //
-        //     return {
-        //         ...prevState,
-        //         estateObjects: updateRealtyObject
-        //     }
-        // })
 
         setFormState(prevState => ({
            ...prevState,
@@ -550,12 +436,6 @@ const VerifyRequest: React.FC = () => {
                                                 <option value="Реструктуризация">Реструктуризация</option>
                                                 <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
                                             </select>
-                                            {/*<div className="img-icon-down">*/}
-                                            {/*    <svg width="33.512817" height="10.858643" viewBox="0 0 33.5128 10.8586" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
-                                            {/*        <line id="Line 1" x1="0.256348" y1="0.486938" x2="16.910767" y2="10.429321" stroke="#FFFFFF" stroke-opacity="0.560000" stroke-width="1.000000"/>*/}
-                                            {/*        <line id="Line 1" x1="16.602051" y1="10.371704" x2="33.256470" y2="0.429321" stroke="#FFFFFF" stroke-opacity="0.560000" stroke-width="1.000000"/>*/}
-                                            {/*    </svg>*/}
-                                            {/*</div>*/}
                                             {showErrors && !formState.businessProcess.type && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
@@ -628,20 +508,11 @@ const VerifyRequest: React.FC = () => {
                                                     value={formState.taskInfo?.estateObjects[0].objectCost || ''}
                                                     onChange={(e) => handleInputChange('taskInfo.estateObjects.0.objectCost', e.target.value)}
                                                 />
-                                                {/*{showErrors && !formState.objectCost && (*/}
-                                                {/*    <div className="error-message">*/}
-                                                {/*        <span className="span-error-info">Обязательное поле</span>*/}
-                                                {/*    </div>*/}
-                                                {/*)}*/}
+
                                             </div>
                                         </div>
                                         <button type="button" onClick={handleAddRealtyObject} className='button-realty-add'>Добавить</button>
-                                        {/*{showErrors && (!formState.taskInfo?.estateObjects[0].objectType || formState?.taskInfo.estateObjects.length === 0) && (*/}
-                                        {/*    <div className="error-message" style={{marginLeft: '40px'}}>*/}
-                                        {/*        <span className="span-error-info">Обязательное поле</span>*/}
-                                        {/*    </div>*/}
 
-                                        {/*)}*/}
                                         {showErrors && (addRealtyObjects.length === 0) && (
                                             <div className="error-message" style={{marginLeft: '40px'}}>
                                                 <span className="span-error-info">Обязательное поле</span>
@@ -783,9 +654,6 @@ const VerifyRequest: React.FC = () => {
                                         <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
                                     </div>
                                 )}
-                                {/*{fileList.length === 0 && (*/}
-                                {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
-                                {/*)}*/}
                                 {showErrors && fileList.length === 0 && (
                                     <div className="error-message">
                                         <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>

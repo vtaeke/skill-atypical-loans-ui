@@ -1,25 +1,72 @@
 import { UPDATE_FORM_FIELD, RESET_FORM, FormActionTypes } from '../action/formActions';
 
 interface FormSettlement {
-    restructuring: string;
-    contractNumber: string;
-    clientFamily: string;
-    clientName: string;
-    clientSurname: string;
-    bank: string;
-    email: string;
-    comment: string;
+    taskInitiator: {
+        externalId: string;
+        source: string;
+        tbName: string;
+        initiatorEmail: string;
+        initiatorID: string;
+    };
+    businessProcess: {
+        type: string;
+        category: string;
+    };
+    taskInfo: {
+        dealMembersNumber: number;
+        client: {
+            firstName: string;
+            middleName: string;
+            lastName: string;
+        };
+        organization: {
+            orgname: string;
+        };
+        estateObjects: {
+            objectType: string;
+            objectCost: number;
+            tbObjectName: string;
+            objectRegionCode: string;
+            currency: string;
+        }[];
+    };
+    clientManagerComment: string;
+    documentsInfo: {
+        otrId: string;
+        fileName: string;
+    }[];
+    files: File[];
+    addRealtyObjects: {objectType: string, objectCost: string}[],
 }
 
 const initialState: FormSettlement = {
-    restructuring: '',
-    contractNumber: '',
-    clientFamily: '',
-    clientName: '',
-    clientSurname: '',
-    bank: '',
-    email: '',
-    comment: '',
+    taskInitiator: {
+        externalId: '',
+        source: '',
+        tbName: '',
+        initiatorEmail: '',
+        initiatorID: '',
+    },
+    businessProcess: {
+        type: '',
+        category: '',
+    },
+    taskInfo: {
+        dealMembersNumber: 0,
+        client: {
+            firstName: '',
+            middleName: '',
+            lastName: '',
+        },
+        organization: {
+            orgname: '',
+        },
+        estateObjects: [],
+    },
+    clientManagerComment: '',
+    documentsInfo: [],
+    files: [],
+    addRealtyObjects: [],
 };
 
 const formSettlement = (state = initialState, action: FormActionTypes): FormSettlement => {
