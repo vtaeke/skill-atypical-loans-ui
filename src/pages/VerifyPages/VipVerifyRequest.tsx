@@ -18,20 +18,99 @@ import {AppDispatch} from "../../redux/store";
 import Notification from "../Notification/Notification";
 import NorificationAlert from "../Notification/NorificationAlert";
 
+interface EstateObject {
+    objectType: string;
+    objectCost: string | number;
+    tbObjectName?: number;
+    objectRegionCode?: string;
+    currency?: string;
+}
+
+interface Client {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+}
+
+interface Organization {
+    orgname: string;
+}
+
+interface TaskInfo {
+    dealMembersNumber: number;
+    client: Client;
+    organization: Organization;
+    estateObjects: EstateObject[];
+}
+
+interface TaskInitiator {
+    externalId: string;
+    source: string;
+    tbName: string;
+    initiatorEmail: string;
+    initiatorID: string;
+}
+
+interface BusinessProcess {
+    type: string;
+    category: string;
+}
+
+interface DocumentInfo {
+    otrId: string;
+    fileName: string;
+}
+
+interface FormState {
+    taskInitiator: TaskInitiator;
+    businessProcess: BusinessProcess;
+    taskInfo: TaskInfo;
+    clientManagerComment: string;
+    documentsInfo: DocumentInfo[];
+}
+
 const VipVerifyRequest: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
+
     const [formState, setFormState] = useState({
-        businessProcess: '',
-        externalId: '',
-        objectType: '',
-        objectCost: '',
-        tbObjectName: '',
-        objectRegionCode: '',
-        lastName: '',
-        firstName: '',
-        middleName: '',
-        initiatorEmail: '',
-        comment: '',
+        taskInitiator: {
+            externalId: "",
+            source: "",
+            tbName: "",
+            initiatorEmail: "",
+            initiatorID: ""
+        },
+        businessProcess: {
+            type: "",
+            category: ""
+        },
+        taskInfo: {
+            dealMembersNumber: 0,
+            client: {
+                firstName: "",
+                middleName: "",
+                lastName: ""
+            },
+            organization: {
+                orgname: ""
+            },
+            estateObjects: [
+                {
+                    objectType: "",
+                    objectCost: 0,
+                    tbObjectName: 0,
+                    objectRegionCode: "",
+                    currency: "RUB"
+                }
+            ]
+        },
+        clientManagerComment: "",
+        documentsInfo: [
+            {
+                otrId: "",
+                fileName: ""
+            }
+        ]
     });
 
     const [fileList, setFileList] = useState<File[]>([]);
@@ -42,18 +121,19 @@ const VipVerifyRequest: React.FC = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [showErrors, setShowErrors] = useState(false);
+    const [addRealtyObjects, setAddRealtyObjects] = useState<{ objectType: string; objectCost: string }[]>([]);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         const validateEmail = () => {
-            if (formState.initiatorEmail === '') {
+            if (formState.taskInitiator.initiatorEmail === '') {
                 setEmailError(null)
                 return;
             }
 
             const emailReg = /^[a-zA-Z0-9._%+-]+@(sberbank.ru|sber.ru|omega.sbrf.ru)$/;
-            if (!emailReg.test(formState.initiatorEmail)) {
+            if (!emailReg.test(formState.taskInitiator.initiatorEmail)) {
                 setEmailError(
                     <>
                         <span style={{color: 'rgb(239, 107, 37)'}}>
@@ -66,21 +146,25 @@ const VipVerifyRequest: React.FC = () => {
             }
         }
         validateEmail()
-    }, [formState.initiatorEmail])
+    }, [formState.taskInitiator.initiatorEmail])
 
-    // условие - проверка на все поля
-    // useEffect(() => {
-    //     const validValue = Object.values(formState).every(val => val !== '') && fileList.length > 0;
-    //     setSuccessSubmit(validValue)
-    // }, [formState, fileList])
 
     // условие - Отчество, комментарий - не обязательное
     useEffect(() => {
-        const requiredFields: (keyof typeof formState)[] = [
-            'businessProcess', 'externalId', 'objectType', 'objectCost', 'tbObjectName', 'objectRegionCode', 'lastName',
-            'firstName', 'initiatorEmail'
-        ];
-        const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
+        console.log("Form state updated============: ", formState);
+        const requiredFields = [
+            formState.businessProcess.type,
+            // formState.businessProcess.category,
+            formState.taskInitiator.externalId,
+            formState.taskInitiator.initiatorEmail,
+            formState.taskInfo.client.firstName,
+            formState.taskInfo.client.lastName,
+            // formState.taskInfo.estateObjects[0].objectType,
+            // formState.taskInfo.estateObjects[0].objectCost,
+            formState.taskInfo.estateObjects[0].objectRegionCode,
+        ]
+        // const validValue = requiredFields.every(field => formState[field] !== '') && fileList.length > 0;
+        const validValue = requiredFields.every(field => field !== '') && fileList.length > 0;
         setSuccessSubmit(validValue);
     }, [formState, fileList]);
 
@@ -124,12 +208,14 @@ const VipVerifyRequest: React.FC = () => {
 
         if (successSubmit) {
             Object.entries(formState).forEach(([field, value]) => {
-                dispatch(updateFormField(field, value))
+                // dispatch(updateFormField(field, value))
+                dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
             })
 
             const formData = new FormData()
             Object.entries(formState).forEach(([field, value]) => {
-                formData.append(field, value)
+                // formData.append(field, value)
+                formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
             });
             fileList.forEach(file => {
                 formData.append('files', file)
@@ -143,29 +229,87 @@ const VipVerifyRequest: React.FC = () => {
         }
     };
 
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     // for (const field in formState) {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // }
-    //     // Object.keys(formState).forEach((field) => {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // })
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //
-    //     setNotificationMsg('Заявка успешно создана!')
-    //     setShowNotification(true)
-    //
-    //     console.log('Данные формы отправлены в Redux:', formState);
-    // };
+    const handleInputChange = (field: string, value: string | number | any[]) => {
+        console.log(`Поле: ${field}, Значение: ${value}`);
+        const fieldParts = field.split('.');
+        const topLevelField = fieldParts[0] as keyof typeof formState;
 
-    const handleInputChange = (field: string, value: string) => {
-        setFormState(prevState => ({
-            ...prevState,
-            [field]: value
-        }));
+
+
+        if (topLevelField === 'taskInitiator') {
+            if (fieldParts[1] === 'externalId') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInitiator: {
+                        ...prevState.taskInitiator,
+                        externalId: value as string,
+                    },
+                }));
+            } else if (fieldParts[1] === 'initiatorEmail') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInitiator: {
+                        ...prevState.taskInitiator,
+                        initiatorEmail: value as string,
+                    },
+                }));
+            }
+        }
+        if (topLevelField === 'businessProcess') {
+            if (fieldParts[1] === 'type') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    businessProcess: {
+                        ...prevState.businessProcess,
+                        type: value as string,
+                    },
+                }));
+            }
+        }
+        else if (topLevelField === 'taskInfo') {
+            if (fieldParts[1] === 'client') {
+                const fieldName = fieldParts[2];
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        client: {
+                            ...prevState.taskInfo.client,
+                            [fieldName]: value,
+                        },
+                    },
+                }));
+            } else if (fieldParts[1] === 'estateObjects') {
+                const index = parseInt(fieldParts[2], 10);
+                const fieldName = fieldParts[3];
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        estateObjects: prevState.taskInfo.estateObjects.map((obj, i) => {
+                            if (i === index) {
+                                return { ...obj, [fieldName]: value };
+                            }
+                            return obj;
+                        }),
+                    },
+                }));
+            } else {
+                const fieldName = fieldParts[1];
+                setFormState((prevState) => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        [fieldName]: value,
+                    },
+                }));
+            }
+        } else {
+            setFormState((prevState) => ({
+                ...prevState,
+                [field]: value,
+            }));
+        }
     };
 
     const closeNotification = () => {
@@ -188,6 +332,40 @@ const VipVerifyRequest: React.FC = () => {
     const closeAlert = () => {
         setShowAlert(false);
     };
+
+    const handleAddRealtyObject = () => {
+        const newObject = {
+            objectType: formState.taskInfo.estateObjects[0].objectType,
+            objectCost: formState.taskInfo.estateObjects[0].objectCost,
+        }
+        //@ts-ignore
+        setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
+        //@ts-ignore
+        setFormState(prevState => ({
+            ...prevState,
+            taskInfo: {
+                ...prevState.taskInfo,
+                estateObjects: [
+                    { objectType: '', objectCost: '' }, // Сбросить поля первого объекта
+                    ...prevState.taskInfo.estateObjects.slice(1), // Оставить остальные объекты
+                    newObject, // Добавить новый объект
+                ],
+            }
+        }))
+    }
+
+    const handleAddRealtyRemove = (index: number) => {
+        setFormState(prevState => ({
+            ...prevState,
+            taskInfo: {
+                ...prevState.taskInfo,
+                estateObjects: prevState.taskInfo.estateObjects.filter((_, i) => i !== index)
+            }
+        }))
+
+        setAddRealtyObjects(prevObjects=> prevObjects.filter((_, i) => i !== index))
+    }
+
 
     return (
         <div className="app">
@@ -217,14 +395,15 @@ const VipVerifyRequest: React.FC = () => {
                                         <div>
                                             <select
                                                 className='select-realty-category'
-                                                value={formState.businessProcess}
-                                                onChange={(e) => handleInputChange('businessProcess', e.target.value)}
+                                                //@ts-ignore
+                                                value={formState.businessProcess.type}
+                                                onChange={(e) => handleInputChange('businessProcess.type', e.target.value)}
                                             >
-                                                <option value="" disabled hidden>Категория запроса</option>
+                                                <option value="" hidden>Категория запроса</option>
                                                 <option value="Реструктуризация">Реструктуризация</option>
                                                 <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
                                             </select>
-                                            {showErrors && !formState.businessProcess && (
+                                            {showErrors && !formState.businessProcess.type && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
@@ -241,10 +420,10 @@ const VipVerifyRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Номер кредитного договора"
-                                            value={formState.externalId}
-                                            onChange={(e) => handleInputChange('externalId', e.target.value)}
+                                            value={formState.taskInitiator.externalId}
+                                            onChange={(e) => handleInputChange('taskInitiator.externalId', e.target.value)}
                                         />
-                                        {showErrors && !formState.externalId && (
+                                        {showErrors && !formState.taskInitiator.externalId && (
                                             <div className="error-message">
                                                 <span className="span-error-info">Обязательное поле</span>
                                             </div>
@@ -252,43 +431,64 @@ const VipVerifyRequest: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="form-content-body">
-                                    <div className="form-content-realty">
+                                <div>
+                                    {addRealtyObjects.map((object, index) => (
+                                        <div className="hidden-realty-block" key={index}>
+                                            <div className="hidden-realty-body">
+                                                <span style={{ padding: '8px 40px 8px 10px'}}>{object.objectType}</span>
+                                                <span>{object.objectCost}</span>
+                                                <button
+                                                    type="button"
+                                                    style={{
+                                                        marginLeft: 'auto', // this will push the button to the right
+                                                        background: "transparent",
+                                                        border: 'none',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                    onClick={() => handleAddRealtyRemove(index)}>
+                                                    <img src={closeImg} width={14} height={14} alt=""/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <div className="form-content-body">
+                                        <div className="form-content-realty">
                                         <span className="icon" style={{ marginRight: '10px' }}>
                                             <img width={30} height={30} src={houseIcon} alt="icon" />
                                         </span>
-                                        <div className="form-content-real-property">
-                                            <select
-                                                className='select-realty'
-                                                value={formState.objectType}
-                                                onChange={(e) => handleInputChange('objectType', e.target.value)}
-                                            >
-                                                <option value="" disabled hidden>Объект недвижимости</option>
-                                                <option value="ИЖС">ИЖС</option>
-                                                <option value="СНТ">СНТ</option>
-                                            </select>
-                                            {showErrors && !formState.objectType && (
-                                                <div className="error-message" style={{marginLeft: '270px'}}>
-                                                    <span className="span-error-info">Обязательное поле</span>
-                                                </div>
-                                            )}
+                                            <div className="form-content-real-property">
+                                                <select
+                                                    className='select-realty'
+                                                    value={formState.taskInfo?.estateObjects[0].objectType}
+                                                    onChange={(e) => handleInputChange('taskInfo.estateObjects.0.objectType', e.target.value)}
+                                                >
+                                                    <option value="" disabled hidden>Объект недвижимости</option>
+                                                    <option value="ИЖС">ИЖС</option>
+                                                    <option value="СНТ">СНТ</option>
+                                                </select>
+                                            </div>
+                                            <div className="form-content-real-property">
+                                                <input
+                                                    style={{ width: "395px", height: '16px' }}
+                                                    type="text"
+                                                    placeholder="Стоимость"
+                                                    value={formState.taskInfo?.estateObjects[0].objectCost || ''}
+                                                    onChange={(e) => handleInputChange('taskInfo.estateObjects.0.objectCost', e.target.value)}
+                                                />
+                                                {/*{showErrors && !formState.objectCost && (*/}
+                                                {/*    <div className="error-message">*/}
+                                                {/*        <span className="span-error-info">Обязательное поле</span>*/}
+                                                {/*    </div>*/}
+                                                {/*)}*/}
+                                            </div>
                                         </div>
-                                        <div className="form-content-real-property">
-                                            <input
-                                                style={{ width: "395px", height: '16px' }}
-                                                type="text"
-                                                placeholder="Стоимость"
-                                                value={formState.objectCost}
-                                                onChange={(e) => handleInputChange('objectCost', e.target.value)}
-                                            />
-                                            {showErrors && !formState.objectCost && (
-                                                <div className="error-message">
-                                                    <span className="span-error-info">Обязательное поле</span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <button type="button" onClick={handleAddRealtyObject} className='button-realty-add'>Добавить</button>
+                                        {showErrors && (addRealtyObjects.length === 0) && (
+                                            <div className="error-message" style={{marginLeft: '40px'}}>
+                                                <span className="span-error-info">Обязательное поле</span>
+                                            </div>
+                                        )}
                                     </div>
-                                    <button className='button-realty-add'>Добавить</button>
                                 </div>
 
                                 <div className="form-content-body">
@@ -299,16 +499,16 @@ const VipVerifyRequest: React.FC = () => {
                                         <div className="form-content-form-bank">
                                             <select
                                                 className='select-bank'
-                                                value={formState.tbObjectName}
-                                                onChange={(e) => handleInputChange('tbObjectName', e.target.value)}
+                                                value={formState.taskInfo.estateObjects[0].tbObjectName}
+                                                onChange={(e) => handleInputChange('taskInfo.estateObjects.0.tbObjectName', e.target.value)}
                                             >
-                                                <option value="" disabled hidden>Территориальный банк расположения объекта недвижимости</option>
+                                                <option value="" hidden>Территориальный банк расположения объекта недвижимости</option>
                                                 <option value="Сбер">Сбер</option>
                                                 <option value="Сбербанк">Сбербанк</option>
                                                 <option value="СБЕР2">СБЕР</option>
                                                 <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
                                             </select>
-                                            {showErrors && !formState.tbObjectName && (
+                                            {showErrors && !formState.taskInfo.estateObjects[0].tbObjectName && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
@@ -325,15 +525,15 @@ const VipVerifyRequest: React.FC = () => {
                                         <div className="form-content-region-object">
                                             <select
                                                 className='select-region'
-                                                value={formState.objectRegionCode}
-                                                onChange={(e) => handleInputChange('objectRegionCode', e.target.value)}
+                                                value={formState.taskInfo.estateObjects[0].objectRegionCode}
+                                                onChange={(e) => handleInputChange('taskInfo.estateObjects.0.objectRegionCode', e.target.value)}
                                             >
                                                 <option value="" disabled hidden>Регион расположения объекта недвижимости</option>
                                                 <option value="регион1">регион1</option>
                                                 <option value="регион2">регион2</option>
                                                 <option value="регион3">регион3</option>
                                             </select>
-                                            {showErrors && !formState.objectRegionCode && (
+                                            {showErrors && !formState.taskInfo.estateObjects[0].objectRegionCode && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
@@ -348,35 +548,38 @@ const VipVerifyRequest: React.FC = () => {
                                     </span>
                                     <div className="input-block">
                                         <input
+                                            maxLength={84}
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
                                             placeholder="Фамилия"
-                                            value={formState.lastName}
-                                            onChange={(e) => handleInputChange('lastName', e.target.value)}
+                                            value={formState.taskInfo.client.lastName}
+                                            onChange={(e) => handleInputChange('taskInfo.client.lastName', e.target.value)}
                                         />
                                         <input
+                                            maxLength={84}
                                             style={{ marginRight: '10px' }}
                                             className='fio'
                                             type="text"
                                             placeholder="Имя"
-                                            value={formState.firstName}
-                                            onChange={(e) => handleInputChange('firstName', e.target.value)}
+                                            value={formState.taskInfo.client.firstName}
+                                            onChange={(e) => handleInputChange('taskInfo.client.firstName', e.target.value)}
                                         />
                                         <input
+                                            maxLength={84}
                                             className='fio'
                                             type="text"
                                             placeholder="Отчество"
-                                            value={formState.middleName}
-                                            onChange={(e) => handleInputChange('middleName', e.target.value)}
+                                            value={formState.taskInfo.client.middleName}
+                                            onChange={(e) => handleInputChange('taskInfo.client.middleName', e.target.value)}
                                         />
                                         <div style={{ display: 'flex'}}>
-                                            {showErrors && !formState.lastName && (
+                                            {showErrors && !formState.taskInfo.client.lastName && (
                                                 <div className="error-message" style={{ marginRight: '102px'}}>
                                                     <span className="span-error-info">Обязательное поле</span> Фамилия
                                                 </div>
                                             )}
-                                            {showErrors && !formState.firstName && (
+                                            {showErrors && !formState.taskInfo.client.firstName && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span> Имя
                                                 </div>
@@ -393,8 +596,8 @@ const VipVerifyRequest: React.FC = () => {
                                         <input
                                             type="text"
                                             placeholder="Email"
-                                            value={formState.initiatorEmail}
-                                            onChange={(e) => handleInputChange('initiatorEmail', e.target.value)}
+                                            value={formState.taskInitiator.initiatorEmail}
+                                            onChange={(e) => handleInputChange('taskInitiator.initiatorEmail', e.target.value)}
                                         />
                                         {emailError && (
                                             <img className='errorImg' src={errorIcon} alt=""/>
@@ -406,14 +609,14 @@ const VipVerifyRequest: React.FC = () => {
                                     <textarea
                                         maxLength={1000}
                                         placeholder="Комментарий"
-                                        value={formState.comment}
-                                        onChange={(e) => handleInputChange('comment', e.target.value)}
+                                        value={formState.clientManagerComment}
+                                        onChange={(e) => handleInputChange('clientManagerComment', e.target.value)}
                                     ></textarea>
                                 </div>
                                 {emailError && (
                                     <div style={{fontSize: '12px', marginBottom: '5px'}}>{emailError}</div>
                                 )}
-                                {showErrors && !formState.initiatorEmail && (
+                                {showErrors && !formState.taskInitiator.initiatorEmail && (
                                     <div className="error-message">
                                          <span style={{color: 'rgb(239, 107, 37)'}}>
                                              Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:
