@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import {updateFormField, resetForm, addFiles} from '../../redux/action/formActions';
+import {updateFormField, resetForm, addFiles, createRequestSuccess} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import './VerifyRequest.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
@@ -201,48 +201,6 @@ const VerifyRequest: React.FC = () => {
         }
     };
 
-    //вывод в консоль файлов, которые были добавлены
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //
-    //     setShowErrors(true);
-    //
-    //     if (successSubmit) {
-    //         // Object.entries(formState).forEach(([field, value]) => {
-    //         //     // dispatch(updateFormField(field, value))
-    //         //     dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
-    //         // })
-    //         const filledEstateObjects = addRealtyObjects.filter(
-    //             (obj) => obj.objectType && obj.objectCost)
-    //
-    //         const updatedFormState = {
-    //             ...formState,
-    //             taskInfo: {
-    //                 ...formState.taskInfo,
-    //                 estateObjects: filledEstateObjects.map((obj, index) => ({
-    //                     ...obj,
-    //                     tbObjectName: formState.taskInfo.estateObjects[index]?.tbObjectName
-    //                 })),
-    //             }
-    //         }
-    //
-    //         const formData = new FormData()
-    //         Object.entries(formState).forEach(([field, value]) => {
-    //             // formData.append(field, value)
-    //             formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
-    //         });
-    //         fileList.forEach(file => {
-    //             formData.append('files', file)
-    //         });
-    //
-    //         setNotificationMsg('Заявка успешно создана!')
-    //         setShowNotification(true)
-    //
-    //         console.log('Данные формы отправлены в Redux:', updatedFormState);
-    //         console.log('Прикрепленные файлы:', fileList);
-    //     }
-    // };
-
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -279,6 +237,8 @@ const VerifyRequest: React.FC = () => {
                 }
             });
 
+            dispatch(createRequestSuccess(updatedFormState))
+
             // Добавляем файлы в FormData
             fileList.forEach(file => {
                 formData.append('files', file);
@@ -306,42 +266,6 @@ const VerifyRequest: React.FC = () => {
             console.log('Прикрепленные файлы:', fileList);
         }
     }
-
-
-
-    //v2 handleSubmit send to back-end
-    // const handleSubmit = async(event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //
-    //     // send to back-end
-    //     const formData = new FormData()
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         formData.append(field, value)
-    //     });
-    //     fileList.forEach(file => {
-    //         formData.append('files', file)
-    //     });
-    //
-    //     try {
-    //         const response = await fetch('/backend', {
-    //             method: 'POST',
-    //             body: formData
-    //         });
-    //         if (response.ok) {
-    //             setNotificationMsg('Заявка успешно создана!');
-    //             setShowNotification(true);
-    //         } else {
-    //             setNotificationMsg('Ошибка при создании заявки!');
-    //             setShowNotification(true);
-    //         }
-    //     } catch (error) {
-    //         setNotificationMsg('Ошибка при создании заявки!')
-    //         setShowNotification(true);
-    //     }
-    // }
 
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);
