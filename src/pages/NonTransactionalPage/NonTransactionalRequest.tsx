@@ -154,7 +154,7 @@ const NonTransactionalRequest: React.FC = () => {
         console.log("Form state updated============: ", formState);
         const requiredFields = [
             formState.businessProcess.type,
-            formState.businessProcess.category,
+            // formState.businessProcess.category,
             formState.taskInitiator.externalId,
             formState.taskInitiator.initiatorEmail,
             formState.taskInfo.client.firstName,
@@ -202,35 +202,94 @@ const NonTransactionalRequest: React.FC = () => {
         }
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    // const handleSubmit = (event: React.FormEvent) => {
+    //     event.preventDefault();
+    //
+    //     setShowErrors(true);
+    //
+    //     if (successSubmit) {
+    //         // Если форма заполнена корректно
+    //         Object.entries(formState).forEach(([field, value]) => {
+    //             // dispatch(updateFormField(field, value));
+    //             dispatch(updateFormField(field, typeof value === 'string' ? value: ''))
+    //         });
+    //
+    //         const formData = new FormData();
+    //         Object.entries(formState).forEach(([field, value]) => {
+    //             // formData.append(field, value);
+    //             formData.append(field, typeof value === 'string' ? value : JSON.stringify(value))
+    //         });
+    //         fileList.forEach(file => {
+    //             formData.append('files', file);
+    //         });
+    //
+    //         setNotificationMsg('Заявка успешно создана!')
+    //         setShowNotification(true)
+    //
+    //         // Логика отправки данных и отображение успешного уведомления
+    //         console.log('Данные формы отправлены в Redux:', formState);
+    //         console.log('Прикрепленные файлы:', fileList);
+    //     }
+    // };
+
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         setShowErrors(true);
 
         if (successSubmit) {
-            // Если форма заполнена корректно
-            Object.entries(formState).forEach(([field, value]) => {
-                // dispatch(updateFormField(field, value));
-                dispatch(updateFormField(field, typeof value === 'string' ? value: ''))
+            // Создаем новый объект состояния с учетом заполненных объектов недвижимости
+            const filledEstateObjects = addRealtyObjects.filter(
+                (obj) => obj.objectType && obj.objectCost
+            );
+
+            const updatedFormState = {
+                ...formState,
+                taskInfo: {
+                    ...formState.taskInfo,
+                    estateObjects: filledEstateObjects.map((obj) => ({
+                        ...obj,
+                    })),
+                }
+            };
+
+            // Создается FormData для отправки на сервер
+            const formData = new FormData();
+            Object.entries(updatedFormState).forEach(([field, value]) => {
+                if (typeof value === 'object' && value !== null) {
+                    formData.append(field, JSON.stringify(value));
+                } else {
+                    formData.append(field, value as string);
+                }
             });
 
-            const formData = new FormData();
-            Object.entries(formState).forEach(([field, value]) => {
-                // formData.append(field, value);
-                formData.append(field, typeof value === 'string' ? value : JSON.stringify(value))
-            });
+            // Добавляем файлы в FormData
             fileList.forEach(file => {
                 formData.append('files', file);
             });
 
-            setNotificationMsg('Заявка успешно создана!')
-            setShowNotification(true)
+            try {
+                const response = await fetch('/backend', {
+                    method: 'POST',
+                    body: formData,
+                });
 
-            // Логика отправки данных и отображение успешного уведомления
-            console.log('Данные формы отправлены в Redux:', formState);
+                if (response.ok) {
+                    setNotificationMsg('Заявка успешно создана!');
+                    setShowNotification(true);
+                } else {
+                    setNotificationMsg('Ошибка при создании заявки!');
+                    setShowNotification(true);
+                }
+            } catch (error) {
+                setNotificationMsg('Ошибка при создании заявки!');
+                setShowNotification(true);
+            }
+
+            console.log('Данные формы отправлены на сервер:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
         }
-    };
+    }
 
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);
@@ -254,6 +313,17 @@ const NonTransactionalRequest: React.FC = () => {
                     taskInitiator: {
                         ...prevState.taskInitiator,
                         initiatorEmail: value as string,
+                    },
+                }));
+            }
+        }
+        if (topLevelField === 'businessProcess') {
+            if (fieldParts[1] === 'type') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    businessProcess: {
+                        ...prevState.businessProcess,
+                        type: value as string,
                     },
                 }));
             }
@@ -320,25 +390,51 @@ const NonTransactionalRequest: React.FC = () => {
         setShowAlert(false);
     };
 
+    // const handleAddRealtyObject = () => {
+    //     const newObject = {
+    //         objectType: formState.taskInfo.estateObjects[0].objectType,
+    //         objectCost: formState.taskInfo.estateObjects[0].objectCost,
+    //     }
+    //     //@ts-ignore
+    //     setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
+    //     //@ts-ignore
+    //     setFormState(prevState => ({
+    //         ...prevState,
+    //         taskInfo: {
+    //             ...prevState.taskInfo,
+    //             estateObjects: [
+    //                 { objectType: '', objectCost: '' }, // Сбросить поля первого объекта
+    //                 ...prevState.taskInfo.estateObjects.slice(1), // Оставить остальные объекты
+    //                 newObject, // Добавить новый объект
+    //             ],
+    //         }
+    //     }))
+    // }
+
     const handleAddRealtyObject = () => {
+
         const newObject = {
             objectType: formState.taskInfo.estateObjects[0].objectType,
             objectCost: formState.taskInfo.estateObjects[0].objectCost,
-        }
+        };
+
         //@ts-ignore
-        setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
+        setAddRealtyObjects(prevObjects => [...prevObjects, newObject]);
         //@ts-ignore
         setFormState(prevState => ({
             ...prevState,
             taskInfo: {
                 ...prevState.taskInfo,
                 estateObjects: [
-                    { objectType: '', objectCost: '' }, // Сбросить поля первого объекта
-                    ...prevState.taskInfo.estateObjects.slice(1), // Оставить остальные объекты
-                    newObject, // Добавить новый объект
+                    {
+                        objectType: '',
+                        objectCost: '',
+                    },
+                    ...prevState.taskInfo.estateObjects.slice(1),
+                    newObject,
                 ],
             }
-        }))
+        }));
     }
 
     const handleAddRealtyRemove = (index: number) => {
@@ -382,14 +478,14 @@ const NonTransactionalRequest: React.FC = () => {
                                             <select
                                                 className='select-realty-category'
                                                 //@ts-ignore
-                                                value={formState.businessProcess}
-                                                onChange={(e) => handleInputChange('businessProcess', e.target.value)}
+                                                value={formState.businessProcess.type}
+                                                onChange={(e) => handleInputChange('businessProcess.type', e.target.value)}
                                             >
                                                 <option value="" hidden>Категория запроса</option>
                                                 <option value="Реструктуризация">Реструктуризация</option>
                                                 <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
                                             </select>
-                                            {showErrors && !formState.businessProcess && (
+                                            {showErrors && !formState.businessProcess.type && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
