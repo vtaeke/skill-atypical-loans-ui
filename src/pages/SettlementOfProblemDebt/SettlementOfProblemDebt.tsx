@@ -209,6 +209,7 @@ const SettlementOfProblemDebt: React.FC = () => {
             const formData = new FormData()
 
             const updatedFormState = {
+                nameRequest: 'Урегулирование задолженности',
                 ...formState,
                 taskInfo: {
                     ...formState.taskInfo,

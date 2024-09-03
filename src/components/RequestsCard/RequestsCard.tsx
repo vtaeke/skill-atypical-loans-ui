@@ -38,7 +38,8 @@ const RequestsCard: React.FC<RequestsCardProps> = ({ title, type, status, isSele
                 <div className="request-title" >{title}</div>
                 <div className="request-type">{type}</div>
             </div>
-            <div className="request-status">
+            {/*<div className="request-status">*/}
+            <div className="" style={{ fontSize: '14px'}}>
                 <p style={statusStyles[status]} >{status}</p>
             </div>
         </div>

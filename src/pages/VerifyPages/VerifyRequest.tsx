@@ -217,6 +217,7 @@ const VerifyRequest: React.FC = () => {
 
             const updatedFormState = {
                 ...formState,
+                nameRequest: 'Верификация отчетов',
                 taskInfo: {
                     ...formState.taskInfo,
                     estateObjects: filledEstateObjects.map((obj) => ({

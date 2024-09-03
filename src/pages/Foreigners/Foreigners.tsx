@@ -210,6 +210,7 @@ const Foreigners: React.FC = () => {
 
             const updatedFormState = {
                 ...formState,
+                nameRequest: 'Иностранцы',
                 taskInfo: {
                     ...formState.taskInfo,
                 }
