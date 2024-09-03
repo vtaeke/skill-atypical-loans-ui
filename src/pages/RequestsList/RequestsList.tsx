@@ -6,6 +6,9 @@ import HintsBlock from "../../components/HintBlock/HintBlock";
 import noResultsIcon from '../../resources/noResultsIcon.svg'
 import {useNavigate} from "react-router-dom";
 import './RequestsList.scss'
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../redux/store";
+import {createRequestSuccess} from "../../redux/action/formActions";
 
 interface Props {}
 
@@ -40,22 +43,43 @@ interface Props {
 
 const RequestsList: React.FC<Props> = ({selectedStatusFilters, selectedTypeFilters, searchInput}) => {
     const [fileList, setFileList] = useState<File[]>([]);
-    const [requests, setRequests] = useState<Request[]>([
-        { title: '135-000-001-002', type: 'Верификация отчетов', status: 'Выполнена' },
-        { title: '135-000-001-002', type: 'VIP. Верификация отчетов', status: 'Отказано' },
-        { title: '135-000-001-003', type: 'Нетиповая и сверхлимитная сделки', status: 'На согласовании' },
-        { title: '135-000-001-005', type: 'Сделка по нетранзакционным продуктам', status: 'Выполнена' },
-        { title: '135-000-001-007', type: 'Иностранные граждане', status: 'Отказано' },
-        { title: '135-000-001-012', type: 'Сделка по нетранзакционным продуктам', status: 'На согласовании' },
-        { title: '135-000-001-0015', type: 'Верификация отчетов', status: 'Ошибка' },
-        { title: '135-000-001-0325', type: 'Верификация отчетов', status: 'Выполнена' },
-    ]);
+    // const [requests, setRequests] = useState<Request[]>([
+    //     { title: '135-000-001-002', type: 'Верификация отчетов', status: 'Выполнена' },
+    //     { title: '135-000-001-002', type: 'VIP. Верификация отчетов', status: 'Отказано' },
+    //     { title: '135-000-001-003', type: 'Нетиповая и сверхлимитная сделки', status: 'На согласовании' },
+    //     { title: '135-000-001-005', type: 'Сделка по нетранзакционным продуктам', status: 'Выполнена' },
+    //     { title: '135-000-001-007', type: 'Иностранные граждане', status: 'Отказано' },
+    //     { title: '135-000-001-012', type: 'Сделка по нетранзакционным продуктам', status: 'На согласовании' },
+    //     { title: '135-000-001-0015', type: 'Верификация отчетов', status: 'Ошибка' },
+    //     { title: '135-000-001-0325', type: 'Верификация отчетов', status: 'Выполнена' },
+    // ]);
 
     const navigate = useNavigate();
 
     const handleCardClick = (path: string) => {
         navigate(path);
     };
+
+    const dispatch: AppDispatch = useDispatch();
+
+    const requestsInfo = useSelector((state:RootState) => state.form.requests);
+    console.log('req', requestsInfo)
+    // const [requests, setRequests] = useState([requests111])
+    const [requests, setRequests] = useState<any[]>([])
+
+    const types = requestsInfo.flatMap((request) => request.businessProcess?.type);
+    console.log('types', types); // должно зарегистрировать ["Реструктуризация"]
+
+
+
+    useEffect(() => {
+        const mappedRequests = requestsInfo.map((req) => ({
+            title: req.taskInitiator.externalId,
+            type: req.businessProcess?.type || 'Должен тянуться тип',
+            status: req.taskInfo.status || 'Статус не указан'
+        }))
+        setRequests(mappedRequests)
+    }, [requestsInfo]);
 
     // const assistantStateRef = useRef<AssistantAppState>();
     // const assistantRef = useRef<ReturnType<typeof createAssistant>>();

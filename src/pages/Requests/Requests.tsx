@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { updateFormField, resetForm } from '../../redux/action/formActions';
 import './Requests.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
@@ -12,7 +12,7 @@ import emailIcon from "../../resources/emailIcon.svg";
 import { useNavigate } from "react-router-dom";
 import circleSalut from "../../resources/circleSalut.svg";
 import closeImg from "../../resources/closeImg.svg";
-import {AppDispatch} from "../../redux/store";
+import {AppDispatch, RootState} from "../../redux/store";
 import Notification from "../Notification/Notification";
 import '../SettlementOfProblemDebt/SettlementOfProblemDebt.scss'
 import NorificationAlert from "../Notification/NorificationAlert";

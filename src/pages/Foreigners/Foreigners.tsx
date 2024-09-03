@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFormField, resetForm } from '../../redux/action/formActions';
+import {updateFormField, resetForm, createRequestSuccess} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import '../VerifyPages/VerifyRequest.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
@@ -82,10 +82,10 @@ const Foreigners: React.FC = () => {
             initiatorEmail: "",
             initiatorID: ""
         },
-        // businessProcess: {
-        //     type: "",
-        //     category: ""
-        // },
+        businessProcess: {
+            type: "",
+            category: ""
+        },
         taskInfo: {
             // dealMembersNumber: 0,
             client: {
@@ -207,12 +207,22 @@ const Foreigners: React.FC = () => {
             })
 
             const formData = new FormData()
+
+            const updatedFormState = {
+                ...formState,
+                taskInfo: {
+                    ...formState.taskInfo,
+                }
+            };
+
             Object.entries(formState).forEach(([field, value]) => {
                 formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
             });
             fileList.forEach(file => {
                 formData.append('files', file)
             });
+
+            dispatch(createRequestSuccess(updatedFormState))
 
             setNotificationMsg('Заявка успешно создана!')
             setShowNotification(true)

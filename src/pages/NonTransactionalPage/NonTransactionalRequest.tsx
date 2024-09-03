@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFormField, resetForm } from '../../redux/action/formActions';
+import {updateFormField, resetForm, createRequestSuccess} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import '../VerifyPages/VerifyRequest.scss';
 import '../GeneralStyles/GeneralStyles.scss'
@@ -195,43 +195,6 @@ const NonTransactionalRequest: React.FC = () => {
         setFileList(newFileList);
     };
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const filesArray = Array.from(event.target.files);
-            setFileList([...fileList, ...filesArray]);
-        }
-    };
-
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //
-    //     setShowErrors(true);
-    //
-    //     if (successSubmit) {
-    //         // Если форма заполнена корректно
-    //         Object.entries(formState).forEach(([field, value]) => {
-    //             // dispatch(updateFormField(field, value));
-    //             dispatch(updateFormField(field, typeof value === 'string' ? value: ''))
-    //         });
-    //
-    //         const formData = new FormData();
-    //         Object.entries(formState).forEach(([field, value]) => {
-    //             // formData.append(field, value);
-    //             formData.append(field, typeof value === 'string' ? value : JSON.stringify(value))
-    //         });
-    //         fileList.forEach(file => {
-    //             formData.append('files', file);
-    //         });
-    //
-    //         setNotificationMsg('Заявка успешно создана!')
-    //         setShowNotification(true)
-    //
-    //         // Логика отправки данных и отображение успешного уведомления
-    //         console.log('Данные формы отправлены в Redux:', formState);
-    //         console.log('Прикрепленные файлы:', fileList);
-    //     }
-    // };
-
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -262,6 +225,8 @@ const NonTransactionalRequest: React.FC = () => {
                     formData.append(field, value as string);
                 }
             });
+
+            dispatch(createRequestSuccess(updatedFormState))
 
             // Добавляем файлы в FormData
             fileList.forEach(file => {

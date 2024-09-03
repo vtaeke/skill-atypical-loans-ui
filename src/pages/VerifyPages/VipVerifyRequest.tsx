@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFormField, resetForm } from '../../redux/action/formActions';
+import {updateFormField, resetForm, createRequestSuccess} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import './VerifyRequest.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
@@ -264,6 +264,8 @@ const VipVerifyRequest: React.FC = () => {
                     formData.append(field, value as string);
                 }
             });
+
+            dispatch(createRequestSuccess(updateFormState))
 
             // Добавляем файлы в FormData
             fileList.forEach(file => {
