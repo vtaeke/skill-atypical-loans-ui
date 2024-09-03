@@ -96,7 +96,7 @@ const SettlementOfProblemDebt: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -188,16 +188,14 @@ const SettlementOfProblemDebt: React.FC = () => {
         setFileList(newFileList);
     };
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const filesArray = Array.from(event.target.files);
-            setFileList([...fileList, ...filesArray]);
-        }
-    };
-
     //вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
+
+        const formData = new FormData()
+        fileList.forEach((file) => {
+            formData.append('files', file)
+        })
 
         setShowErrors(true);
 
@@ -206,21 +204,20 @@ const SettlementOfProblemDebt: React.FC = () => {
                 dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
             })
 
-            const formData = new FormData()
-
             const updatedFormState = {
                 nameRequest: 'Урегулирование задолженности',
                 ...formState,
                 taskInfo: {
                     ...formState.taskInfo,
-                }
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
             };
 
             Object.entries(formState).forEach(([field, value]) => {
                 formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
-            });
-            fileList.forEach(file => {
-                formData.append('files', file)
             });
 
             setNotificationMsg('Заявка успешно создана!')
@@ -228,31 +225,10 @@ const SettlementOfProblemDebt: React.FC = () => {
 
             dispatch(createRequestSuccess(updatedFormState))
 
-            console.log('Данные формы отправлены в Redux:', formState);
+            console.log('Данные формы отправлены в Redux:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
         }
     };
-
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     // for (const field in formState) {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // }
-    //     // Object.keys(formState).forEach((field) => {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // })
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //     setNotificationMsg('Заявка успешно создана!')
-    //     setShowNotification(true)
-    //
-    //     // setTimeout(() => {
-    //     //     setShowNotification(false)
-    //     // }, 4000)
-    //
-    //     console.log('Данные формы отправлены в Redux:', formState);
-    // };
 
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);
@@ -517,9 +493,6 @@ const SettlementOfProblemDebt: React.FC = () => {
                                             <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
                                         </div>
                                     )}
-                                    {/*{fileList.length === 0 && (*/}
-                                    {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
-                                    {/*)}*/}
                                     {showErrors && fileList.length === 0 && (
                                         <div className="error-message">
                                             <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>

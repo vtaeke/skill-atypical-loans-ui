@@ -108,7 +108,7 @@ const ConclusionTransactions: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -212,6 +212,11 @@ const ConclusionTransactions: React.FC = () => {
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
+        const formData = new FormData()
+        fileList.forEach(file => {
+            formData.append('files', file)
+        });
+
         setShowErrors(true);
 
         if (successSubmit) {
@@ -219,21 +224,20 @@ const ConclusionTransactions: React.FC = () => {
                 dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
             })
 
-            const formData = new FormData()
-
             const updatedFormState = {
                 ...formState,
                 nameRequest: 'Нетиповая и сверхлимитная сделки',
                 taskInfo: {
                     ...formState.taskInfo,
-                }
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
             };
 
             Object.entries(formState).forEach(([field, value]) => {
                 formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
-            });
-            fileList.forEach(file => {
-                formData.append('files', file)
             });
 
             setNotificationMsg('Заявка успешно создана!')
@@ -241,7 +245,7 @@ const ConclusionTransactions: React.FC = () => {
 
             dispatch(createRequestSuccess(updatedFormState))
 
-            console.log('Данные формы отправлены в Redux:', formState);
+            console.log('Данные формы отправлены в Redux:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
         }
     };

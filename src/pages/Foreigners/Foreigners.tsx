@@ -110,7 +110,7 @@ const Foreigners: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -199,6 +199,11 @@ const Foreigners: React.FC = () => {
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
+        const formData = new FormData()
+        fileList.forEach((file) => {
+            formData.append('files', file)
+        })
+
         setShowErrors(true);
 
         if (successSubmit) {
@@ -206,21 +211,20 @@ const Foreigners: React.FC = () => {
                 dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
             })
 
-            const formData = new FormData()
-
             const updatedFormState = {
                 ...formState,
                 nameRequest: 'Иностранцы',
                 taskInfo: {
                     ...formState.taskInfo,
-                }
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
             };
 
             Object.entries(formState).forEach(([field, value]) => {
                 formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
-            });
-            fileList.forEach(file => {
-                formData.append('files', file)
             });
 
             dispatch(createRequestSuccess(updatedFormState))
@@ -228,7 +232,7 @@ const Foreigners: React.FC = () => {
             setNotificationMsg('Заявка успешно создана!')
             setShowNotification(true)
 
-            console.log('Данные формы отправлены в Redux:', formState);
+            console.log('Данные формы отправлены в Redux:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
         }
     };
