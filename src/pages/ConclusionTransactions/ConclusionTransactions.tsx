@@ -223,6 +223,7 @@ const ConclusionTransactions: React.FC = () => {
 
             const updatedFormState = {
                 ...formState,
+                nameRequest: 'Нетиповая и сверхлимитная сделки',
                 taskInfo: {
                     ...formState.taskInfo,
                 }

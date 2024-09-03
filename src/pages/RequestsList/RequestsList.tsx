@@ -75,8 +75,9 @@ const RequestsList: React.FC<Props> = ({selectedStatusFilters, selectedTypeFilte
     useEffect(() => {
         const mappedRequests = requestsInfo.map((req) => ({
             title: req.taskInitiator.externalId,
-            type: req.businessProcess?.type || 'Должен тянуться тип',
-            status: req.taskInfo.status || 'Статус не указан'
+            // type: req.businessProcess?.type || 'Должен тянуться тип',
+            type: req.nameRequest || 'Должен тянуться тип',
+            status: req.taskInfo.status || 'Должен тянуться статус'
         }))
         setRequests(mappedRequests)
     }, [requestsInfo]);

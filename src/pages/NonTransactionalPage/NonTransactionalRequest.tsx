@@ -208,6 +208,7 @@ const NonTransactionalRequest: React.FC = () => {
 
             const updatedFormState = {
                 ...formState,
+                nameRequest: 'Сделка по нетранзакционным продуктам',
                 taskInfo: {
                     ...formState.taskInfo,
                     estateObjects: filledEstateObjects.map((obj) => ({

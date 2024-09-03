@@ -245,6 +245,7 @@ const VipVerifyRequest: React.FC = () => {
 
             const updateFormState = {
                 ...formState,
+                nameRequest: 'VIP. Верификация отчетов',
                 taskInfo: {
                     ...formState.taskInfo,
                     estateObjects: filledEstateObjects.map((obj) => ({
