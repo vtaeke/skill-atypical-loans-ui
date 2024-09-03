@@ -108,7 +108,7 @@ const NonTransactionalRequest: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -198,6 +198,11 @@ const NonTransactionalRequest: React.FC = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
+        const formData = new FormData()
+        fileList.forEach((file) => {
+            formData.append('files', file)
+        })
+
         setShowErrors(true);
 
         if (successSubmit) {
@@ -214,11 +219,14 @@ const NonTransactionalRequest: React.FC = () => {
                     estateObjects: filledEstateObjects.map((obj) => ({
                         ...obj,
                     })),
-                }
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
             };
 
             // Создается FormData для отправки на сервер
-            const formData = new FormData();
             Object.entries(updatedFormState).forEach(([field, value]) => {
                 if (typeof value === 'object' && value !== null) {
                     formData.append(field, JSON.stringify(value));
@@ -228,11 +236,6 @@ const NonTransactionalRequest: React.FC = () => {
             });
 
             dispatch(createRequestSuccess(updatedFormState))
-
-            // Добавляем файлы в FormData
-            fileList.forEach(file => {
-                formData.append('files', file);
-            });
 
             try {
                 const response = await fetch('/backend', {
@@ -356,27 +359,6 @@ const NonTransactionalRequest: React.FC = () => {
         setShowAlert(false);
     };
 
-    // const handleAddRealtyObject = () => {
-    //     const newObject = {
-    //         objectType: formState.taskInfo.estateObjects[0].objectType,
-    //         objectCost: formState.taskInfo.estateObjects[0].objectCost,
-    //     }
-    //     //@ts-ignore
-    //     setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
-    //     //@ts-ignore
-    //     setFormState(prevState => ({
-    //         ...prevState,
-    //         taskInfo: {
-    //             ...prevState.taskInfo,
-    //             estateObjects: [
-    //                 { objectType: '', objectCost: '' }, // Сбросить поля первого объекта
-    //                 ...prevState.taskInfo.estateObjects.slice(1), // Оставить остальные объекты
-    //                 newObject, // Добавить новый объект
-    //             ],
-    //         }
-    //     }))
-    // }
-
     const handleAddRealtyObject = () => {
 
         const newObject = {
@@ -428,7 +410,6 @@ const NonTransactionalRequest: React.FC = () => {
                     </div>
                     <button className='my-order' style={{ color: '#fff' }} onClick={() => handleCardClick('/requests')}>Мои заявки</button>
                 </div>
-
 
                 <div className="main">
                     <div className="form">
@@ -614,13 +595,6 @@ const NonTransactionalRequest: React.FC = () => {
                                             value={formState.taskInitiator.initiatorEmail}
                                             onChange={(e) => handleInputChange('taskInitiator.initiatorEmail', e.target.value)}
                                         />
-                                        {/*{showErrors && !formState.initiatorEmail && (*/}
-                                        {/*    <div className="error-message">*/}
-                                        {/*        <span className="span-error-info">Указан некорректный адрес корпоративной электронной почты. Проверьте, что электронная почта, которую вы ввели, с одним из доменов:*/}
-                                        {/*        </span>*/}
-                                        {/*        <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>*/}
-                                        {/*    </div>*/}
-                                        {/*)}*/}
                                         {emailError && (
                                             <img className='errorImg' src={errorIcon} alt=""/>
                                         )}
@@ -645,9 +619,6 @@ const NonTransactionalRequest: React.FC = () => {
                                              <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
                                         </div>
                                     )}
-                                    {/*{fileList.length === 0 && (*/}
-                                    {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
-                                    {/*)}*/}
                                     {showErrors && fileList.length === 0 && (
                                         <div className="error-message">
                                             <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>

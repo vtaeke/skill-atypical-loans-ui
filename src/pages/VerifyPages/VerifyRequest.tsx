@@ -108,7 +108,7 @@ const VerifyRequest: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -193,16 +193,14 @@ const VerifyRequest: React.FC = () => {
         setFileList(newFileList);
     };
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const filesArray = Array.from(event.target.files);
-            setFileList([...fileList, ...filesArray]);
-            dispatch(addFiles(filesArray));
-        }
-    };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        const formData = new FormData()
+        fileList.forEach((file) => {
+            formData.append('files', file)
+        })
 
         setShowErrors(true);
 
@@ -225,11 +223,14 @@ const VerifyRequest: React.FC = () => {
                         tbObjectName: tbObjectName,
                         objectRegionCode: objectRegionCode
                     })),
-                }
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
             };
 
             // Создается FormData для отправки на сервер
-            const formData = new FormData();
             Object.entries(updatedFormState).forEach(([field, value]) => {
                 if (typeof value === 'object' && value !== null) {
                     formData.append(field, JSON.stringify(value));
@@ -240,10 +241,10 @@ const VerifyRequest: React.FC = () => {
 
             dispatch(createRequestSuccess(updatedFormState))
 
-            // Добавляем файлы в FormData
-            fileList.forEach(file => {
-                formData.append('files', file);
-            });
+            // // Добавляем файлы в FormData
+            // fileList.forEach(file => {
+            //     formData.append('files', file);
+            // });
 
             try {
                 const response = await fetch('/backend', {
@@ -368,28 +369,6 @@ const VerifyRequest: React.FC = () => {
     const closeAlert = () => {
         setShowAlert(false);
     };
-
-
-    // const handleAddRealtyObject = () => {
-    //     const newObject = {
-    //         objectType: formState.taskInfo.estateObjects[0].objectType,
-    //         objectCost: formState.taskInfo.estateObjects[0].objectCost,
-    //     }
-    //     //@ts-ignore
-    //     setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
-    //     //@ts-ignore
-    //     setFormState(prevState => ({
-    //         ...prevState,
-    //         taskInfo: {
-    //             ...prevState.taskInfo,
-    //             estateObjects: [
-    //                 { objectType: '', objectCost: '' }, // Сбросить поля первого объекта
-    //                 ...prevState.taskInfo.estateObjects.slice(1), // Оставить остальные объекты
-    //                 newObject, // Добавить новый объект
-    //             ],
-    //         }
-    //     }))
-    // }
 
     const handleAddRealtyObject = () => {
         // Получаем текущие значения tbObjectName и objectRegionCode из первой записи в estateObjects

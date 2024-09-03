@@ -108,7 +108,7 @@ const VipVerifyRequest: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -232,7 +232,12 @@ const VipVerifyRequest: React.FC = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        setShowErrors(true)
+        const formData = new FormData();
+        fileList.forEach((file) => {
+            formData.append('files', file)
+        });
+
+        setShowErrors(true);
 
         if (successSubmit) {
             // Создаем новый объект состояния с учетом заполненных объектов недвижимости
@@ -253,11 +258,15 @@ const VipVerifyRequest: React.FC = () => {
                         tbObjectName: tbObjectName,
                         objectRegionCode: tbObjectRegionCodde,
                     })),
-                }
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
             };
 
             // Создается FormData для отправки на сервер
-            const formData = new FormData();
+
             Object.entries(updateFormState).forEach(([field, value]) => {
                 if (typeof value === 'object' && value !== null) {
                     formData.append(field, JSON.stringify(value));
@@ -267,11 +276,6 @@ const VipVerifyRequest: React.FC = () => {
             });
 
             dispatch(createRequestSuccess(updateFormState))
-
-            // Добавляем файлы в FormData
-            fileList.forEach(file => {
-                formData.append('files', file);
-            });
 
             try {
                 const response = await fetch('/backend', {
