@@ -4,7 +4,7 @@ default:
 pipeline:
   name: content
   vars:
-    NEXUS2_ARTIFACT: CI00001111_REQUEST_SERVICE # Пространство sbrf-nexus для публикации дистрибутива с навыком
+    NEXUS2_ARTIFACT: maven2_CI00892765.CI06091120 # Пространство sbrf-nexus для публикации дистрибутива с навыком
 # параметры Checkmarx используются при необходимости. Влияют на наличие флага QG.CI.3 SAST
     SAST_SERVICE_ID: CI00001111 # КЭ сервиса. Для Checkmarx/OSS
     SAST_SERVICE_NAME: Сервис обработки запросов  # Название сервиса. Для Checkmarx/OSS
