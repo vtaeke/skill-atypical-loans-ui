@@ -1,0 +1,13 @@
+default:
+  executor: pythonDocker
+ 
+pipeline:
+  name: content
+  vars:
+    NEXUS2_ARTIFACT: CI00001111_REQUEST_SERVICE # Пространство sbrf-nexus для публикации дистрибутива с навыком
+# параметры Checkmarx используются при необходимости. Влияют на наличие флага QG.CI.3 SAST
+    SAST_SERVICE_ID: CI00001111 # КЭ сервиса. Для Checkmarx/OSS
+    SAST_SERVICE_NAME: Сервис обработки запросов  # Название сервиса. Для Checkmarx/OSS
+# параметры SonarQube используются при необходимости. Влияют на наличие флага QG.CI.1 Static Code Analyze
+    SONARQUBE_KEY: ru.sbrf... # SonarQube Key для анализа проекта SonarQube.
+    SONARQUBE_PROJECT: request-service # Название проекта SonarQube
