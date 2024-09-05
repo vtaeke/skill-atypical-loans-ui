@@ -6,8 +6,8 @@ pipeline:
   vars:
     NEXUS2_ARTIFACT: maven2_CI00892765.CI06091120 # Пространство sbrf-nexus для публикации дистрибутива с навыком
 # параметры Checkmarx используются при необходимости. Влияют на наличие флага QG.CI.3 SAST
-    SAST_SERVICE_ID: CI00001111 # КЭ сервиса. Для Checkmarx/OSS
-    SAST_SERVICE_NAME: Сервис обработки запросов  # Название сервиса. Для Checkmarx/OSS
+    SAST_SERVICE_ID: CI07672828 # КЭ сервиса. Для Checkmarx/OSS
+    SAST_SERVICE_NAME: SmartApp.Нетиповые кредиты  # Название сервиса. Для Checkmarx/OSS
 # параметры SonarQube используются при необходимости. Влияют на наличие флага QG.CI.1 Static Code Analyze
     SONARQUBE_KEY: ru.sbrf... # SonarQube Key для анализа проекта SonarQube.
     SONARQUBE_PROJECT: request-service # Название проекта SonarQube
