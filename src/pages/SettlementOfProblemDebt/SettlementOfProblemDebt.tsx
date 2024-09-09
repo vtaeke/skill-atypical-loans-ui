@@ -499,7 +499,7 @@ const SettlementOfProblemDebt: React.FC = () => {
                                     )}
                                 </div>
 
-                                <div className="form-button" style={{ marginTop: '20px'}}>
+                                <div className="form-button" style={{ marginTop: '20px', marginBottom: '40px'}}>
                                     <button className="create-request-btn">Создать заявку</button>
                                 </div>
 

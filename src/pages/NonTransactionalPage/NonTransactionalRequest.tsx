@@ -237,23 +237,24 @@ const NonTransactionalRequest: React.FC = () => {
 
             dispatch(createRequestSuccess(updatedFormState))
 
-            try {
-                const response = await fetch('/backend', {
-                    method: 'POST',
-                    body: formData,
-                });
+            // try {
+            //     const response = await fetch('/backend', {
+            //         method: 'POST',
+            //         body: formData,
+            //     });
 
-                if (response.ok) {
+                // if (response.ok) {
                     setNotificationMsg('Заявка успешно создана!');
                     setShowNotification(true);
-                } else {
-                    setNotificationMsg('Ошибка при создании заявки!');
-                    setShowNotification(true);
-                }
-            } catch (error) {
-                setNotificationMsg('Ошибка при создании заявки!');
-                setShowNotification(true);
-            }
+            //     }
+            //     else {
+            //         setNotificationMsg('Заявка успешно создана! Без отправки на бэк');
+            //         setShowNotification(true);
+            //     }
+            // } catch (error) {
+            //     setNotificationMsg('Ошибка при создании заявки!');
+            //     setShowNotification(true);
+            // }
 
             console.log('Данные формы отправлены на сервер:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
@@ -626,7 +627,9 @@ const NonTransactionalRequest: React.FC = () => {
                                 </div>
 
                                 <div className="form-button-verify" >
+                                    <a href="#submit-anchor">
                                     <button type="submit" className="create-request-btn">Создать заявку</button>
+                                    </a>
                                 </div>
 
                             </form>

@@ -66,13 +66,15 @@
 }
 
 .file-upload-button {
+  display: flex;
   width: 260px;
   height: 30px;
-  display: inline-block;
+  //display: inline-block;
   border: none;
   border-radius: 16px;
   background-image: linear-gradient(to bottom, rgb(47, 214, 92), rgb(32, 193, 199));
   cursor: pointer;
+  //margin-bottom: 15px;
 
   font-size: 14px;
   padding-top: 10px;
@@ -110,7 +112,7 @@
 
 .svg-container {
   position: absolute;
-  padding: 10px 0px 0px 220px;
+  padding: 0px 0px 0px 220px;
 }
 
 .svg-container svg {

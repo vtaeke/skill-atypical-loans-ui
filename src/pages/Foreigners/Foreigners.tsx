@@ -470,7 +470,7 @@ const Foreigners: React.FC = () => {
                                     <div className="error-message">
                                         <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>
                                 )}
-                                <div className="form-button" style={{ marginTop: '20px'}}>
+                                <div className="form-button" style={{ marginTop: '20px', marginBottom: '40px'}}>
                                     <button
                                         onClick={handleSubmit}
                                         type="submit" className="create-request-btn">Создать заявку</button>
