@@ -246,23 +246,23 @@ const VerifyRequest: React.FC = () => {
             //     formData.append('files', file);
             // });
 
-            try {
-                const response = await fetch('/backend', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (response.ok) {
+            // try {
+            //     const response = await fetch('/backend', {
+            //         method: 'POST',
+            //         body: formData,
+            //     });
+            //
+            //     if (response.ok) {
                     setNotificationMsg('Заявка успешно создана!');
                     setShowNotification(true);
-                } else {
-                    setNotificationMsg('Ошибка при создании заявки!');
-                    setShowNotification(true);
-                }
-            } catch (error) {
-                setNotificationMsg('Ошибка при создании заявки!');
-                setShowNotification(true);
-            }
+            //     } else {
+            //         setNotificationMsg('Заявка успешно создана! Без отправки на бэк');
+            //         setShowNotification(true);
+            //     }
+            // } catch (error) {
+            //     setNotificationMsg('Ошибка при создании заявки!');
+            //     setShowNotification(true);
+            // }
 
             console.log('Данные формы отправлены на сервер:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
