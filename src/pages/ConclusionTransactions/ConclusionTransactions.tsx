@@ -81,7 +81,7 @@ const ConclusionTransactions: React.FC = () => {
             initiatorID: ""
         },
         businessProcess: {
-            type: "",
+            type: "TP_7",
             category: ""
         },
         taskInfo: {
@@ -148,33 +148,60 @@ const ConclusionTransactions: React.FC = () => {
     }, [formState.taskInitiator.initiatorEmail])
 
     // условие - Отчество, комментарий - не обязательное
+    // useEffect(() => {
+    //     let requiredFields: (keyof typeof formState)[] = [];
+    //     if (formState.businessProcess.category === 'Индивидуальные схемы кредитования RQ_435') {
+    //         requiredFields = [
+    //             'taskInitiator',
+    //             'taskInfo',
+    //             'clientManagerComment'
+    //         ];
+    //     } else if (formState.businessProcess.category === 'Кредит на индивидуальных условиях RQ_485') {
+    //         requiredFields = [
+    //             'taskInitiator',
+    //             'taskInfo',
+    //             'clientManagerComment'
+    //         ];
+    //     }
+    //     const validValue = requiredFields.every(field => {
+    //         let fieldValue = formState[field];
+    //         if (field === 'taskInitiator' && typeof fieldValue === 'object' && fieldValue !== null && 'externalId' in fieldValue && 'initiatorEmail' in fieldValue) {
+    //             return fieldValue.externalId !== '' && fieldValue.initiatorEmail !== '';
+    //         } else if (field === 'taskInfo' && typeof fieldValue === 'object' && fieldValue !== null && 'dealMembersNumber' in fieldValue && 'client' in fieldValue &&
+    //         'organization' in fieldValue) {
+    //             return fieldValue.dealMembersNumber > 0 && fieldValue.client && fieldValue.client.firstName !== '' && fieldValue.client.lastName !== '' &&
+    //                 fieldValue.organization.orgname !== '';
+    //         } else {
+    //             return fieldValue !== '';
+    //         }
+    //     }) && fileList.length > 0;
+    //     setSuccessSubmit(validValue);
+    // }, [formState, fileList]);
+
+    //v2
     useEffect(() => {
-        let requiredFields: (keyof typeof formState)[] = [];
-        if (formState.businessProcess.type === 'Индивидуальные схемы кредитования') {
-            requiredFields = [
-                'taskInitiator',
-                'taskInfo',
-                'clientManagerComment'
-            ];
-        } else if (formState.businessProcess.type === 'Кредит на индивидуальных условиях') {
-            requiredFields = [
-                'taskInitiator',
-                'taskInfo',
-                'clientManagerComment'
-            ];
+        let validValue = true;
+
+        switch (formState.businessProcess.category) {
+            case 'Индивидуальные схемы кредитования RQ_435':
+                validValue =
+                    formState.taskInitiator.externalId !== '' &&
+                    formState.taskInfo.organization.orgname !== '' &&
+                    formState.taskInitiator.initiatorEmail !== '' &&
+                    fileList.length > 0;
+                break;
+            case 'Кредит на индивидуальных условиях RQ_485':
+                validValue =
+                    formState.taskInitiator.externalId !== '' &&
+                    formState.taskInfo.client.lastName !== '' &&
+                    formState.taskInfo.client.firstName !== '' &&
+                    formState.taskInitiator.initiatorEmail !== '' &&
+                    fileList.length > 0;
+                break;
+            default:
+                validValue = false;
         }
-        const validValue = requiredFields.every(field => {
-            let fieldValue = formState[field];
-            if (field === 'taskInitiator' && typeof fieldValue === 'object' && fieldValue !== null && 'externalId' in fieldValue && 'initiatorEmail' in fieldValue) {
-                return fieldValue.externalId !== '' && fieldValue.initiatorEmail !== '';
-            } else if (field === 'taskInfo' && typeof fieldValue === 'object' && fieldValue !== null && 'dealMembersNumber' in fieldValue && 'client' in fieldValue &&
-            'organization' in fieldValue) {
-                return fieldValue.dealMembersNumber > 0 && fieldValue.client && fieldValue.client.firstName !== '' && fieldValue.client.lastName !== '' &&
-                    fieldValue.organization.orgname !== '';
-            } else {
-                return fieldValue !== '';
-            }
-        }) && fileList.length > 0;
+
         setSuccessSubmit(validValue);
     }, [formState, fileList]);
 
@@ -285,7 +312,19 @@ const ConclusionTransactions: React.FC = () => {
                     }
                 })))
             }
-        } else if (topLevelField === 'taskInfo') {
+        }
+        if (topLevelField === 'businessProcess') {
+            if (fieldParts[1] === 'category') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    businessProcess: {
+                        ...prevState.businessProcess,
+                        category: value as string,
+                    },
+                }));
+            }
+        }
+        else if (topLevelField === 'taskInfo') {
             if (fieldParts[1] === 'client') {
                 const fieldName = fieldParts[2];
                 setFormState((prevState) => ({
@@ -389,12 +428,12 @@ const ConclusionTransactions: React.FC = () => {
                                     <div className="input-block-category">
                                         <select className="select-realty-category"
                                             //@ts-ignore
-                                            value={formState.businessProcess}
-                                            onChange={(e) => handleInputChange('businessProcess', e.target.value)}
+                                            value={formState.businessProcess.category}
+                                            onChange={(e) => handleInputChange('businessProcess.category', e.target.value)}
                                         >
                                             <option value='' >Категория запроса</option>
-                                            <option value='Индивидуальные схемы кредитования'>Индивидуальные схемы кредитования</option>
-                                            <option value='Кредит на индивидуальных условиях'>Кредит на индивидуальных условиях</option>
+                                            <option value='Индивидуальные схемы кредитования RQ_435'>Индивидуальные схемы кредитования RQ_435</option>
+                                            <option value='Кредит на индивидуальных условиях RQ_485'>Кредит на индивидуальных условиях RQ_485</option>
                                         </select>
                                     </div>
                                 </div>
@@ -403,7 +442,7 @@ const ConclusionTransactions: React.FC = () => {
                                     <>
                                         { /* Индивидуальные схемы кредитования */ }
                                         {/*@ts-ignore*/}
-                                        {formState.businessProcess === 'Индивидуальные схемы кредитования' && (
+                                        {formState.businessProcess.category === 'Индивидуальные схемы кредитования RQ_435' && (
                                             <div>
                                                 <div className="form-content-credit-contract">
                                                     <span className="icon" style={{marginRight: '10px'}}>
@@ -494,7 +533,7 @@ const ConclusionTransactions: React.FC = () => {
 
                                         { /* Кредит на индивидуальных условиях */ }
                                         {/*@ts-ignore*/}
-                                        {formState.businessProcess === 'Кредит на индивидуальных условиях' && (
+                                        {formState.businessProcess.category === 'Кредит на индивидуальных условиях RQ_485' && (
                                             <div>
                                                 <div className="form-content-credit-contract">
                                             <span className="icon" style={{marginRight: '10px'}}>

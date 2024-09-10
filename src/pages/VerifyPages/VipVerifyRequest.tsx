@@ -81,7 +81,7 @@ const VipVerifyRequest: React.FC = () => {
             initiatorID: ""
         },
         businessProcess: {
-            type: "",
+            type: "TP_6",
             category: ""
         },
         taskInfo: {
@@ -329,12 +329,12 @@ const VipVerifyRequest: React.FC = () => {
             }
         }
         if (topLevelField === 'businessProcess') {
-            if (fieldParts[1] === 'type') {
+            if (fieldParts[1] === 'category') {
                 setFormState((prevState) => ({
                     ...prevState,
                     businessProcess: {
                         ...prevState.businessProcess,
-                        type: value as string,
+                        category: value as string,
                     },
                 }));
             }
@@ -481,14 +481,15 @@ const VipVerifyRequest: React.FC = () => {
                                             <select
                                                 className='select-realty-category'
                                                 //@ts-ignore
-                                                value={formState.businessProcess.type}
-                                                onChange={(e) => handleInputChange('businessProcess.type', e.target.value)}
+                                                value={formState.businessProcess.category}
+                                                onChange={(e) => handleInputChange('businessProcess.category', e.target.value)}
                                             >
                                                 <option value="" hidden>Категория запроса</option>
                                                 <option value="Реструктуризация">Реструктуризация</option>
-                                                <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
+                                                <option value="Жилые дома, участки (VIP) RQ_1051">Жилые дома, участки (VIP) RQ_1051</option>
+                                                <option value="Жилые квартиры, комнаты (VIP) RQ_1052">Жилые квартиры, комнаты (VIP) RQ_1052</option>
                                             </select>
-                                            {showErrors && !formState.businessProcess.type && (
+                                            {showErrors && !formState.businessProcess.category && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
