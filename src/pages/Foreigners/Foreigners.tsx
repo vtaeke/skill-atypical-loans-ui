@@ -83,8 +83,8 @@ const Foreigners: React.FC = () => {
             initiatorID: ""
         },
         businessProcess: {
-            type: "",
-            category: ""
+            type: "TP_83",
+            category: "RQ_583"
         },
         taskInfo: {
             // dealMembersNumber: 0,

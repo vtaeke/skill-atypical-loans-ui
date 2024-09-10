@@ -81,7 +81,7 @@ const NonTransactionalRequest: React.FC = () => {
             initiatorID: ""
         },
         businessProcess: {
-            type: "",
+            type: "TP_8",
             category: ""
         },
         taskInfo: {
@@ -154,7 +154,7 @@ const NonTransactionalRequest: React.FC = () => {
         console.log("Form state updated============: ", formState);
         const requiredFields = [
             formState.businessProcess.type,
-            // formState.businessProcess.category,
+            formState.businessProcess.category,
             formState.taskInitiator.externalId,
             formState.taskInitiator.initiatorEmail,
             formState.taskInfo.client.firstName,
@@ -288,12 +288,12 @@ const NonTransactionalRequest: React.FC = () => {
             }
         }
         if (topLevelField === 'businessProcess') {
-            if (fieldParts[1] === 'type') {
+            if (fieldParts[1] === 'category') {
                 setFormState((prevState) => ({
                     ...prevState,
                     businessProcess: {
                         ...prevState.businessProcess,
-                        type: value as string,
+                        category: value as string,
                     },
                 }));
             }
@@ -426,14 +426,15 @@ const NonTransactionalRequest: React.FC = () => {
                                             <select
                                                 className='select-realty-category'
                                                 //@ts-ignore
-                                                value={formState.businessProcess.type}
-                                                onChange={(e) => handleInputChange('businessProcess.type', e.target.value)}
+                                                value={formState.businessProcess.category}
+                                                onChange={(e) => handleInputChange('businessProcess.category', e.target.value)}
                                             >
                                                 <option value="" hidden>Категория запроса</option>
-                                                <option value="Реструктуризация">Реструктуризация</option>
-                                                <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
+                                                <option value="Стройсберкасса, Благонадежность RQ_626">Стройсберкасса, Благонадежность RQ_626</option>
+                                                <option value="Стройсберкасса, Благонадежность + Объект недвижимости RQ_627">Стройсберкасса, Благонадежность + Объект недвижимости RQ_627</option>
+                                                <option value="Стройсберкасса, Объект недвижимости RQ_628">Стройсберкасса, Благонадежность + Объект недвижимости RQ_628</option>
                                             </select>
-                                            {showErrors && !formState.businessProcess.type && (
+                                            {showErrors && !formState.businessProcess.category && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
