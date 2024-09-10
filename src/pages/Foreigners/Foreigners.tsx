@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFormField, resetForm } from '../../redux/action/formActions';
+import {updateFormField, resetForm, createRequestSuccess} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import '../VerifyPages/VerifyRequest.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
@@ -82,10 +82,10 @@ const Foreigners: React.FC = () => {
             initiatorEmail: "",
             initiatorID: ""
         },
-        // businessProcess: {
-        //     type: "",
-        //     category: ""
-        // },
+        businessProcess: {
+            type: "TP_83",
+            category: "RQ_583"
+        },
         taskInfo: {
             // dealMembersNumber: 0,
             client: {
@@ -110,7 +110,7 @@ const Foreigners: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -199,6 +199,11 @@ const Foreigners: React.FC = () => {
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
+        const formData = new FormData()
+        fileList.forEach((file) => {
+            formData.append('files', file)
+        })
+
         setShowErrors(true);
 
         if (successSubmit) {
@@ -206,18 +211,28 @@ const Foreigners: React.FC = () => {
                 dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
             })
 
-            const formData = new FormData()
+            const updatedFormState = {
+                ...formState,
+                nameRequest: 'Иностранцы',
+                taskInfo: {
+                    ...formState.taskInfo,
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
+            };
+
             Object.entries(formState).forEach(([field, value]) => {
                 formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
             });
-            fileList.forEach(file => {
-                formData.append('files', file)
-            });
+
+            dispatch(createRequestSuccess(updatedFormState))
 
             setNotificationMsg('Заявка успешно создана!')
             setShowNotification(true)
 
-            console.log('Данные формы отправлены в Redux:', formState);
+            console.log('Данные формы отправлены в Redux:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
         }
     };
@@ -455,7 +470,7 @@ const Foreigners: React.FC = () => {
                                     <div className="error-message">
                                         <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>
                                 )}
-                                <div className="form-button" style={{ marginTop: '20px'}}>
+                                <div className="form-button" style={{ marginTop: '20px', marginBottom: '40px'}}>
                                     <button
                                         onClick={handleSubmit}
                                         type="submit" className="create-request-btn">Создать заявку</button>

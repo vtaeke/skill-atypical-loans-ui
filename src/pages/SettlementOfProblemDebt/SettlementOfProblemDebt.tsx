@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFormField, resetForm } from '../../redux/action/formActions';
+import {updateFormField, resetForm, createRequestSuccess} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import '../VerifyPages/VerifyRequest.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
@@ -82,7 +82,7 @@ const SettlementOfProblemDebt: React.FC = () => {
             initiatorID: ""
         },
         businessProcess: {
-            type: "",
+            type: "TP_13",
             category: ""
         },
         taskInfo: {
@@ -96,7 +96,7 @@ const SettlementOfProblemDebt: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -188,16 +188,14 @@ const SettlementOfProblemDebt: React.FC = () => {
         setFileList(newFileList);
     };
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const filesArray = Array.from(event.target.files);
-            setFileList([...fileList, ...filesArray]);
-        }
-    };
-
     //вывод в консоль файлов, которые были добавлены
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
+
+        const formData = new FormData()
+        fileList.forEach((file) => {
+            formData.append('files', file)
+        })
 
         setShowErrors(true);
 
@@ -206,42 +204,31 @@ const SettlementOfProblemDebt: React.FC = () => {
                 dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
             })
 
-            const formData = new FormData()
+            const updatedFormState = {
+                nameRequest: 'Урегулирование задолженности',
+                ...formState,
+                taskInfo: {
+                    ...formState.taskInfo,
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
+            };
+
             Object.entries(formState).forEach(([field, value]) => {
                 formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
-            });
-            fileList.forEach(file => {
-                formData.append('files', file)
             });
 
             setNotificationMsg('Заявка успешно создана!')
             setShowNotification(true)
 
-            console.log('Данные формы отправлены в Redux:', formState);
+            dispatch(createRequestSuccess(updatedFormState))
+
+            console.log('Данные формы отправлены в Redux:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
         }
     };
-
-    // const handleSubmit = (event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     // for (const field in formState) {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // }
-    //     // Object.keys(formState).forEach((field) => {
-    //     //     dispatch(updateFormField(field, formState[field as keyof typeof formState]));
-    //     // })
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //     setNotificationMsg('Заявка успешно создана!')
-    //     setShowNotification(true)
-    //
-    //     // setTimeout(() => {
-    //     //     setShowNotification(false)
-    //     // }, 4000)
-    //
-    //     console.log('Данные формы отправлены в Redux:', formState);
-    // };
 
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);
@@ -279,12 +266,12 @@ const SettlementOfProblemDebt: React.FC = () => {
             }
         }
         if (topLevelField === 'businessProcess') {
-            if (fieldParts[1] === 'type') {
+            if (fieldParts[1] === 'category') {
                 setFormState((prevState) => ({
                     ...prevState,
                     businessProcess: {
                         ...prevState.businessProcess,
-                        type: value as string,
+                        category: value as string,
                     },
                 }));
             }
@@ -364,14 +351,17 @@ const SettlementOfProblemDebt: React.FC = () => {
                                             <select
                                                 className='select-realty-category'
                                                 //@ts-ignore
-                                                value={formState.businessProcess.type}
-                                                onChange={(e) => handleInputChange('businessProcess.type', e.target.value)}
+                                                value={formState.businessProcess.category}
+                                                onChange={(e) => handleInputChange('businessProcess.category', e.target.value)}
                                             >
                                                 <option value="" hidden>Категория запроса</option>
-                                                <option value="Реструктуризация">Реструктуризация</option>
-                                                <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
+                                                <option value="Реструктуризация RQ_123">Реструктуризация RQ_123</option>
+                                                <option value="Мировое соглашение RQ_512">Мировое соглашение RQ_512</option>
+                                                <option value="Перевод долга RQ_534">Перевод долга RQ_534</option>
+                                                <option value="Добровольная реализация залогового имущества RQ_418">Добровольная реализация залогового имущества RQ_418</option>
+                                                <option value="Цессия индивидуальная RQ_683">Цессия индивидуальная RQ_683</option>
                                             </select>
-                                            {showErrors && !formState.businessProcess.type && (
+                                            {showErrors && !formState.businessProcess.category && (
                                                 <div className="error-message" style={{marginBottom: '5px'}}>
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
@@ -506,16 +496,13 @@ const SettlementOfProblemDebt: React.FC = () => {
                                             <span style={{ color: '#fff'}}>  @sberbank.ru    @sber.ru    @omega.sbrf.ru </span>
                                         </div>
                                     )}
-                                    {/*{fileList.length === 0 && (*/}
-                                    {/*    <div style={{ fontSize: '12px' }}><span style={{color: 'rgb(239, 107, 37)'}}>Отсутствуют документы.</span> Прикрепите документы к заявке</div>*/}
-                                    {/*)}*/}
                                     {showErrors && fileList.length === 0 && (
                                         <div className="error-message">
                                             <span className="span-error-info">Отсутствуют документы.</span> Прикрепите документы к заявке</div>
                                     )}
                                 </div>
 
-                                <div className="form-button" style={{ marginTop: '20px'}}>
+                                <div className="form-button" style={{ marginTop: '20px', marginBottom: '40px'}}>
                                     <button className="create-request-btn">Создать заявку</button>
                                 </div>
 

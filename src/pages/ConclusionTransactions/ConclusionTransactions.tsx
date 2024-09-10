@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFormField, resetForm } from '../../redux/action/formActions';
+import {updateFormField, resetForm, createRequestSuccess} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import '../VerifyPages/VerifyRequest.scss';
 import './ConclussionTransactions.scss';
@@ -81,7 +81,7 @@ const ConclusionTransactions: React.FC = () => {
             initiatorID: ""
         },
         businessProcess: {
-            type: "",
+            type: "TP_7",
             category: ""
         },
         taskInfo: {
@@ -108,7 +108,7 @@ const ConclusionTransactions: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -148,31 +148,60 @@ const ConclusionTransactions: React.FC = () => {
     }, [formState.taskInitiator.initiatorEmail])
 
     // условие - Отчество, комментарий - не обязательное
+    // useEffect(() => {
+    //     let requiredFields: (keyof typeof formState)[] = [];
+    //     if (formState.businessProcess.category === 'Индивидуальные схемы кредитования RQ_435') {
+    //         requiredFields = [
+    //             'taskInitiator',
+    //             'taskInfo',
+    //             'clientManagerComment'
+    //         ];
+    //     } else if (formState.businessProcess.category === 'Кредит на индивидуальных условиях RQ_485') {
+    //         requiredFields = [
+    //             'taskInitiator',
+    //             'taskInfo',
+    //             'clientManagerComment'
+    //         ];
+    //     }
+    //     const validValue = requiredFields.every(field => {
+    //         let fieldValue = formState[field];
+    //         if (field === 'taskInitiator' && typeof fieldValue === 'object' && fieldValue !== null && 'externalId' in fieldValue && 'initiatorEmail' in fieldValue) {
+    //             return fieldValue.externalId !== '' && fieldValue.initiatorEmail !== '';
+    //         } else if (field === 'taskInfo' && typeof fieldValue === 'object' && fieldValue !== null && 'dealMembersNumber' in fieldValue && 'client' in fieldValue &&
+    //         'organization' in fieldValue) {
+    //             return fieldValue.dealMembersNumber > 0 && fieldValue.client && fieldValue.client.firstName !== '' && fieldValue.client.lastName !== '' &&
+    //                 fieldValue.organization.orgname !== '';
+    //         } else {
+    //             return fieldValue !== '';
+    //         }
+    //     }) && fileList.length > 0;
+    //     setSuccessSubmit(validValue);
+    // }, [formState, fileList]);
+
+    //v2
     useEffect(() => {
-        let requiredFields: (keyof typeof formState)[] = [];
-        if (formState.businessProcess.type === 'Индивидуальные схемы кредитования') {
-            requiredFields = [
-                'taskInitiator',
-                'taskInfo',
-                'clientManagerComment'
-            ];
-        } else if (formState.businessProcess.type === 'Кредит на индивидуальных условиях') {
-            requiredFields = [
-                'taskInitiator',
-                'taskInfo',
-                'clientManagerComment'
-            ];
+        let validValue = true;
+
+        switch (formState.businessProcess.category) {
+            case 'Индивидуальные схемы кредитования RQ_435':
+                validValue =
+                    formState.taskInitiator.externalId !== '' &&
+                    formState.taskInfo.organization.orgname !== '' &&
+                    formState.taskInitiator.initiatorEmail !== '' &&
+                    fileList.length > 0;
+                break;
+            case 'Кредит на индивидуальных условиях RQ_485':
+                validValue =
+                    formState.taskInitiator.externalId !== '' &&
+                    formState.taskInfo.client.lastName !== '' &&
+                    formState.taskInfo.client.firstName !== '' &&
+                    formState.taskInitiator.initiatorEmail !== '' &&
+                    fileList.length > 0;
+                break;
+            default:
+                validValue = false;
         }
-        const validValue = requiredFields.every(field => {
-            let fieldValue = formState[field];
-            if (field === 'taskInitiator' && typeof fieldValue === 'object' && fieldValue !== null && 'externalId' in fieldValue && 'initiatorEmail' in fieldValue) {
-                return fieldValue.externalId !== '' && fieldValue.initiatorEmail !== '';
-            } else if (field === 'taskInfo' && typeof fieldValue === 'object' && fieldValue !== null && 'dealMembersNumber' in fieldValue && 'client' in fieldValue) {
-                return fieldValue.dealMembersNumber > 0 && fieldValue.client && fieldValue.client.firstName !== '' && fieldValue.client.lastName !== '';
-            } else {
-                return fieldValue !== '';
-            }
-        }) && fileList.length > 0;
+
         setSuccessSubmit(validValue);
     }, [formState, fileList]);
 
@@ -212,6 +241,11 @@ const ConclusionTransactions: React.FC = () => {
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
+        const formData = new FormData()
+        fileList.forEach(file => {
+            formData.append('files', file)
+        });
+
         setShowErrors(true);
 
         if (successSubmit) {
@@ -219,18 +253,28 @@ const ConclusionTransactions: React.FC = () => {
                 dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
             })
 
-            const formData = new FormData()
+            const updatedFormState = {
+                ...formState,
+                nameRequest: 'Нетиповая и сверхлимитная сделки',
+                taskInfo: {
+                    ...formState.taskInfo,
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
+            };
+
             Object.entries(formState).forEach(([field, value]) => {
                 formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
-            });
-            fileList.forEach(file => {
-                formData.append('files', file)
             });
 
             setNotificationMsg('Заявка успешно создана!')
             setShowNotification(true)
 
-            console.log('Данные формы отправлены в Redux:', formState);
+            dispatch(createRequestSuccess(updatedFormState))
+
+            console.log('Данные формы отправлены в Redux:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
         }
     };
@@ -268,7 +312,19 @@ const ConclusionTransactions: React.FC = () => {
                     }
                 })))
             }
-        } else if (topLevelField === 'taskInfo') {
+        }
+        if (topLevelField === 'businessProcess') {
+            if (fieldParts[1] === 'category') {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    businessProcess: {
+                        ...prevState.businessProcess,
+                        category: value as string,
+                    },
+                }));
+            }
+        }
+        else if (topLevelField === 'taskInfo') {
             if (fieldParts[1] === 'client') {
                 const fieldName = fieldParts[2];
                 setFormState((prevState) => ({
@@ -281,7 +337,21 @@ const ConclusionTransactions: React.FC = () => {
                         },
                     },
                 }));
-            } else if (fieldParts[1] === 'estateObjects') {
+            }
+            else if (fieldParts[1] === 'organization' && fieldParts[2] === 'orgname') {
+
+                setFormState((prevState => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        organization: {
+                            ...prevState.taskInfo.organization,
+                            orgname: value as string,
+                        },
+                    },
+                })))
+            }
+            else if (fieldParts[1] === 'estateObjects') {
                 const index = parseInt(fieldParts[2], 10);
                 const fieldName = fieldParts[3];
                 setFormState((prevState) => ({
@@ -358,12 +428,12 @@ const ConclusionTransactions: React.FC = () => {
                                     <div className="input-block-category">
                                         <select className="select-realty-category"
                                             //@ts-ignore
-                                            value={formState.businessProcess}
-                                            onChange={(e) => handleInputChange('businessProcess', e.target.value)}
+                                            value={formState.businessProcess.category}
+                                            onChange={(e) => handleInputChange('businessProcess.category', e.target.value)}
                                         >
                                             <option value='' >Категория запроса</option>
-                                            <option value='Индивидуальные схемы кредитования'>Индивидуальные схемы кредитования</option>
-                                            <option value='Кредит на индивидуальных условиях'>Кредит на индивидуальных условиях</option>
+                                            <option value='Индивидуальные схемы кредитования RQ_435'>Индивидуальные схемы кредитования RQ_435</option>
+                                            <option value='Кредит на индивидуальных условиях RQ_485'>Кредит на индивидуальных условиях RQ_485</option>
                                         </select>
                                     </div>
                                 </div>
@@ -372,7 +442,7 @@ const ConclusionTransactions: React.FC = () => {
                                     <>
                                         { /* Индивидуальные схемы кредитования */ }
                                         {/*@ts-ignore*/}
-                                        {formState.businessProcess === 'Индивидуальные схемы кредитования' && (
+                                        {formState.businessProcess.category === 'Индивидуальные схемы кредитования RQ_435' && (
                                             <div>
                                                 <div className="form-content-credit-contract">
                                                     <span className="icon" style={{marginRight: '10px'}}>
@@ -400,16 +470,16 @@ const ConclusionTransactions: React.FC = () => {
                                                         <div className="form-content-form-bank">
                                                             <select
                                                                 className='select-bank'
-                                                                value={formState.taskInitiator.tbName}
-                                                                onChange={(e) => handleInputChange('taskInitiator.tbName', e.target.value)}
+                                                                value={formState.taskInfo.organization.orgname}
+                                                                onChange={(e) => handleInputChange('taskInfo.organization.orgname', e.target.value)}
                                                             >
-                                                                <option value="" disabled>Территориальный банк расположения объекта недвижимости</option>
-                                                                <option value="Сбер">Сбер</option>
-                                                                <option value="Сбербанк">Сбербанк</option>
-                                                                <option value="СБЕР2">СБЕР</option>
-                                                                <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
+                                                                <option value="" disabled>Название организации</option>
+                                                                <option value="Организация 1">Организация 1</option>
+                                                                <option value="Организация 2">Организация 2</option>
+                                                                <option value="Организация 3">Организация 3</option>
+                                                                <option value="Организация 4">Организация 4</option>
                                                             </select>
-                                                            {showErrors && !formState.taskInitiator.tbName && (
+                                                            {showErrors && !formState.taskInfo.organization.orgname && (
                                                                 <div className="error-message" style={{ marginBottom: '5px'}}>
                                                                     <span className="span-error-info">Обязательное поле</span>
                                                                 </div>
@@ -463,7 +533,7 @@ const ConclusionTransactions: React.FC = () => {
 
                                         { /* Кредит на индивидуальных условиях */ }
                                         {/*@ts-ignore*/}
-                                        {formState.businessProcess === 'Кредит на индивидуальных условиях' && (
+                                        {formState.businessProcess.category === 'Кредит на индивидуальных условиях RQ_485' && (
                                             <div>
                                                 <div className="form-content-credit-contract">
                                             <span className="icon" style={{marginRight: '10px'}}>
@@ -572,7 +642,7 @@ const ConclusionTransactions: React.FC = () => {
 
 
 
-                                <div className="form-button" style={{ marginTop: '20px'}}>
+                                <div className="form-button" style={{ marginTop: '20px', marginBottom: '40px'}}>
                                     <button className="create-request-btn">Создать заявку</button>
                                 </div>
 

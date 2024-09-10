@@ -1,0 +1,17 @@
+default:
+  executor: pythonDocker
+ 
+pipeline:
+  name: content
+  vars:
+#    NEXUS2_ARTIFACT: maven2_CI00892765.CI06091120 # Пространство sbrf-nexus для публикации дистрибутива с навыком
+# параметры Checkmarx используются при необходимости. Влияют на наличие флага QG.CI.3 SAST
+    SAST_SERVICE_ID: CI07672828 # КЭ сервиса. Для Checkmarx/OSS
+    SAST_SERVICE_NAME: SmartApp.Нетиповые кредиты  # Название сервиса. Для Checkmarx/OSS
+# параметры SonarQube используются при необходимости. Влияют на наличие флага QG.CI.1 Static Code Analyze
+    SONARQUBE_KEY: atypical_smartapp # SonarQube Key для анализа проекта SonarQube.
+    SONARQUBE_PROJECT: atypical_smartapp # Название проекта SonarQube
+artifacts:
+  distrib:
+    repository: nexus3-cdp-delta
+    artifact: CI06091120    

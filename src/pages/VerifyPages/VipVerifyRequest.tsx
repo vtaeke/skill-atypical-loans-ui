@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import { updateFormField, resetForm } from '../../redux/action/formActions';
+import {updateFormField, resetForm, createRequestSuccess} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import './VerifyRequest.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
@@ -81,7 +81,7 @@ const VipVerifyRequest: React.FC = () => {
             initiatorID: ""
         },
         businessProcess: {
-            type: "",
+            type: "TP_6",
             category: ""
         },
         taskInfo: {
@@ -108,7 +108,7 @@ const VipVerifyRequest: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -201,33 +201,106 @@ const VipVerifyRequest: React.FC = () => {
     };
 
     //вывод в консоль файлов, которые были добавлены
-    const handleSubmit = (event: React.FormEvent) => {
+    // const handleSubmit = (event: React.FormEvent) => {
+    //     event.preventDefault();
+    //
+    //     setShowErrors(true);
+    //
+    //     if (successSubmit) {
+    //         Object.entries(formState).forEach(([field, value]) => {
+    //             // dispatch(updateFormField(field, value))
+    //             dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
+    //         })
+    //
+    //         const formData = new FormData()
+    //         Object.entries(formState).forEach(([field, value]) => {
+    //             // formData.append(field, value)
+    //             formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
+    //         });
+    //         fileList.forEach(file => {
+    //             formData.append('files', file)
+    //         });
+    //
+    //         setNotificationMsg('Заявка успешно создана!')
+    //         setShowNotification(true)
+    //
+    //         console.log('Данные формы отправлены в Redux:', formState);
+    //         console.log('Прикрепленные файлы:', fileList);
+    //     }
+    // };
+
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        const formData = new FormData();
+        fileList.forEach((file) => {
+            formData.append('files', file)
+        });
 
         setShowErrors(true);
 
         if (successSubmit) {
-            Object.entries(formState).forEach(([field, value]) => {
-                // dispatch(updateFormField(field, value))
-                dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
-            })
+            // Создаем новый объект состояния с учетом заполненных объектов недвижимости
+            const filledEstateObjects = addRealtyObjects.filter(
+                (obj) => obj.objectCost && obj.objectType
+            );
 
-            const formData = new FormData()
-            Object.entries(formState).forEach(([field, value]) => {
-                // formData.append(field, value)
-                formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
+            const tbObjectName = formState.taskInfo.estateObjects[0]?.tbObjectName || "";
+            const tbObjectRegionCodde = formState.taskInfo.estateObjects[0]?.objectRegionCode || "";
+
+            const updateFormState = {
+                ...formState,
+                nameRequest: 'VIP. Верификация отчетов',
+                taskInfo: {
+                    ...formState.taskInfo,
+                    estateObjects: filledEstateObjects.map((obj) => ({
+                        ...obj,
+                        tbObjectName: tbObjectName,
+                        objectRegionCode: tbObjectRegionCodde,
+                    })),
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
+            };
+
+            // Создается FormData для отправки на сервер
+
+            Object.entries(updateFormState).forEach(([field, value]) => {
+                if (typeof value === 'object' && value !== null) {
+                    formData.append(field, JSON.stringify(value));
+                } else {
+                    formData.append(field, value as string);
+                }
             });
-            fileList.forEach(file => {
-                formData.append('files', file)
-            });
 
-            setNotificationMsg('Заявка успешно создана!')
-            setShowNotification(true)
+            dispatch(createRequestSuccess(updateFormState))
 
-            console.log('Данные формы отправлены в Redux:', formState);
+            // try {
+            //     const response = await fetch('/backend', {
+            //         method: 'POST',
+            //         body: formData,
+            //     });
+            //
+            //     if (response.ok) {
+                    setNotificationMsg('Заявка успешно создана!');
+                    setShowNotification(true);
+            //     }
+            //     else {
+            //         setNotificationMsg('Заявка успешно создана! Без отправки на бэк');
+            //         setShowNotification(true);
+            //     }
+            // } catch (error) {
+            //     setNotificationMsg('Ошибка при создании заявки!');
+            //     setShowNotification(true);
+            // }
+            console.log('Данные формы отправлены на сервер:', updateFormState);
             console.log('Прикрепленные файлы:', fileList);
         }
-    };
+    }
+
+
 
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);
@@ -256,12 +329,12 @@ const VipVerifyRequest: React.FC = () => {
             }
         }
         if (topLevelField === 'businessProcess') {
-            if (fieldParts[1] === 'type') {
+            if (fieldParts[1] === 'category') {
                 setFormState((prevState) => ({
                     ...prevState,
                     businessProcess: {
                         ...prevState.businessProcess,
-                        type: value as string,
+                        category: value as string,
                     },
                 }));
             }
@@ -334,24 +407,36 @@ const VipVerifyRequest: React.FC = () => {
     };
 
     const handleAddRealtyObject = () => {
+        // Получаем текущие значения tbObjectName и objectRegionCode из первой записи в estateObjects
+        const currentTbObjectName = formState.taskInfo.estateObjects[0].tbObjectName;
+        const currentObjectRegionCode = formState.taskInfo.estateObjects[0].objectRegionCode;
+
         const newObject = {
             objectType: formState.taskInfo.estateObjects[0].objectType,
             objectCost: formState.taskInfo.estateObjects[0].objectCost,
+            tbObjectName: currentTbObjectName, // Присваиваем значение из текущих значений формы
+            objectRegionCode: currentObjectRegionCode // Присваиваем значение из текущих значений формы
         }
+
         //@ts-ignore
-        setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
+        setAddRealtyObjects(prevObjects => [...prevObjects, newObject]);
         //@ts-ignore
         setFormState(prevState => ({
             ...prevState,
             taskInfo: {
                 ...prevState.taskInfo,
                 estateObjects: [
-                    { objectType: '', objectCost: '' }, // Сбросить поля первого объекта
-                    ...prevState.taskInfo.estateObjects.slice(1), // Оставить остальные объекты
-                    newObject, // Добавить новый объект
+                    {
+                        objectType: '',
+                        objectCost: '',
+                        tbObjectName: currentTbObjectName, // Присваиваем значение из текущих значений формы
+                        objectRegionCode: currentObjectRegionCode // Присваиваем значение из текущих значений формы
+                    },
+                    ...prevState.taskInfo.estateObjects.slice(1),
+                    newObject,
                 ],
             }
-        }))
+        }));
     }
 
     const handleAddRealtyRemove = (index: number) => {
@@ -396,14 +481,15 @@ const VipVerifyRequest: React.FC = () => {
                                             <select
                                                 className='select-realty-category'
                                                 //@ts-ignore
-                                                value={formState.businessProcess.type}
-                                                onChange={(e) => handleInputChange('businessProcess.type', e.target.value)}
+                                                value={formState.businessProcess.category}
+                                                onChange={(e) => handleInputChange('businessProcess.category', e.target.value)}
                                             >
                                                 <option value="" hidden>Категория запроса</option>
                                                 <option value="Реструктуризация">Реструктуризация</option>
-                                                <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
+                                                <option value="Жилые дома, участки (VIP) RQ_1051">Жилые дома, участки (VIP) RQ_1051</option>
+                                                <option value="Жилые квартиры, комнаты (VIP) RQ_1052">Жилые квартиры, комнаты (VIP) RQ_1052</option>
                                             </select>
-                                            {showErrors && !formState.businessProcess.type && (
+                                            {showErrors && !formState.businessProcess.category && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>

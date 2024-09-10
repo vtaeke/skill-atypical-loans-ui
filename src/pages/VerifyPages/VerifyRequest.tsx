@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import {updateFormField, resetForm, addFiles} from '../../redux/action/formActions';
+import {updateFormField, resetForm, addFiles, createRequestSuccess} from '../../redux/action/formActions';
 import HintsBlock from "../../components/HintBlock/HintBlock";
 import './VerifyRequest.scss';
 import categoryChoice from "../../resources/categoryChoice.svg";
@@ -81,7 +81,7 @@ const VerifyRequest: React.FC = () => {
             initiatorID: ""
         },
         businessProcess: {
-            type: "",
+            type: "TP_6",
             category: ""
         },
         taskInfo: {
@@ -108,7 +108,7 @@ const VerifyRequest: React.FC = () => {
         documentsInfo: [
             {
                 otrId: "",
-                fileName: ""
+                fileName: null
             }
         ]
     });
@@ -193,76 +193,81 @@ const VerifyRequest: React.FC = () => {
         setFileList(newFileList);
     };
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-            const filesArray = Array.from(event.target.files);
-            setFileList([...fileList, ...filesArray]);
-            dispatch(addFiles(filesArray));
-        }
-    };
 
-    //вывод в консоль файлов, которые были добавлены
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        const formData = new FormData()
+        fileList.forEach((file) => {
+            formData.append('files', file)
+        })
 
         setShowErrors(true);
 
         if (successSubmit) {
-            Object.entries(formState).forEach(([field, value]) => {
-                // dispatch(updateFormField(field, value))
-                dispatch(updateFormField(field, typeof value === 'string' ? value : ''))
-            })
+            // Создаем новый объект состояния с учетом заполненных объектов недвижимости
+            const filledEstateObjects = addRealtyObjects.filter(
+                (obj) => obj.objectType && obj.objectCost
+            );
 
-            const formData = new FormData()
-            Object.entries(formState).forEach(([field, value]) => {
-                // formData.append(field, value)
-                formData.append(field, typeof value === 'string' ?  value : JSON.stringify(value))
+            const tbObjectName = formState.taskInfo.estateObjects[0]?.tbObjectName || "";
+            const objectRegionCode = formState.taskInfo.estateObjects[0]?.objectRegionCode || "";
+
+            const updatedFormState = {
+                ...formState,
+                nameRequest: 'Верификация отчетов',
+                taskInfo: {
+                    ...formState.taskInfo,
+                    estateObjects: filledEstateObjects.map((obj) => ({
+                        ...obj,
+                        tbObjectName: tbObjectName,
+                        objectRegionCode: objectRegionCode
+                    })),
+                },
+                documentsInfo: fileList.map((file, index) => ({
+                    otrId: index,
+                    fileName: file.name
+                }))
+            };
+
+            // Создается FormData для отправки на сервер
+            Object.entries(updatedFormState).forEach(([field, value]) => {
+                if (typeof value === 'object' && value !== null) {
+                    formData.append(field, JSON.stringify(value));
+                } else {
+                    formData.append(field, value as string);
+                }
             });
-            fileList.forEach(file => {
-                formData.append('files', file)
-            });
 
-            setNotificationMsg('Заявка успешно создана!')
-            setShowNotification(true)
+            dispatch(createRequestSuccess(updatedFormState))
 
-            console.log('Данные формы отправлены в Redux:', formState);
+            // // Добавляем файлы в FormData
+            // fileList.forEach(file => {
+            //     formData.append('files', file);
+            // });
+
+            // try {
+            //     const response = await fetch('/backend', {
+            //         method: 'POST',
+            //         body: formData,
+            //     });
+            //
+            //     if (response.ok) {
+                    setNotificationMsg('Заявка успешно создана!');
+                    setShowNotification(true);
+            //     } else {
+            //         setNotificationMsg('Заявка успешно создана! Без отправки на бэк');
+            //         setShowNotification(true);
+            //     }
+            // } catch (error) {
+            //     setNotificationMsg('Ошибка при создании заявки!');
+            //     setShowNotification(true);
+            // }
+
+            console.log('Данные формы отправлены на сервер:', updatedFormState);
             console.log('Прикрепленные файлы:', fileList);
         }
-    };
-
-    //v2 handleSubmit send to back-end
-    // const handleSubmit = async(event: React.FormEvent) => {
-    //     event.preventDefault();
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         dispatch(updateFormField(field, value))
-    //     })
-    //
-    //     // send to back-end
-    //     const formData = new FormData()
-    //     Object.entries(formState).forEach(([field, value]) => {
-    //         formData.append(field, value)
-    //     });
-    //     fileList.forEach(file => {
-    //         formData.append('files', file)
-    //     });
-    //
-    //     try {
-    //         const response = await fetch('/backend', {
-    //             method: 'POST',
-    //             body: formData
-    //         });
-    //         if (response.ok) {
-    //             setNotificationMsg('Заявка успешно создана!');
-    //             setShowNotification(true);
-    //         } else {
-    //             setNotificationMsg('Ошибка при создании заявки!');
-    //             setShowNotification(true);
-    //         }
-    //     } catch (error) {
-    //         setNotificationMsg('Ошибка при создании заявки!')
-    //         setShowNotification(true);
-    //     }
-    // }
+    }
 
     const handleInputChange = (field: string, value: string | number | any[]) => {
         console.log(`Поле: ${field}, Значение: ${value}`);
@@ -291,12 +296,12 @@ const VerifyRequest: React.FC = () => {
             }
         }
         if (topLevelField === 'businessProcess') {
-            if (fieldParts[1] === 'type') {
+            if (fieldParts[1] === 'category') {
                 setFormState((prevState) => ({
                     ...prevState,
                     businessProcess: {
                         ...prevState.businessProcess,
-                        type: value as string,
+                        category: value as string,
                     },
                 }));
             }
@@ -365,26 +370,37 @@ const VerifyRequest: React.FC = () => {
         setShowAlert(false);
     };
 
-
     const handleAddRealtyObject = () => {
+        // Получаем текущие значения tbObjectName и objectRegionCode из первой записи в estateObjects
+        const currentTbObjectName = formState.taskInfo.estateObjects[0].tbObjectName;
+        const currentObjectRegionCode = formState.taskInfo.estateObjects[0].objectRegionCode;
+
         const newObject = {
             objectType: formState.taskInfo.estateObjects[0].objectType,
             objectCost: formState.taskInfo.estateObjects[0].objectCost,
-        }
+            tbObjectName: currentTbObjectName, // Присваиваем значение из текущих значений формы
+            objectRegionCode: currentObjectRegionCode // Присваиваем значение из текущих значений формы
+        };
+
         //@ts-ignore
-        setAddRealtyObjects(prevObjects => [...prevObjects, newObject])
+        setAddRealtyObjects(prevObjects => [...prevObjects, newObject]);
         //@ts-ignore
         setFormState(prevState => ({
             ...prevState,
             taskInfo: {
                 ...prevState.taskInfo,
                 estateObjects: [
-                    { objectType: '', objectCost: '' }, // Сбросить поля первого объекта
-                    ...prevState.taskInfo.estateObjects.slice(1), // Оставить остальные объекты
-                    newObject, // Добавить новый объект
+                    {
+                        objectType: '',
+                        objectCost: '',
+                        tbObjectName: currentTbObjectName, // Присваиваем значение из текущих значений формы
+                        objectRegionCode: currentObjectRegionCode // Присваиваем значение из текущих значений формы
+                    },
+                    ...prevState.taskInfo.estateObjects.slice(1),
+                    newObject,
                 ],
             }
-        }))
+        }));
     }
 
     const handleAddRealtyRemove = (index: number) => {
@@ -429,14 +445,15 @@ const VerifyRequest: React.FC = () => {
                                             <select
                                                 className='select-realty-category'
                                                 //@ts-ignore
-                                                value={formState.businessProcess.type}
-                                                onChange={(e) => handleInputChange('businessProcess.type', e.target.value)}
+                                                value={formState.businessProcess.category}
+                                                onChange={(e) => handleInputChange('businessProcess.category', e.target.value)}
                                             >
                                                 <option value="" hidden>Категория запроса</option>
                                                 <option value="Реструктуризация">Реструктуризация</option>
-                                                <option value="Жилые дома, земельные участки">Жилые дома, земельные участки</option>
+                                                <option value="Жилые квартиры, комнаты (нетиповая) RQ_1055">Жилые квартиры, комнаты (нетиповая) RQ_1055</option>
+                                                <option value="Жилые дома, участки (нетиповая) RQ_1057">Жилые дома, участки (нетиповая) RQ_1057</option>
                                             </select>
-                                            {showErrors && !formState.businessProcess.type && (
+                                            {showErrors && !formState.businessProcess.category && (
                                                 <div className="error-message">
                                                     <span className="span-error-info">Обязательное поле</span>
                                                 </div>
