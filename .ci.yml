@@ -11,3 +11,7 @@ pipeline:
 # параметры SonarQube используются при необходимости. Влияют на наличие флага QG.CI.1 Static Code Analyze
     SONARQUBE_KEY: atypical_smartapp # SonarQube Key для анализа проекта SonarQube.
     SONARQUBE_PROJECT: atypical_smartapp # Название проекта SonarQube
+artifacts:
+  distrib:
+    repository: nexus3-cdp-delta
+    artifact: CI06091120    
