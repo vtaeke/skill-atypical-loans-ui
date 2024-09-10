@@ -4,7 +4,7 @@ default:
 pipeline:
   name: content
   vars:
-    NEXUS2_ARTIFACT: maven2_CI00892765.CI06091120 # Пространство sbrf-nexus для публикации дистрибутива с навыком
+#    NEXUS2_ARTIFACT: maven2_CI00892765.CI06091120 # Пространство sbrf-nexus для публикации дистрибутива с навыком
 # параметры Checkmarx используются при необходимости. Влияют на наличие флага QG.CI.3 SAST
     SAST_SERVICE_ID: CI07672828 # КЭ сервиса. Для Checkmarx/OSS
     SAST_SERVICE_NAME: SmartApp.Нетиповые кредиты  # Название сервиса. Для Checkmarx/OSS
