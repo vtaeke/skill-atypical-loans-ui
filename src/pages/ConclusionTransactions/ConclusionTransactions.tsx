@@ -167,8 +167,10 @@ const ConclusionTransactions: React.FC = () => {
             let fieldValue = formState[field];
             if (field === 'taskInitiator' && typeof fieldValue === 'object' && fieldValue !== null && 'externalId' in fieldValue && 'initiatorEmail' in fieldValue) {
                 return fieldValue.externalId !== '' && fieldValue.initiatorEmail !== '';
-            } else if (field === 'taskInfo' && typeof fieldValue === 'object' && fieldValue !== null && 'dealMembersNumber' in fieldValue && 'client' in fieldValue) {
-                return fieldValue.dealMembersNumber > 0 && fieldValue.client && fieldValue.client.firstName !== '' && fieldValue.client.lastName !== '';
+            } else if (field === 'taskInfo' && typeof fieldValue === 'object' && fieldValue !== null && 'dealMembersNumber' in fieldValue && 'client' in fieldValue &&
+            'organization' in fieldValue) {
+                return fieldValue.dealMembersNumber > 0 && fieldValue.client && fieldValue.client.firstName !== '' && fieldValue.client.lastName !== '' &&
+                    fieldValue.organization.orgname !== '';
             } else {
                 return fieldValue !== '';
             }
@@ -296,7 +298,21 @@ const ConclusionTransactions: React.FC = () => {
                         },
                     },
                 }));
-            } else if (fieldParts[1] === 'estateObjects') {
+            }
+            else if (fieldParts[1] === 'organization' && fieldParts[2] === 'orgname') {
+
+                setFormState((prevState => ({
+                    ...prevState,
+                    taskInfo: {
+                        ...prevState.taskInfo,
+                        organization: {
+                            ...prevState.taskInfo.organization,
+                            orgname: value as string,
+                        },
+                    },
+                })))
+            }
+            else if (fieldParts[1] === 'estateObjects') {
                 const index = parseInt(fieldParts[2], 10);
                 const fieldName = fieldParts[3];
                 setFormState((prevState) => ({
@@ -415,16 +431,16 @@ const ConclusionTransactions: React.FC = () => {
                                                         <div className="form-content-form-bank">
                                                             <select
                                                                 className='select-bank'
-                                                                value={formState.taskInitiator.tbName}
-                                                                onChange={(e) => handleInputChange('taskInitiator.tbName', e.target.value)}
+                                                                value={formState.taskInfo.organization.orgname}
+                                                                onChange={(e) => handleInputChange('taskInfo.organization.orgname', e.target.value)}
                                                             >
-                                                                <option value="" disabled>Территориальный банк расположения объекта недвижимости</option>
-                                                                <option value="Сбер">Сбер</option>
-                                                                <option value="Сбербанк">Сбербанк</option>
-                                                                <option value="СБЕР2">СБЕР</option>
-                                                                <option value="СБЕЕЕР!!!">СБЕЕЕР!!!</option>
+                                                                <option value="" disabled>Название организации</option>
+                                                                <option value="Организация 1">Организация 1</option>
+                                                                <option value="Организация 2">Организация 2</option>
+                                                                <option value="Организация 3">Организация 3</option>
+                                                                <option value="Организация 4">Организация 4</option>
                                                             </select>
-                                                            {showErrors && !formState.taskInitiator.tbName && (
+                                                            {showErrors && !formState.taskInfo.organization.orgname && (
                                                                 <div className="error-message" style={{ marginBottom: '5px'}}>
                                                                     <span className="span-error-info">Обязательное поле</span>
                                                                 </div>
