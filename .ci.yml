@@ -14,4 +14,4 @@ pipeline:
 artifacts:
   distrib:
     repository: nexus3-cdp-delta
-    artifact: CI06091120    
+    artifact: CI07672828    
