@@ -9,7 +9,7 @@ pipeline:
     SAST_SERVICE_ID: CI07672828 # КЭ сервиса. Для Checkmarx/OSS
     SAST_SERVICE_NAME: SmartApp.Нетиповые кредиты  # Название сервиса. Для Checkmarx/OSS
 # параметры SonarQube используются при необходимости. Влияют на наличие флага QG.CI.1 Static Code Analyze
-    SONARQUBE_KEY: devsecops # SonarQube Key для анализа проекта SonarQube.
+    SONARQUBE_KEY: atypical_smartapp	 # SonarQube Key для анализа проекта SonarQube.
     SONARQUBE_PROJECT: atypical_smartapp # Название проекта SonarQube
 artifacts:
   distrib:
