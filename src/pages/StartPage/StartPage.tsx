@@ -95,14 +95,14 @@ const StartPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className='footer'>
+            {/* <div className='footer'>
                 <div className="circle" style={{paddingRight: '14px', cursor: 'pointer'}} onClick={() => handleCardClick('/requests')}>
                     <img width={61} height={61} src={circleSalut} alt="Clip Board" />
                 </div>
                 <div className="salut">
                     <input className='salut-input' type="text" placeholder={'Напишите, чем вам помочь'}/>
                 </div>
-            </div>
+            </div> */}
 
         </div>
     );
