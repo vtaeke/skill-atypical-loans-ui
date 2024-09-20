@@ -40,15 +40,15 @@ const StartPage: React.FC = () => {
     const navigate = useNavigate();
     const dispatch:AppDispatch = useDispatch();
 
-    // const assistantStateRef = useRef<AssistantAppState>();
+    const assistantStateRef = useRef<AssistantAppState>();
     const assistantRef = useRef<ReturnType<typeof createAssistant>>();
 
     useEffect(() => {
         assistantRef.current = initializeAssistant(() => {});
 
         assistantRef.current.on('data', ({action}: any) => {
-            if (action.type === "SET_NAME") {
-                dispatch({ type: 'SET_NAME', payload: action.payload});
+            if (action.type === "OPEN_FORM") {
+                dispatch({ type: 'OPEN_FORM', payload: action.payload});
             };
         });
     },[])
